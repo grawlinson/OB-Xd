@@ -14,33 +14,47 @@ It contains the basic startup code for a Juce application.
 
 //==============================================================================
 ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFilter)
-	: AudioProcessorEditor (&ownerFilter), processor (ownerFilter)
+	: AudioProcessorEditor (&ownerFilter), processor (ownerFilter),
+      skinFolder (processor.getSkinFolder()),
+      progStart (2000),
+      bankStart (1000),
+      skinStart (0),
+      skins (processor.getSkinFiles()),
+      banks (processor.getBankFiles())
 {
-    skinFolder = ownerFilter.getCurrentSkinFolder();
-    loadSkin(processor);
+//    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
+    loadSkin (processor);
     repaint();
 }
 
-void ObxdAudioProcessorEditor::loadSkin(ObxdAudioProcessor& ownerFilter){
+void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
+{
+    knobAttachments.clear();
+    buttonListAttachments.clear();
+    toggleAttachments.clear();
     imageButtons.clear();
+    popupMenus.clear();
     ownerFilter.removeChangeListener (this);
     //File coords("/Users/jimmy/Downloads/coords.xml");
     skinFolder = ownerFilter.getCurrentSkinFolder();
     File coords = skinFolder.getChildFile ("coords.xml");
     bool useClassicSkin = coords.existsAsFile();
-    if (!useClassicSkin) {
+    
+    if (! useClassicSkin) {
        rebuildComponents (processor);
        return;
     }
     
     XmlDocument skin (coords);
     XmlElement* doc = skin.getDocumentElement();
-    if (doc) {
-        
-        if (doc->getTagName() == "PROPERTIES"){
-            
-            forEachXmlChildElementWithTagName(*doc, child, "VALUE"){
-                if (child->hasAttribute("NAME") && child->hasAttribute("x") && child->hasAttribute("y")) {
+    if (doc)
+    {
+        if (doc->getTagName() == "PROPERTIES")
+        {
+            forEachXmlChildElementWithTagName(*doc, child, "VALUE")
+            {
+                if (child->hasAttribute("NAME") && child->hasAttribute("x") && child->hasAttribute("y"))
+                {
                     String name = child->getStringAttribute("NAME");
                     int x = child->getIntAttribute("x");
                     int y = child->getIntAttribute("y");
@@ -150,8 +164,8 @@ void ObxdAudioProcessorEditor::loadSkin(ObxdAudioProcessor& ownerFilter){
                     
                     if (name == "menu")
                     {
-                        addMenu (x, y, d,
-                                 ImageCache::getFromFile (skinFolder.getChildFile ("menu.png")));
+                        addMenuButton (x, y, d,
+                                       ImageCache::getFromFile (skinFolder.getChildFile ("menu.png")));
                     }
                     
                     //DBG(" Name: " << name << " X: " <<x <<" Y: "<<y);
@@ -161,34 +175,35 @@ void ObxdAudioProcessorEditor::loadSkin(ObxdAudioProcessor& ownerFilter){
     }
     
     // Prepare data
-    if (voiceSwitch){
-        
+    if (voiceSwitch)
+    {
         for (int i = 1; i <= 32; ++i)
         {
             voiceSwitch->addChoice (String (i));
         }
+        
+        auto voiceOption = ownerFilter.getPluginState().getParameter (ownerFilter.getEngineParameterId (VOICE_COUNT))->getValue();
+        voiceSwitch->setValue (voiceOption, dontSendNotification);
     }
-    if (legatoSwitch) {
+    
+    if (legatoSwitch)
+    {
         legatoSwitch->addChoice ("Keep All");
         legatoSwitch->addChoice ("Keep Filter Envelope");
         legatoSwitch->addChoice ("Keep Amplitude Envelope");
         legatoSwitch->addChoice ("Retrig");
+        auto legatoOption = ownerFilter.getPluginState().getParameter (ownerFilter.getEngineParameterId (LEGATOMODE))->getValue();
+        legatoSwitch->setValue (legatoOption, dontSendNotification);
     }
-    buttonListAttachments.add (new ButtonList::ButtonListAttachment (ownerFilter.getPluginState(),
-                                                                     ownerFilter.getEngineParameterId (VOICE_COUNT),
-                                                                     *voiceSwitch));
     
-    buttonListAttachments.add (new ButtonList::ButtonListAttachment (ownerFilter.getPluginState(),
-                                                                     ownerFilter.getEngineParameterId (LEGATOMODE),
-                                                                     *legatoSwitch));
-    
+    createMenu();
     ownerFilter.addChangeListener (this);
     repaint();
 }
 ObxdAudioProcessorEditor::~ObxdAudioProcessorEditor()
 {
 	processor.removeChangeListener (this);
-//    deleteAllChildren();  // WATCH OUT!
+//    deleteAllChildren();  // Method to be avoided
 }
 
 void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
@@ -204,6 +219,10 @@ void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, Image img)
 {
 	ButtonList *bl = new ButtonList (img, height);
+    buttonListAttachments.add (new ButtonList::ButtonListAttachment (filter.getPluginState(),
+                                                                     filter.getEngineParameterId (parameter),
+                                                                     *bl));
+    
 	bl->setBounds (x, y, width, height);
 	addAndMakeVisible (bl);
     
@@ -214,40 +233,46 @@ ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int heig
 Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String /*name*/, float defval)
 {
 	Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 144);
+    knobAttachments.add (new Knob::KnobAttachment (filter.getPluginState(),
+                                                   filter.getEngineParameterId (parameter),
+                                                   *knob));
+    
 	knob->setSliderStyle (Slider::RotaryVerticalDrag);
 	knob->setTextBoxStyle (knob->NoTextBox, true, 0, 0);
 	knob->setRange (0, 1);
-	addAndMakeVisible (knob);
 	knob->setBounds (x, y, d+(d/6), d+(d/6));
 	knob->setTextBoxIsEditable (false);
 	knob->setDoubleClickReturnValue (true, defval);
-    knobAttachments.add (new Knob::KnobAttachment (filter.getPluginState(),
-                                                   
-                                                   filter.getEngineParameterId (parameter),
-                                                   *knob));
+    knob->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue());
+    addAndMakeVisible (knob);
     
 	return knob;
 }
 
 
-void ObxdAudioProcessorEditor::clean(){
+void ObxdAudioProcessorEditor::clean()
+{
     this->removeAllChildren();
 }
 
 TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name)
 {
 	TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
-	addAndMakeVisible (button);
-	button->setBounds (x, y, w, h);
-	button->setButtonText (name);
     toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
                                                                   filter.getEngineParameterId (parameter),
                                                                   *button));
     
+	button->setBounds (x, y, w, h);
+	button->setButtonText (name);
+    button->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
+                      dontSendNotification);
+    
+    addAndMakeVisible (button);
+    
 	return button;
 }
 
-void ObxdAudioProcessorEditor::addMenu (int x, int y, int d, const Image& image)
+void ObxdAudioProcessorEditor::addMenuButton (int x, int y, int d, const Image& image)
 {
     ImageButton* imageButton;
     imageButtons.add (imageButton = new ImageButton());
@@ -283,18 +308,15 @@ void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilte
 	repaint();
 }
 
-void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
+void ObxdAudioProcessorEditor::createMenu ()
 {
-    PopupMenu menu;
+    PopupMenu* menu = new PopupMenu();
     PopupMenu progMenu;
     PopupMenu bankMenu;
     PopupMenu skinMenu;
 
-    
-    Array<File> skins;
-    const Array<File>& banks = processor.getBankFiles();
-    
-    int progStart = 2000;
+    skins = processor.getSkinFiles();
+    banks = processor.getBankFiles();
     
     {
         for (int i = 0; i < processor.getNumPrograms(); ++i)
@@ -305,10 +327,8 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
                               i == processor.getCurrentProgram());
         }
         
-        menu.addSubMenu("Programs", progMenu);
+        menu->addSubMenu("Programs", progMenu);
     }
-    
-    int bankStart = 1000;
     
     {
         const String currentBank = processor.getCurrentBankFile().getFileName();
@@ -322,19 +342,10 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
                               bank.getFileName() == currentBank);
         }
         
-        menu.addSubMenu ("Banks", bankMenu);
+        menu->addSubMenu ("Banks", bankMenu);
     }
     
-    int skinStart = 0;
-    
     {
-        DirectoryIterator it (processor.getSkinFolder(), false, "*", File::findDirectories);
-        
-        while (it.next())
-        {
-            skins.addUsingDefaultSort (it.getFile());
-        }
-        
         for (int i = 0; i < skins.size(); ++i)
         {
             const File skin = skins.getUnchecked (i);
@@ -344,11 +355,15 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
                               skin.getFileName() == skinFolder.getFileName());
         }
         
-        menu.addSubMenu ("Skins", skinMenu);
+        menu->addSubMenu ("Skins", skinMenu);
     }
-
     
-    int result = menu.showAt (Rectangle<int> (pos.getX(), pos.getY(), 1, 1));
+    popupMenus.add (menu);
+}
+
+void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
+{
+    int result = popupMenus[0]->showAt (Rectangle<int> (pos.getX(), pos.getY(), 1, 1));
     
     if (result >= (skinStart + 1) && result <= (skinStart + skins.size()))
     {
@@ -367,14 +382,18 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
         result -= 1;
         result -= bankStart;
         
-        const File bankFile = banks.getUnchecked(result);
+        const File bankFile = banks.getUnchecked (result);
         processor.loadFromFXBFile (bankFile);
+        clean();
+        loadSkin (processor);
     }
     else if (result >= (progStart + 1) && result <= (progStart + processor.getNumPrograms()))
     {
         result -= 1;
         result -= progStart;
         processor.setCurrentProgram (result);
+        clean();
+        loadSkin (processor);
     }
 }
 
@@ -389,7 +408,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
         auto dx  = imageButton->getWidth();
         auto pos = Point<int> (x, y + dx);
 
-        createMenu (pos);
+        resultFromMenu (pos);
     }
 }
 
@@ -397,17 +416,21 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source)
 {
     
-    for (int i = 0; i < knobAttachments.size(); i++){
+    for (int i = 0; i < knobAttachments.size(); ++i)
+    {
         knobAttachments[i]->updateToSlider();
     }
     
-    for (int i = 0; i < toggleAttachments.size(); i++){
+    for (int i = 0; i < toggleAttachments.size(); ++i)
+    {
         toggleAttachments[i]->updateToSlider();
     }
     
-    for (int i = 0; i < buttonListAttachments.size(); i++){
+    for (int i = 0; i < buttonListAttachments.size(); ++i)
+    {
         buttonListAttachments[i]->updateToSlider();
     }
+    
     repaint();
 }
 
@@ -415,7 +438,7 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 {
 	if (e.mods.isRightButtonDown() || e.mods.isCommandDown())
 	{
-        createMenu (e.getMouseDownScreenPosition());
+        resultFromMenu (e.getMouseDownScreenPosition());
 	}
 }
 
