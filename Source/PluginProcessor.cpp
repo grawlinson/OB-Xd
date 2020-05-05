@@ -35,8 +35,6 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
     
     for (int i = 0; i < PARAM_COUNT; ++i)
     {
-        if (i == 0) continue;  // skip undefined
-        
         auto id           = ObxdAudioProcessor::getEngineParameterId (i);
         auto name         = TRANS (id);
         auto range        = NormalisableRange<float> {0.0f, 1.0f};
@@ -77,23 +75,19 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	currentBank = "Init";
 
 	scanAndUpdateBanks();
-    scanAndUpdateSkins();
+    initAllParams();
 
-	for (int i = 0; i < PARAM_COUNT; ++i)
+	if (bankFiles.size() > 0)
+	{
+		loadFromFXBFile (bankFiles[0]);
+	}
+    
+    for (int i = 0; i < PARAM_COUNT; ++i)
     {
-        if (i == 0) continue;  // skip undefined
-        
         apvtState.addParameterListener (getEngineParameterId (i), this);
     }
     
     apvtState.state = ValueTree (JucePlugin_Name);
-    
-    if (bankFiles.size() > 0)
-    {
-        loadFromFXBFile (bankFiles[0]);
-    }
-    
-    initAllParams();
 }
 
 ObxdAudioProcessor::~ObxdAudioProcessor()
@@ -580,34 +574,16 @@ void ObxdAudioProcessor::scanAndUpdateBanks()
 {
 	bankFiles.clearQuick();
 
-	DirectoryIterator it (getBanksFolder(), false, "*.fxb", File::findFiles);
-	
-    while (it.next())
+	DirectoryIterator it(getBanksFolder(), false, "*.fxb", File::findFiles);
+	while (it.next())
 	{
-		bankFiles.addUsingDefaultSort (it.getFile());
+		bankFiles.addUsingDefaultSort(it.getFile());
 	}
-}
-
-void ObxdAudioProcessor::scanAndUpdateSkins()
-{
-    skinFiles.clearQuick();
-    DirectoryIterator it (getSkinFolder(), false, "*", File::findDirectories);
-    
-    while (it.next())
-    {
-        skinFiles.addUsingDefaultSort (it.getFile());
-    }
-    
 }
 
 const Array<File>& ObxdAudioProcessor::getBankFiles() const
 {
 	return bankFiles;
-}
-
-const Array<File>& ObxdAudioProcessor::getSkinFiles() const
-{
-    return skinFiles;
 }
 
 File ObxdAudioProcessor::getCurrentBankFile() const
@@ -766,12 +742,7 @@ void ObxdAudioProcessor::setEngineParameterValue (int index, float newValue)
     }
     
     programs.currentProgramPtr->values[index] = newValue;
-    
-    // Skip Undefined
-    if (index != 0)
-    {
-        apvtState.getParameter(getEngineParameterId(index))->setValue(newValue);
-    }
+    apvtState.getParameter(getEngineParameterId(index))->setValue(newValue);
     
     
     switch (index)

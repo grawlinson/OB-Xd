@@ -46,9 +46,8 @@ private:
 	void placeLabel (int x, int y, String text);
 	TooglableButton* addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name);
 	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, Image img);
-    void addMenuButton (int x, int y, int d, const Image&);
-    void createMenu ();
-    void resultFromMenu (const Point<int>);
+    void addMenu (int x, int y, int d, const Image&);
+    void createMenu (const Point<int>);
     void clean();
     
 	void rebuildComponents (ObxdAudioProcessor&);
@@ -138,14 +137,6 @@ private:
     OwnedArray<ButtonList::ButtonListAttachment>  buttonListAttachments;
     
     OwnedArray<ImageButton> imageButtons;
-    
-    OwnedArray<PopupMenu> popupMenus;
-    
-    int progStart;
-    int bankStart;
-    int skinStart;
-    Array<File> skins;
-    Array<File> banks;
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED
