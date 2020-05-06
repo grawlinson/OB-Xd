@@ -345,6 +345,7 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
         }
         
         menu.addSubMenu ("Themes", skinMenu);
+        // About // menu.addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
     }
 
     
