@@ -2,15 +2,15 @@
 
 <JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.0.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="0"
+              buildVST="1" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="0"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
-              pluginManufacturer="Datsounds" pluginManufacturerCode="Dats"
-              pluginCode="Obxd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
-              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
-              pluginEditorRequiresKeys="0" pluginAUExportPrefix="" pluginRTASCategory="2048"
-              aaxIdentifier="" pluginAAXCategory="" jucerVersion="5.4.4" companyName="2Dat"
+              pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
+              pluginChannelConfigs="{0, 2}" pluginIsSynth="1" pluginWantsMidiIn="1"
+              pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier=""
+              pluginAAXCategory="" jucerVersion="5.4.4" companyName="discoDSP"
               companyWebsite="https://www.discodsp.com/" companyEmail="" buildAUv3="0"
-              pluginIsMidiEffectPlugin="0" pluginFormats="buildAU,buildStandalone,buildVST3"
+              pluginIsMidiEffectPlugin="0" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               buildStandalone="1" enableIAA="0">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
@@ -63,11 +63,10 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" bigIcon="nnY63W" smallIcon="nnY63W"
                vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Obxd" stripLocalSymbols="0"
-                       osxCompatibility="10.6 SDK" linkTimeOptimisation="0"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Obxd"
-                       stripLocalSymbols="1" osxCompatibility="10.6 SDK" linkTimeOptimisation="0"
-                       osxArchitecture="64BitIntel"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="OB-Xd"
+                       stripLocalSymbols="0" osxCompatibility="10.6 SDK" linkTimeOptimisation="0"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="OB-Xd"
+                       stripLocalSymbols="1" linkTimeOptimisation="0" osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -88,7 +87,7 @@
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraLinkerFlags="-no-pie">
       <CONFIGURATIONS>
         <CONFIGURATION name="Release64" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
-                       targetName="Obxd64" linuxArchitecture="-m64"/>
+                       targetName="OB-Xd" linuxArchitecture="-m64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -106,39 +105,15 @@
         <MODULEPATH id="juce_audio_basics" path="Modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="3" targetName="Obxd"/>
-        <CONFIGURATION name="Release64" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="Obxd64" useRuntimeLibDLL="0"/>
-        <CONFIGURATION name="Release32" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="Obxd" useRuntimeLibDLL="0"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="modules"/>
-        <MODULEPATH id="juce_gui_extra" path="modules"/>
-        <MODULEPATH id="juce_gui_basics" path="modules"/>
-        <MODULEPATH id="juce_graphics" path="modules"/>
-        <MODULEPATH id="juce_events" path="modules"/>
-        <MODULEPATH id="juce_data_structures" path="modules"/>
-        <MODULEPATH id="juce_core" path="modules"/>
-        <MODULEPATH id="juce_audio_utils" path="modules"/>
-        <MODULEPATH id="juce_audio_processors" path="modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="modules"/>
-        <MODULEPATH id="juce_audio_formats" path="modules"/>
-        <MODULEPATH id="juce_audio_devices" path="modules"/>
-        <MODULEPATH id="juce_audio_basics" path="modules"/>
-      </MODULEPATHS>
-    </VS2013>
     <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="nnY63W" bigIcon="nnY63W"
             vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0" targetName="Obxd"/>
+        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0" targetName="OB-Xd"
+                       headerPath="../../Modules/asiosdk2.3.2/common"/>
         <CONFIGURATION isDebug="0" name="Release32" useRuntimeLibDLL="0" winArchitecture="Win32"
-                       targetName="Obxd"/>
+                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
         <CONFIGURATION isDebug="0" name="Release64" useRuntimeLibDLL="0" winArchitecture="x64"
-                       targetName="Obxd"/>
+                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -159,9 +134,10 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" vstLegacyFolder="Modules/vstsdk2.4"
             vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Obxd"/>
-        <CONFIGURATION isDebug="0" name="Release32" winArchitecture="Win32" targetName="Obxd"/>
-        <CONFIGURATION isDebug="0" name="Release64" winArchitecture="x64" targetName="Obxd"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
+        <CONFIGURATION isDebug="0" name="Release32" winArchitecture="Win32" targetName="OB-Xd"/>
+        <CONFIGURATION isDebug="0" name="Release64" winArchitecture="x64" targetName="OB-Xd"
+                       headerPath="../../Modules/asiosdk2.3.2/common"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -196,7 +172,7 @@
     <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_WEB_BROWSER="0" JUCE_FORCE_USE_LEGACY_PARAM_IDS="1"/>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_WEB_BROWSER="0"/>
   <LIVE_SETTINGS>
     <OSX/>
     <WINDOWS/>
