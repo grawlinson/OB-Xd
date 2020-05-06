@@ -344,7 +344,7 @@ void ObxdAudioProcessorEditor::createMenu (const Point<int> pos)
                               skin.getFileName() == skinFolder.getFileName());
         }
         
-        menu.addSubMenu ("Skins", skinMenu);
+        menu.addSubMenu ("Themes", skinMenu);
     }
 
     

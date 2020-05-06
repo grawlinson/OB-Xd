@@ -608,7 +608,7 @@ File ObxdAudioProcessor::getDocumentFolder() const
 
 File ObxdAudioProcessor::getSkinFolder() const
 {
-	return getDocumentFolder().getChildFile("Skins");
+	return getDocumentFolder().getChildFile("Themes");
 }
 
 File ObxdAudioProcessor::getBanksFolder() const
