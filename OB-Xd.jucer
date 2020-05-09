@@ -18,6 +18,7 @@
       <GROUP id="{5F0B15D1-4D92-B2FF-5904-9CF4C3CE645F}" name="Images">
         <FILE id="nnY63W" name="appicon.png" compile="0" resource="1" file="Source/Images/appicon.png"/>
         <FILE id="kwaOoZ" name="main.png" compile="0" resource="1" file="Source/Images/main.png"/>
+        <FILE id="l84SVW" name="menu.png" compile="0" resource="1" file="Source/Images/menu.png"/>
       </GROUP>
       <GROUP id="{6995BDF2-263F-3CA7-8CA4-4E21F325477A}" name="Gui">
         <FILE id="zJoidp" name="ButtonList.h" compile="0" resource="0" file="Source/Gui/ButtonList.h"/>
