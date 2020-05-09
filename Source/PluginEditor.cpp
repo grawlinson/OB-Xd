@@ -29,8 +29,9 @@ void ObxdAudioProcessorEditor::loadSkin(ObxdAudioProcessor& ownerFilter){
     File coords = skinFolder.getChildFile ("coords.xml");
     bool useClassicSkin = coords.existsAsFile();
     if (!useClassicSkin) {
-       rebuildComponents (processor);
-       return;
+        addMenu (14, 25, 20, ImageCache::getFromMemory(BinaryData::menu_png, BinaryData::menu_pngSize));
+        rebuildComponents (processor);
+        return;
     }
     
     XmlDocument skin (coords);
