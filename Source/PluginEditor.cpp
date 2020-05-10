@@ -204,7 +204,7 @@ void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 
 ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, Image img)
 {
-	ButtonList *bl = new ButtonList (img, height);
+	ButtonList *bl = new ButtonList (img, height*2); //*2 preliminar retina support
 	bl->setBounds (x, y, width, height);
 	addAndMakeVisible (bl);
     
@@ -423,7 +423,7 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 
 void ObxdAudioProcessorEditor::paint(Graphics& g)
 {
-	g.fillAll (Colours::white);
+	g.fillAll (Colours::black);
 
 	const File mainFile(skinFolder.getChildFile("main.png"));
 
@@ -432,7 +432,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 		const Image image = ImageCache::getFromFile(mainFile);
 
 		g.drawImage (image,
-					 0, 0, image.getWidth(), image.getHeight(),
+					 0, 0, image.getWidth()/2, image.getHeight()/2, // /2 preliminar retina support
 					 0, 0, image.getWidth(), image.getHeight());
 	}
 	else
