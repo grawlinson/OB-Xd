@@ -75,6 +75,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	currentBank = "Init";
 
 	scanAndUpdateBanks();
+    scanAndUpdateSkins();
     initAllParams();
 
 	if (bankFiles.size() > 0)
@@ -574,16 +575,34 @@ void ObxdAudioProcessor::scanAndUpdateBanks()
 {
 	bankFiles.clearQuick();
 
-	DirectoryIterator it(getBanksFolder(), false, "*.fxb", File::findFiles);
-	while (it.next())
+	DirectoryIterator it (getBanksFolder(), false, "*.fxb", File::findFiles);
+	
+    while (it.next())
 	{
-		bankFiles.addUsingDefaultSort(it.getFile());
+		bankFiles.addUsingDefaultSort (it.getFile());
 	}
+}
+
+void ObxdAudioProcessor::scanAndUpdateSkins()
+{
+    skinFiles.clearQuick();
+    DirectoryIterator it (getSkinFolder(), false, "*", File::findDirectories);
+    
+    while (it.next())
+    {
+        skinFiles.addUsingDefaultSort (it.getFile());
+    }
+    
 }
 
 const Array<File>& ObxdAudioProcessor::getBankFiles() const
 {
 	return bankFiles;
+}
+
+const Array<File>& ObxdAudioProcessor::getSkinFiles() const
+{
+    return skinFiles;
 }
 
 File ObxdAudioProcessor::getCurrentBankFile() const

@@ -164,7 +164,9 @@ public:
 
 	//==============================================================================
 	void scanAndUpdateBanks();
+    void scanAndUpdateSkins();
 	const Array<File>& getBankFiles() const;
+    const Array<File>& getSkinFiles() const;
 	bool loadFromFXBFile(const File& fxbFile);
 	bool restoreProgramSettings(const fxProgram* const prog);
 	File getCurrentBankFile() const;
@@ -208,6 +210,7 @@ private:
 	String currentSkin;
 	String currentBank;
 	Array<File> bankFiles;
+    Array<File> skinFiles;
 
     std::unique_ptr<PropertiesFile> config;
 	InterProcessLock configLock;
