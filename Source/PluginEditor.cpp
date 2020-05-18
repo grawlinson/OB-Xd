@@ -449,8 +449,11 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 
     if (skinFolder.exists() && mainFile.exists())
 	{
-		const Image image = ImageCache::getFromFile(mainFile);
-
+        
+        const Image image = ImageCache::getFromFile(mainFile);
+        
+        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
+        
 		g.drawImage (image,
 					 0, 0, image.getWidth()/2, image.getHeight()/2, // /2 preliminar retina support
 					 0, 0, image.getWidth(), image.getHeight());
@@ -458,7 +461,9 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 	else
 	{
 		const Image image = ImageCache::getFromMemory(BinaryData::main_png, BinaryData::main_pngSize);
-
+        
+        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
+        
 		g.drawImage (image,
 					 0, 0, image.getWidth(), image.getHeight(),
 					 0, 0, image.getWidth(), image.getHeight());

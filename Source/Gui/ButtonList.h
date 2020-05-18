@@ -94,6 +94,7 @@ public:
     void paintOverChildren (Graphics& g) override
 	{
 		int ofs = getSelectedId() - 1;
+        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
         g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs, w2, h2);
 	}
 

@@ -99,7 +99,7 @@ public:
         {
             offset = 1;
         }
-        
+        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
 		g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, offset * h2, w2, h2);
 	}
     

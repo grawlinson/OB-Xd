@@ -87,6 +87,7 @@ public:
 	void paint (Graphics& g) override
 	{
 		int ofs = (int) ((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFr - 1));
+        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
         g.drawImage (kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs, w2, h2);
 	}
     
