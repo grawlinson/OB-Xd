@@ -413,10 +413,11 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 		{
 			bindings.controllers[i] = xmlState->getIntAttribute(String(i), 0);
 		}
-
+#if ! DEMOVERSION
 		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
 
         sendChangeMessage();
+#endif
 #if JUCE_VERSION <= JUCE_543
 		delete xmlState;
 #endif

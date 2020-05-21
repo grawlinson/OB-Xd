@@ -452,10 +452,8 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
         
         const Image image = ImageCache::getFromFile(mainFile);
         
-        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
-        
 		g.drawImage (image,
-					 0, 0, image.getWidth()/2, image.getHeight()/2, // /2 preliminar retina support
+                     0, 0, image.getWidth()/2, image.getHeight()/2, // TODO this resize should be done on resized()
 					 0, 0, image.getWidth(), image.getHeight());
 	}
 	else
@@ -468,4 +466,15 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 					 0, 0, image.getWidth(), image.getHeight(),
 					 0, 0, image.getWidth(), image.getHeight());
 	}
+
+}
+
+void ObxdAudioProcessorEditor::resized()
+{
+/* Not working
+ 
+    const Image image = gin::applyResize (ImageCache::getFromFile(mainFile), 0.5);
+
+ */
+ 
 }
