@@ -19,6 +19,6 @@ Thanks to 2Dat for the original OB-Xd and Soshi Studio for giving the rights to 
 
 Source is compiled with [JUCE 5.4.3](https://github.com/juce-framework/JUCE/archive/5.4.3.zip) and VST3 SDK.
 
-[Gin JUCE module](https://github.com/FigBug/Gin) Copyright © Roland Rabien 
+[Gin JUCE module](https://github.com/FigBug/Gin) Copyright © Roland Rabien https://www.rabien.com
 
-[AVIR image resizing](https://github.com/avaneev/avir) Copyright © Aleksey Vaneev ([Voxengo](https://www.voxengo.com))
+[AVIR image resizing](https://github.com/avaneev/avir) Copyright © Aleksey Vaneev https://www.voxengo.com
