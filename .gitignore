@@ -4,7 +4,6 @@
 
 .DS_Store
 Builds/
-Modules/
 
 ## JUCE library code
 JuceLibraryCode/
