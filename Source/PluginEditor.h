@@ -36,7 +36,6 @@ public:
     
 	void mouseUp (const MouseEvent& e) override;
 	void paint (Graphics& g) override;
-    void resized() override;
     
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;

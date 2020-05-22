@@ -46,7 +46,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
     }
     
     XmlDocument skin (coords);
-    XmlElement* doc = skin.getDocumentElement();
+    auto doc = skin.getDocumentElement();
     if (doc) {
         
         if (doc->getTagName() == "PROPERTIES"){
@@ -467,14 +467,4 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 					 0, 0, image.getWidth(), image.getHeight());
 	}
 
-}
-
-void ObxdAudioProcessorEditor::resized()
-{
-/* Not working
- 
-    const Image image = gin::applyResize (ImageCache::getFromFile(mainFile), 0.5);
-
- */
- 
 }
