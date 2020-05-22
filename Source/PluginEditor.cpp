@@ -155,10 +155,20 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                                         
                     if (name == "voiceSwitch"){
                         //if (voiceSwitch) voiceSwitch->setVisible(false);
+#if JUCE_WIN || JUCE_LINUX
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices.png"))); }
+#else
+                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices@2x.png"))); }
+#endif
+
                     if (name == "legatoSwitch"){
                         //if (legatoSwitch) legatoSwitch->setVisible(false);
+#if JUCE_WIN || JUCE_LINUX
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato.png"))); }
+#else
+                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato@2x.png"))); }
+#endif
+
                     
                     if (name == "menu")
                     {
@@ -230,7 +240,12 @@ ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int heig
 
 Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String /*name*/, float defval)
 {
-	Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 144);
+#if JUCE_WIN || JUCE_LINUX
+    Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 48);
+#else
+    Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob@2x.png")), 96);
+#endif
+
     knobAttachments.add (new Knob::KnobAttachment (filter.getPluginState(),
                                                    filter.getEngineParameterId (parameter),
                                                    *knob));
@@ -255,7 +270,12 @@ void ObxdAudioProcessorEditor::clean()
 
 TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name)
 {
-	TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
+#if JUCE_WIN || JUCE_LINUX
+    TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
+#else
+    TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
+#endif
+
     toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
                                                                   filter.getEngineParameterId (parameter),
                                                                   *button));
@@ -444,23 +464,33 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 void ObxdAudioProcessorEditor::paint(Graphics& g)
 {
 	g.fillAll (Colours::black);
-
+#if JUCE_WIN || JUCE_LINUX
 	const File mainFile(skinFolder.getChildFile("main.png"));
-
+#else
+    const File mainFile(skinFolder.getChildFile("main@2x.png"));
+#endif
+    
     if (skinFolder.exists() && mainFile.exists())
 	{
         
         const Image image = ImageCache::getFromFile(mainFile);
         
-		g.drawImage (image,
-                     0, 0, image.getWidth()/2, image.getHeight()/2, // TODO this resize should be done on resized()
-					 0, 0, image.getWidth(), image.getHeight());
+#if JUCE_WIN || JUCE_LINUX
+        g.drawImage (image,
+                     0, 0, image.getWidth(), image.getHeight(),
+                     0, 0, image.getWidth(), image.getHeight());
+#else
+        g.drawImage (image,
+                     0, 0, image.getWidth()/2, image.getHeight()/2,
+                     0, 0, image.getWidth(), image.getHeight());
+#endif
+
 	}
 	else
 	{
 		const Image image = ImageCache::getFromMemory(BinaryData::main_png, BinaryData::main_pngSize);
         
-        g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
+        // g.setImageResamplingQuality(Graphics::ResamplingQuality::highResamplingQuality);
         
 		g.drawImage (image,
 					 0, 0, image.getWidth(), image.getHeight(),
