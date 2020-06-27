@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <PROPERTIES>
 	<VALUE NAME="guisize" x="1087" y="442"/>
-	<VALUE NAME="menu" x="28" y="30" d="20"/>
+	<VALUE NAME="menu" x="23" y="30" d="20"/>
 
 	<!------- MASTER ----->
 
-	<VALUE NAME="volumeKnob" x="58" y="120" d="40"/>
+	<VALUE NAME="volumeKnob" x="53" y="120" d="40"/>
 	<VALUE NAME="tuneKnob" x="116" y="120" d="40"/>  
 	<VALUE NAME="transposeKnob" x="181" y="120" d="40"/> 
 
@@ -15,8 +15,8 @@
 	<VALUE NAME="unisonButton" x="125" y="251" w="28" h="35"/>   
 	<VALUE NAME="portamentoKnob" x="175" y="241" d="40"/>  
 
-	<VALUE NAME="voiceSwitch" x="172" y="311" w="38" h="32"/>
-	<VALUE NAME="legatoSwitch" x="66" y="311" w="89" h="32"/>
+	<VALUE NAME="voiceSwitch" x="172" y="321" w="38" h="32"/>
+	<VALUE NAME="legatoSwitch" x="66" y="321" w="89" h="32"/>
  
 	<VALUE NAME="asPlayedAllocButton" x="65" y="372" d="32" w="28" h="35"/>  
 	<VALUE NAME="midiLearnButton" x="126" y="372" d="40" w="28" h="35"/>  
