@@ -347,7 +347,7 @@ void ObxdAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 		for (int k = 0; k < PARAM_COUNT; ++k)
 		{
-            xpr->setAttribute(String(k), programs.programs[i].values[k]);
+            xpr->setAttribute("Val_" + String(k), programs.programs[i].values[k]);
 		}
 
 		xprogs->addChildElement(xpr);
@@ -357,7 +357,7 @@ void ObxdAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	for (int i = 0; i < 255; ++i)
 	{
-        xmlState.setAttribute(String(i), bindings.controllers[i]);
+        xmlState.setAttribute("Val_" + String(i), bindings.controllers[i]);
 	}
 
 	copyXmlToBinary(xmlState, destData);
@@ -369,7 +369,7 @@ void ObxdAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData
 
 	for (int k = 0; k < PARAM_COUNT; ++k)
 	{
-		xmlState.setAttribute(String(k), programs.currentProgramPtr->values[k]);
+		xmlState.setAttribute("Val_" + String(k), programs.currentProgramPtr->values[k]);
 	}
 
 	xmlState.setAttribute(S("voiceCount"), Motherboard::MAX_VOICES);
@@ -398,7 +398,13 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 				for (int k = 0; k < PARAM_COUNT; ++k)
 				{
-					float value = float(e->getDoubleAttribute(String(k), programs.programs[i].values[k]));
+                    float value = 0.0;
+                    if (e->hasAttribute("Val_" + String(k))){
+                        value = float(e->getDoubleAttribute("Val_" + String(k), programs.programs[i].values[k]));
+                    } else {
+                        value = float(e->getDoubleAttribute(String(k), programs.programs[i].values[k]));
+                    }
+                    
 					if (!newFormat && k == VOICE_COUNT) value *= 0.25f;
 					programs.programs[i].values[k] = value;
 				}
@@ -411,7 +417,7 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 		for (int i = 0; i < 255; ++i)
 		{
-			bindings.controllers[i] = xmlState->getIntAttribute(String(i), 0);
+			bindings.controllers[i] = xmlState->getIntAttribute("Val_" + String(i), 0);
 		}
 #if ! DEMOVERSION
 		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
@@ -438,7 +444,13 @@ void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data, in
 		bool newFormat = e->hasAttribute("voiceCount");
 		for (int k = 0; k < PARAM_COUNT; ++k)
 		{
-			float value = float(e->getDoubleAttribute(String(k), programs.currentProgramPtr->values[k]));
+            float value = 0.0 ;
+            if (e->hasAttribute("Val_" + String(k))){
+                value = float(e->getDoubleAttribute("Val_" + String(k), programs.currentProgramPtr->values[k]));
+            } else {
+                value = float(e->getDoubleAttribute(String(k), programs.currentProgramPtr->values[k]));
+            }
+			 
 			if (!newFormat && k == VOICE_COUNT) value *= 0.25f;
 			programs.currentProgramPtr->values[k] = value;
 		}
