@@ -25,7 +25,7 @@
 #include "ObxdVoice.h"
 enum ObxdParameters
 {
-	UNDEFINED,
+	UNDEFINED = 0,
 	MIDILEARN,
 	VOLUME,
 	VOICE_COUNT,

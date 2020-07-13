@@ -230,22 +230,22 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 			lastMovedController = midiMsg->getControllerNumber();
             
 			if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f)
-				bindings.controllers[lastMovedController] = lastUsedParameter;
+				bindings[lastMovedController] = lastUsedParameter;
             
 			if (programs.currentProgramPtr->values[UNLEARN] > 0.5f)
 			{
 				midiControlledParamSet = true;
-				bindings.controllers[lastMovedController] = 0;
+				bindings[lastMovedController] = 0;
 				setEngineParameterValue (UNLEARN, 0);
 				lastMovedController = 0;
 				lastUsedParameter = 0;
 				midiControlledParamSet = false;
 			}
 
-			if (bindings.controllers[lastMovedController] > 0)
+			if (bindings[lastMovedController] > 0)
 			{
 				midiControlledParamSet = true;
-				setEngineParameterValue (bindings.controllers[lastMovedController],
+				setEngineParameterValue (bindings[lastMovedController],
                                          midiMsg->getControllerValue() / 127.0f);
                 
 				setEngineParameterValue (MIDILEARN, 0);
@@ -355,10 +355,7 @@ void ObxdAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	xmlState.addChildElement(xprogs);
 
-	for (int i = 0; i < 255; ++i)
-	{
-        xmlState.setAttribute("Val_" + String(i), bindings.controllers[i]);
-	}
+    bindings.setXml(xmlState);
 
 	copyXmlToBinary(xmlState, destData);
 }
@@ -415,10 +412,7 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 				}
 			}
 
-		for (int i = 0; i < 255; ++i)
-		{
-			bindings.controllers[i] = xmlState->getIntAttribute("Val_" + String(i), 0);
-		}
+		bindings.getXml(*xmlState);
 #if ! DEMOVERSION
 		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
 
