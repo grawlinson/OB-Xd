@@ -48,7 +48,7 @@ public:
         int midicc = 71;
         controllers[midicc] = controllers_default[midicc] = VOLUME;
         
-        midicc = 72;
+        midicc = 15;
         controllers[midicc] = controllers_default[midicc] = VOICE_COUNT;
         
         midicc = 33;
@@ -60,47 +60,47 @@ public:
         midicc = 118;
         controllers[midicc] = controllers_default[midicc] = BENDRANGE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = BENDOSC2;
+        midicc = 34;
+        controllers[midicc] = controllers_default[midicc] = BENDOSC2;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LEGATOMODE;
+        midicc = 35;
+        controllers[midicc] = controllers_default[midicc] = LEGATOMODE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = BENDLFORATE;
+        midicc = 36;
+        controllers[midicc] = controllers_default[midicc] = BENDLFORATE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = VFLTENV;
+        midicc = 37;
+        controllers[midicc] = controllers_default[midicc] = VFLTENV;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = VAMPENV;
+        midicc = 120;
+        controllers[midicc] = controllers_default[midicc] = VAMPENV;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = ASPLAYEDALLOCATION;
+        midicc = 121;
+        controllers[midicc] = controllers_default[midicc] = ASPLAYEDALLOCATION;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PORTAMENTO;
+        midicc = 122;
+        controllers[midicc] = controllers_default[midicc] = PORTAMENTO;
         
-        //midicc = 16;
-        //controllers[midicc] = controllers_default[midicc] = UNISON;
+        midicc = 16;
+        controllers[midicc] = controllers_default[midicc] = UNISON;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = UDET;
+        midicc = 123;
+        controllers[midicc] = controllers_default[midicc] = UDET;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC2_DET;
+        midicc = 43;
+        controllers[midicc] = controllers_default[midicc] = OSC2_DET;
         
-        //midicc = 19;
-        //controllers[midicc] = controllers_default[midicc] = LFOFREQ;
+        midicc = 19;
+        controllers[midicc] = controllers_default[midicc] = LFOFREQ;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOSINWAVE;
+        midicc = 44;
+        controllers[midicc] = controllers_default[midicc] = LFOSINWAVE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOSQUAREWAVE;
+        midicc = 45;
+        controllers[midicc] = controllers_default[midicc] = LFOSQUAREWAVE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOSHWAVE;
+        midicc = 46;
+        controllers[midicc] = controllers_default[midicc] = LFOSHWAVE;
         
         midicc = 22;
         controllers[midicc] = controllers_default[midicc] = LFO1AMT;
@@ -108,68 +108,68 @@ public:
         midicc = 25;
         controllers[midicc] = controllers_default[midicc] = LFO2AMT;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOOSC1;
+        midicc = 47;
+        controllers[midicc] = controllers_default[midicc] = LFOOSC1;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOOSC2;
+        midicc = 48;
+        controllers[midicc] = controllers_default[midicc] = LFOOSC2;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOFILTER;
+        midicc = 49;
+        controllers[midicc] = controllers_default[midicc] = LFOFILTER;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOPW1;
+        midicc = 50;
+        controllers[midicc] = controllers_default[midicc] = LFOPW1;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LFOPW2;
+        midicc = 51;
+        controllers[midicc] = controllers_default[midicc] = LFOPW2;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC2HS;
+        midicc = 52;
+        controllers[midicc] = controllers_default[midicc] = OSC2HS;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = XMOD;
+        midicc = 53;
+        controllers[midicc] = controllers_default[midicc] = XMOD;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC1P;
+        midicc = 54;
+        controllers[midicc] = controllers_default[midicc] = OSC1P;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC2P;
+        midicc = 55;
+        controllers[midicc] = controllers_default[midicc] = OSC2P;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSCQuantize;
+        midicc = 56;
+        controllers[midicc] = controllers_default[midicc] = OSCQuantize;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC1Saw;
+        midicc = 57;
+        controllers[midicc] = controllers_default[midicc] = OSC1Saw;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC1Pul;
+        midicc = 58;
+        controllers[midicc] = controllers_default[midicc] = OSC1Pul;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC2Saw;
+        midicc = 59;
+        controllers[midicc] = controllers_default[midicc] = OSC2Saw;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC2Pul;
+        midicc = 60;
+        controllers[midicc] = controllers_default[midicc] = OSC2Pul;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PW;
+        midicc = 61;
+        controllers[midicc] = controllers_default[midicc] = PW;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = BRIGHTNESS;
+        midicc = 62;
+        controllers[midicc] = controllers_default[midicc] = BRIGHTNESS;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = ENVPITCH;
+        midicc = 63;
+        controllers[midicc] = controllers_default[midicc] = ENVPITCH;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = OSC1MIX;
+        midicc = 100;
+        controllers[midicc] = controllers_default[midicc] = OSC1MIX;
         
-        //midicc = 8;
-        //controllers[midicc] = controllers_default[midicc] = OSC2MIX;
+        midicc = 101;
+        controllers[midicc] = controllers_default[midicc] = OSC2MIX;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = NOISEMIX;
+        midicc = 102;
+        controllers[midicc] = controllers_default[midicc] = NOISEMIX;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = FLT_KF;
+        midicc = 103;
+        controllers[midicc] = controllers_default[midicc] = FLT_KF;
         
         midicc = 74;
         controllers[midicc] = controllers_default[midicc] = CUTOFF;
@@ -177,20 +177,20 @@ public:
         midicc = 42;
         controllers[midicc] = controllers_default[midicc] = RESONANCE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = MULTIMODE;
+        midicc = 104;
+        controllers[midicc] = controllers_default[midicc] = MULTIMODE;
         
-        midicc = 47;
+        midicc = 18;
         controllers[midicc] = controllers_default[midicc] = FILTER_WARM;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = BANDPASS;
+        midicc = 105;
+        controllers[midicc] = controllers_default[midicc] = BANDPASS;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = FOURPOLE;
+        midicc = 106;
+        controllers[midicc] = controllers_default[midicc] = FOURPOLE;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = ENVELOPE_AMT;
+        midicc = 107;
+        controllers[midicc] = controllers_default[midicc] = ENVELOPE_AMT;
         
         midicc = 73;
         controllers[midicc] = controllers_default[midicc] = LATK;
@@ -216,20 +216,20 @@ public:
         midicc = 41;
         controllers[midicc] = controllers_default[midicc] = FREL;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = ENVDER;
+        midicc = 108;
+        controllers[midicc] = controllers_default[midicc] = ENVDER;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = FILTERDER;
+        midicc = 109;
+        controllers[midicc] = controllers_default[midicc] = FILTERDER;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PORTADER;
+        midicc = 110;
+        controllers[midicc] = controllers_default[midicc] = PORTADER;
         
-        //midicc = 81;
-        //controllers[midicc] = controllers_default[midicc] = PAN1;
+        midicc = 81;
+        controllers[midicc] = controllers_default[midicc] = PAN1;
         
-        //midicc = 82;
-        //controllers[midicc] = controllers_default[midicc] = PAN2;
+        midicc = 82;
+        controllers[midicc] = controllers_default[midicc] = PAN2;
         
         midicc = 83;
         controllers[midicc] = controllers_default[midicc] = PAN3;
@@ -249,32 +249,32 @@ public:
         midicc = 88;
         controllers[midicc] = controllers_default[midicc] = PAN8;
         
-        //midicc = 0;
+        //midicc = 111;
         //controllers[midicc] = controllers_default[midicc] = ECONOMY_MODE;
         
-        //midicc = 0;
+        //midicc = 112;
         //controllers[midicc] = controllers_default[midicc] = LFO_SYNC;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PW_ENV;
+        midicc = 113;
+        controllers[midicc] = controllers_default[midicc] = PW_ENV;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PW_ENV_BOTH;
+        midicc = 114;
+        controllers[midicc] = controllers_default[midicc] = PW_ENV_BOTH;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = ENV_PITCH_BOTH;
+        midicc = 115;
+        controllers[midicc] = controllers_default[midicc] = ENV_PITCH_BOTH;
         
-        //midicc = 0;
+        //midicc = 116;
         //controllers[midicc] = controllers_default[midicc] = FENV_INVERT;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = PW_OSC2_OFS;
+        midicc = 117;
+        controllers[midicc] = controllers_default[midicc] = PW_OSC2_OFS;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = LEVEL_DIF;
+        midicc = 118;
+        controllers[midicc] = controllers_default[midicc] = LEVEL_DIF;
         
-        //midicc = 0;
-        //controllers[midicc] = controllers_default[midicc] = SELF_OSC_PUSH;
+        midicc = 119;
+        controllers[midicc] = controllers_default[midicc] = SELF_OSC_PUSH;
         
     }
     
