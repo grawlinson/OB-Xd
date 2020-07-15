@@ -72,19 +72,19 @@ public:
         midicc = 37;
         controllers[midicc] = controllers_default[midicc] = VFLTENV;
         
-        midicc = 120;
+        midicc = 20;
         controllers[midicc] = controllers_default[midicc] = VAMPENV;
         
-        midicc = 121;
+        midicc = 21;
         controllers[midicc] = controllers_default[midicc] = ASPLAYEDALLOCATION;
         
-        midicc = 122;
+        midicc = 23;
         controllers[midicc] = controllers_default[midicc] = PORTAMENTO;
         
         midicc = 16;
         controllers[midicc] = controllers_default[midicc] = UNISON;
         
-        midicc = 123;
+        midicc = 24;
         controllers[midicc] = controllers_default[midicc] = UDET;
         
         midicc = 43;
