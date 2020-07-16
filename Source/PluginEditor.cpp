@@ -436,6 +436,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
         if (midiUnlearnButton->toogled){
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
+            midiUnlearnButton->setValue(0.0, false);
         }
     }
     
