@@ -436,7 +436,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
         if (midiUnlearnButton->toogled){
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
-            midiUnlearnButton->setValue(0.0, false);
+            processor.sendChangeMessage();
         }
     }
     
@@ -460,6 +460,9 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
     {
         buttonListAttachments[i]->updateToSlider();
     }
+    
+    // Set to unlearn to false
+    midiUnlearnButton->setValue(0.0, false);
     
     repaint();
 }
