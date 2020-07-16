@@ -171,6 +171,7 @@ public:
 	bool restoreProgramSettings(const fxProgram* const prog);
 	File getCurrentBankFile() const;
 
+    MidiMap &getMidiMap(){ return bindings; }
 	//==============================================================================
 	const ObxdBank& getPrograms() const { return programs; }
 
@@ -185,7 +186,7 @@ public:
     //==============================================================================
     static String getEngineParameterId (size_t);
     int getParameterIndexFromId (String);
-    void setEngineParameterValue (int, float);
+    void setEngineParameterValue (int, float, bool notifyToHost= false);
     void parameterChanged (const String&, float) override;
     AudioProcessorValueTreeState& getPluginState();
 

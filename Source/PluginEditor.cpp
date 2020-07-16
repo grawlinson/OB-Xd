@@ -284,7 +284,7 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
 	button->setButtonText (name);
     button->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
                       dontSendNotification);
-    
+    button->addListener(this);
     addAndMakeVisible (button);
     
 	return button;
@@ -429,6 +429,16 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 
         resultFromMenu (pos);
     }
+    
+    
+    auto toggleButton = dynamic_cast<TooglableButton*> (b);
+    if (toggleButton == midiUnlearnButton){
+        if (midiUnlearnButton->toogled){
+            processor.getMidiMap().reset();
+            processor.getMidiMap().set_default();
+        }
+    }
+    
 }
 
 //==============================================================================

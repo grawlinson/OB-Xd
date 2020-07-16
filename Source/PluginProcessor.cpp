@@ -229,18 +229,14 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 		{
 			lastMovedController = midiMsg->getControllerNumber();
             
-			if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f)
+            if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
+                midiControlledParamSet = true;
 				bindings[lastMovedController] = lastUsedParameter;
-            
-			if (programs.currentProgramPtr->values[UNLEARN] > 0.5f)
-			{
-				midiControlledParamSet = true;
-				bindings[lastMovedController] = 0;
-				setEngineParameterValue (UNLEARN, 0);
-				lastMovedController = 0;
-				lastUsedParameter = 0;
-				midiControlledParamSet = false;
-			}
+                setEngineParameterValue (MIDILEARN, 0, true);
+                lastMovedController = 0;
+                lastUsedParameter = 0;
+                midiControlledParamSet = false;
+            }
 
 			if (bindings[lastMovedController] > 0)
 			{
@@ -760,7 +756,7 @@ int ObxdAudioProcessor::getParameterIndexFromId (String paramId)
     return -1;
 }
 
-void ObxdAudioProcessor::setEngineParameterValue (int index, float newValue)
+void ObxdAudioProcessor::setEngineParameterValue (int index, float newValue, bool notifyToHost)
 {
     if (! midiControlledParamSet || index == MIDILEARN || index == UNLEARN)
     {
@@ -768,8 +764,12 @@ void ObxdAudioProcessor::setEngineParameterValue (int index, float newValue)
     }
     
     programs.currentProgramPtr->values[index] = newValue;
-    apvtState.getParameter(getEngineParameterId(index))->setValue(newValue);
     
+    if (notifyToHost){
+        apvtState.getParameter(getEngineParameterId(index))->setValueNotifyingHost(newValue);
+    } else {
+        apvtState.getParameter(getEngineParameterId(index))->setValue(newValue);
+    }
     
     switch (index)
     {
