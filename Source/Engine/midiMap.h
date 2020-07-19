@@ -249,8 +249,8 @@ public:
         midicc = 88;
         controllers[midicc] = controllers_default[midicc] = PAN8;
         
-        //midicc = 111;
-        //controllers[midicc] = controllers_default[midicc] = ECONOMY_MODE;
+        midicc = 111;
+        controllers[midicc] = controllers_default[midicc] = ECONOMY_MODE;
         
         //midicc = 112;
         //controllers[midicc] = controllers_default[midicc] = LFO_SYNC;
@@ -264,8 +264,8 @@ public:
         midicc = 115;
         controllers[midicc] = controllers_default[midicc] = ENV_PITCH_BOTH;
         
-        //midicc = 116;
-        //controllers[midicc] = controllers_default[midicc] = FENV_INVERT;
+        midicc = 116;
+        controllers[midicc] = controllers_default[midicc] = FENV_INVERT;
         
         midicc = 117;
         controllers[midicc] = controllers_default[midicc] = PW_OSC2_OFS;
