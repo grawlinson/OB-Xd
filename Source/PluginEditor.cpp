@@ -308,7 +308,15 @@ void ObxdAudioProcessorEditor::addMenuButton (int x, int y, int d, const Image& 
                             0.3f, // menu click transparency
                             Colour());
     
-    imageButton->addListener (this);
+    //imageButton->addListener (this);
+    imageButton->onClick = [this](){
+        ImageButton *imageButton = this->imageButtons[0];
+        auto x   = imageButton->getScreenX();
+        auto y   = imageButton->getScreenY();
+        auto dx  = imageButton->getWidth();
+        auto pos = Point<int> (x, y + dx);
+        resultFromMenu (pos);
+    };
     addAndMakeVisible (imageButton);
 }
 
@@ -418,6 +426,7 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
 
 void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 {
+    /*
     auto imageButton = dynamic_cast<ImageButton*> (b);
     
     if (imageButton == imageButtons[0])
@@ -428,7 +437,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
         auto pos = Point<int> (x, y + dx);
 
         resultFromMenu (pos);
-    }
+    }*/
     
     
     auto toggleButton = dynamic_cast<TooglableButton*> (b);
