@@ -1020,7 +1020,9 @@ void ObxdAudioProcessor::parameterChanged (const String& parameter, float newVal
     
     if ( isPositiveAndBelow (index, PARAM_COUNT) )
     {
+        isHostAutomatedChange = false;
         setEngineParameterValue (index, newValue);
+        isHostAutomatedChange = true;
     }
 }
 
