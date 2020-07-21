@@ -11,7 +11,7 @@ Thanks to [2Dat](https://github.com/2DaT/Obxd) for the original OB-Xd and Soshi 
 
 # Binaries
 
-**Release** https://www.discodsp.com/obxd/
+Latest binaries can be downloaded at https://www.discodsp.com/obxd/
 
 # Building
 
