@@ -272,12 +272,12 @@ public:
             maxNumOutputs = jmax (0, bus->getDefaultLayout().size());
 
         o.content.setOwned (new SettingsComponent (*this, deviceManager, maxNumInputs, maxNumOutputs));
-#if JUCE_MAC
-        o.content->setSize (500, 240);
-#endif
-#if ! JUCE_MAC
-        o.content->setSize (500, 340);
-#endif
+//#if JUCE_MAC
+        o.content->setSize (500, 400);
+//#endif
+//#if ! JUCE_MAC
+//        o.content->setSize (500, 450);
+//#endif
         o.dialogTitle                   = TRANS("Audio/MIDI Settings");
         o.dialogBackgroundColour        = o.content->getLookAndFeel().findColour (ResizableWindow::backgroundColourId);
         o.escapeKeyTriggersCloseButton  = true;
