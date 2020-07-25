@@ -66,10 +66,10 @@ public:
         midicc = 35;
         controllers[midicc] = controllers_default[midicc] = LEGATOMODE;
         
-        midicc = 36;
+        midicc = 75;
         controllers[midicc] = controllers_default[midicc] = BENDLFORATE;
         
-        midicc = 37;
+        midicc = 76;
         controllers[midicc] = controllers_default[midicc] = VFLTENV;
         
         midicc = 20;
