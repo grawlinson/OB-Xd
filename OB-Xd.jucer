@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="Obxd" projectType="audioplug" version="1.5.0"
-              bundleIdentifier="com.Datsounds.Obxd" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="1" buildAU="1" buildRTAS="0" buildAAX="0"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.0.0"
+              bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
-              pluginManufacturer="Datsounds" pluginManufacturerCode="Dats"
-              pluginCode="Obxd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
-              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
-              pluginEditorRequiresKeys="0" pluginAUExportPrefix="" pluginRTASCategory="2048"
-              aaxIdentifier="" pluginAAXCategory="" jucerVersion="5.4.4" companyName="2Dat"
-              companyWebsite="https://www.discodsp.com/obxd/" companyEmail=""
-              buildAUv3="0" pluginIsMidiEffectPlugin="0" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
-              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
+              pluginChannelConfigs="{0, 2}" pluginIsSynth="1" pluginWantsMidiIn="1"
+              pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier=""
+              pluginAAXCategory="" jucerVersion="5.4.7" companyName="discoDSP"
+              companyWebsite="https://www.discodsp.com/" companyEmail="contactus@discodsp.com"
+              pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginFormats="buildAU,buildStandalone,buildVST3" buildVST="0"
+              buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
               buildStandalone="1" enableIAA="0">
-  <MAINGROUP id="NZ3n4V" name="Obxd">
+  <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{5F0B15D1-4D92-B2FF-5904-9CF4C3CE645F}" name="Images">
         <FILE id="nnY63W" name="appicon.png" compile="0" resource="1" file="Source/Images/appicon.png"/>
-        <FILE id="IV8Ubu" name="button.png" compile="0" resource="1" file="Source/Images/button.png"/>
-        <FILE id="gUrdhJ" name="knoblsd.png" compile="0" resource="1" file="Source/Images/knoblsd.png"/>
-        <FILE id="FzhdQQ" name="knobssd.png" compile="0" resource="1" file="Source/Images/knobssd.png"/>
-        <FILE id="syMyon" name="legato.png" compile="0" resource="1" file="Source/Images/legato.png"/>
         <FILE id="kwaOoZ" name="main.png" compile="0" resource="1" file="Source/Images/main.png"/>
-        <FILE id="UHyt7V" name="voices.png" compile="0" resource="1" file="Source/Images/voices.png"/>
+        <FILE id="l84SVW" name="menu.png" compile="0" resource="1" file="Source/Images/menu.png"/>
       </GROUP>
       <GROUP id="{6995BDF2-263F-3CA7-8CA4-4E21F325477A}" name="Gui">
         <FILE id="zJoidp" name="ButtonList.h" compile="0" resource="0" file="Source/Gui/ButtonList.h"/>
@@ -65,118 +61,105 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" bigIcon="nnY63W" smallIcon="nnY63W">
+    <XCODE_MAC targetFolder="Builds/MacOSX" bigIcon="nnY63W" smallIcon="nnY63W"
+               vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Obxd" stripLocalSymbols="0"
-                       osxCompatibility="10.6 SDK" linkTimeOptimisation="0"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Obxd"
-                       stripLocalSymbols="1" osxCompatibility="10.6 SDK" linkTimeOptimisation="0"
-                       osxArchitecture="64BitIntel"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="OB-Xd"
+                       stripLocalSymbols="0" osxCompatibility="10.6 SDK" linkTimeOptimisation="0"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="OB-Xd"
+                       stripLocalSymbols="1" osxArchitecture="64BitIntel" linkTimeOptimisation="1"/>
+        <CONFIGURATION name="Demo" isDebug="0" optimisation="3" targetName="OB-Xd" stripLocalSymbols="1"
+                       osxArchitecture="64BitIntel" linkTimeOptimisation="1" defines="DEMOVERSION=1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics"/>
-        <MODULEPATH id="juce_audio_utils" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="Modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Modules"/>
+        <MODULEPATH id="juce_graphics" path="Modules"/>
+        <MODULEPATH id="juce_events" path="Modules"/>
+        <MODULEPATH id="juce_data_structures" path="Modules"/>
+        <MODULEPATH id="juce_core" path="Modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="Modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Modules"/>
+        <MODULEPATH id="juce_audio_utils" path="Modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraLinkerFlags="-no-pie">
       <CONFIGURATIONS>
         <CONFIGURATION name="Release64" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
-                       targetName="Obxd64" linuxArchitecture="-m64"/>
+                       targetName="OB-Xd" linuxArchitecture="-m64"/>
+        <CONFIGURATION name="Demo64" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
+                       targetName="OB-Xd" linuxArchitecture="-m64" defines="DEMOVERSION=1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="~/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_opengl" path="Modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Modules"/>
+        <MODULEPATH id="juce_graphics" path="Modules"/>
+        <MODULEPATH id="juce_events" path="Modules"/>
+        <MODULEPATH id="juce_data_structures" path="Modules"/>
+        <MODULEPATH id="juce_core" path="Modules"/>
+        <MODULEPATH id="juce_audio_utils" path="Modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="Modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
+    <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="nnY63W" bigIcon="nnY63W"
+            vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="3" targetName="Obxd"/>
-        <CONFIGURATION name="Release64" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="Obxd64" useRuntimeLibDLL="0"/>
-        <CONFIGURATION name="Release32" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="Obxd" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0" targetName="OB-Xd"
+                       headerPath="../../Modules/asiosdk2.3.2/common"/>
+        <CONFIGURATION isDebug="0" name="Release64" useRuntimeLibDLL="0" winArchitecture="x64"
+                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
+        <CONFIGURATION isDebug="0" name="Demo64" useRuntimeLibDLL="0" winArchitecture="x64"
+                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"
+                       defines="DEMOVERSION=1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="modules"/>
-        <MODULEPATH id="juce_gui_extra" path="modules"/>
-        <MODULEPATH id="juce_gui_basics" path="modules"/>
-        <MODULEPATH id="juce_graphics" path="modules"/>
-        <MODULEPATH id="juce_events" path="modules"/>
-        <MODULEPATH id="juce_data_structures" path="modules"/>
-        <MODULEPATH id="juce_core" path="modules"/>
-        <MODULEPATH id="juce_audio_utils" path="modules"/>
-        <MODULEPATH id="juce_audio_processors" path="modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="modules"/>
-        <MODULEPATH id="juce_audio_formats" path="modules"/>
-        <MODULEPATH id="juce_audio_devices" path="modules"/>
-        <MODULEPATH id="juce_audio_basics" path="modules"/>
-      </MODULEPATHS>
-    </VS2013>
-    <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="nnY63W" bigIcon="nnY63W">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release32" useRuntimeLibDLL="0" winArchitecture="Win32"/>
-        <CONFIGURATION isDebug="0" name="Release64" useRuntimeLibDLL="0" winArchitecture="x64"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_data_structures" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_opengl" path="Modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Modules"/>
+        <MODULEPATH id="juce_graphics" path="Modules"/>
+        <MODULEPATH id="juce_events" path="Modules"/>
+        <MODULEPATH id="juce_data_structures" path="Modules"/>
+        <MODULEPATH id="juce_core" path="Modules"/>
+        <MODULEPATH id="juce_audio_utils" path="Modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="Modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Modules"/>
       </MODULEPATHS>
     </VS2019>
-    <VS2017 targetFolder="Builds/VisualStudio2017">
+    <VS2017 targetFolder="Builds/VisualStudio2017" vstLegacyFolder="Modules/vstsdk2.4"
+            vst3Folder="Modules/vstsdk3">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release32" winArchitecture="Win32"/>
-        <CONFIGURATION isDebug="0" name="Release64" winArchitecture="x64"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
+        <CONFIGURATION isDebug="0" name="Release64" winArchitecture="x64" targetName="OB-Xd"
+                       headerPath="../../Modules/asiosdk2.3.2/common"/>
+        <CONFIGURATION isDebug="0" name="Demo64" winArchitecture="x64" targetName="OB-Xd"
+                       headerPath="../../Modules/asiosdk2.3.2/common" defines="DEMOVERSION=1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_opengl" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_data_structures" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="C:\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_opengl" path="Modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Modules"/>
+        <MODULEPATH id="juce_graphics" path="Modules"/>
+        <MODULEPATH id="juce_events" path="Modules"/>
+        <MODULEPATH id="juce_data_structures" path="Modules"/>
+        <MODULEPATH id="juce_core" path="Modules"/>
+        <MODULEPATH id="juce_audio_utils" path="Modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="Modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Modules"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>

@@ -113,10 +113,9 @@ static inline float fxbSwapFloat (const float x) noexcept
 //==============================================================================
 /**
 */
-class ObxdAudioProcessor :
-	public AudioProcessor,
-	// public AudioProcessorListener,
-	public ChangeBroadcaster
+class ObxdAudioProcessor  : public AudioProcessor,
+	                        public AudioProcessorValueTreeState::Listener,
+	                        public ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -124,61 +123,55 @@ public:
     ~ObxdAudioProcessor();
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
 
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
 
     //==============================================================================
-    AudioProcessorEditor* createEditor();
-    bool hasEditor() const;
+    AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
 	
 	//==============================================================================
-	void processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos);
-	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
+	void processMidiPerSample (MidiBuffer::Iterator* iter, const int samplePos);
+	bool getNextEvent (MidiBuffer::Iterator* iter, const int samplePos);
 
 	//==============================================================================
-	void initAllParams();
+    void initAllParams();
+    
+    const String getInputChannelName (int channelIndex) const override;  // WATCH OUT!
+    const String getOutputChannelName (int channelIndex) const override;  // WATCH OUT!
+    bool isInputChannelStereoPair (int index) const override;  // WATCH OUT!
+    bool isOutputChannelStereoPair (int index) const override;  // WATCH OUT!
 
-	int getNumParameters();
-
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
-
-    const String getParameterName (int index);
-    const String getParameterText (int index);
-
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
-
-    bool acceptsMidi() const;
-    bool producesMidi() const;
-    bool silenceInProducesSilenceOut() const;
-    double getTailLengthSeconds() const;
-	const String getName() const;
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    double getTailLengthSeconds() const override;
+	const String getName() const override;
 
     //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram (int index);
-    const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    const String getProgramName (int index) override;
+    void changeProgramName (int index, const String& newName) override;
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
-	void setCurrentProgramStateInformation(const void* data,int sizeInBytes);
-	void getCurrentProgramStateInformation(MemoryBlock& destData);
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
+	void setCurrentProgramStateInformation (const void* data,int sizeInBytes) override;
+	void getCurrentProgramStateInformation (MemoryBlock& destData) override;
 
 	//==============================================================================
 	void scanAndUpdateBanks();
+    void scanAndUpdateSkins();
 	const Array<File>& getBankFiles() const;
+    const Array<File>& getSkinFiles() const;
 	bool loadFromFXBFile(const File& fxbFile);
 	bool restoreProgramSettings(const fxProgram* const prog);
 	File getCurrentBankFile() const;
 
+    MidiMap &getMidiMap(){ return bindings; }
 	//==============================================================================
 	const ObxdBank& getPrograms() const { return programs; }
 
@@ -189,6 +182,13 @@ public:
 
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
+    
+    //==============================================================================
+    static String getEngineParameterId (size_t);
+    int getParameterIndexFromId (String);
+    void setEngineParameterValue (int, float, bool notifyToHost= false);
+    void parameterChanged (const String&, float) override;
+    AudioProcessorValueTreeState& getPluginState();
 
 private:
 	//==============================================================================
@@ -211,9 +211,14 @@ private:
 	String currentSkin;
 	String currentBank;
 	Array<File> bankFiles;
+    Array<File> skinFiles;
 
-	ScopedPointer<PropertiesFile> config;
+    std::unique_ptr<PropertiesFile> config;
 	InterProcessLock configLock;
+    
+    //==============================================================================
+    AudioProcessorValueTreeState apvtState;
+    UndoManager                  undoManager;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdAudioProcessor)

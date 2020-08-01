@@ -22,67 +22,130 @@
 //==============================================================================
 /**
 */
-class ObxdAudioProcessorEditor :
-	public AudioProcessorEditor,
-	// public AudioProcessorListener,
-	public ChangeListener,
-	public Slider::Listener,
-	public Button::Listener,
-	public ComboBox::Listener
+class ObxdAudioProcessorEditor  : public AudioProcessorEditor
+//                                  , public AudioProcessorListener
+                                , public ChangeListener
+//                                  , public Slider::Listener
+                                , public Button::Listener
+//                                  , public ComboBox::Listener
 {
 public:
-    ObxdAudioProcessorEditor(ObxdAudioProcessor* ownerFilter);
+    ObxdAudioProcessorEditor(ObxdAudioProcessor& ownerFilter);
     ~ObxdAudioProcessorEditor();
-
-	void mouseUp(const MouseEvent& e);
-	void paint(Graphics& g);
-
+    
+    
+	void mouseUp (const MouseEvent& e) override;
+	void paint (Graphics& g) override;
+    
 	//==============================================================================
-	void changeListenerCallback (ChangeBroadcaster* source);
+	void changeListenerCallback (ChangeBroadcaster* source) override;
+    void buttonClicked (Button *) override;
 
 private:
-	Knob* addNormalKnob(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
-	Knob* addTinyKnob(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
-	void placeLabel(int x , int y,String text);
-	TooglableButton* addNormalTooglableButton(int x , int y , ObxdAudioProcessor* filter,int parameter,String name);
-	TooglableButton* addTinyTooglableButton(int x , int y , ObxdAudioProcessor* filter,int parameter,String name);
-
-	ButtonList* addNormalButtonList(int x , int y ,int width, ObxdAudioProcessor* filter,int parameter,String name,Image img);
-    void sliderValueChanged (Slider*);
-	void buttonClicked (Button *);
-    void comboBoxChanged(ComboBox*);
-
-    Knob* addNormalKnobClassic(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
-    Knob* addTinyKnobClassic(int x , int y ,ObxdAudioProcessor* filter, int parameter,String name,float defval);
-    TooglableButton* addNormalTooglableButtonClassic(int x , int y , ObxdAudioProcessor* filter,int parameter,String name);
-	ButtonList* addNormalButtonListClassic(int x , int y ,int width, ObxdAudioProcessor* filter,int parameter,String name,Image img);
-
-	void rebuildComponents();
+	Knob* addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String name, float defval);
+	void placeLabel (int x, int y, String text);
+	TooglableButton* addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name);
+	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, Image img);
+    void addMenuButton (int x, int y, int d, const Image&);
+    void createMenu ();
+    void resultFromMenu (const Point<int>);
+    void clean();
+    
+	void rebuildComponents (ObxdAudioProcessor&);
+    void loadSkin(ObxdAudioProcessor&);
+	//==============================================================================
+    ObxdAudioProcessor& processor;
 
 	//==============================================================================
-	ObxdAudioProcessor* getFilter() noexcept    { return (ObxdAudioProcessor*)getAudioProcessor();}
+	Knob* cutoffKnob=nullptr,
+    *resonanceKnob=nullptr,
+    *osc1PitchKnob=nullptr,
+    *osc2PitchKnob=nullptr,
+    *osc2DetuneKnob=nullptr,
+    *volumeKnob=nullptr,
+    *portamentoKnob=nullptr,
+    *voiceDetuneKnob=nullptr,
+    *filterEnvelopeAmtKnob=nullptr,
+    *pulseWidthKnob=nullptr,
+    *xmodKnob=nullptr,
+    *multimodeKnob=nullptr,
+    *attackKnob=nullptr,
+    *decayKnob=nullptr,
+    *sustainKnob=nullptr,
+    *releaseKnob=nullptr,
+    *fattackKnob=nullptr,
+    *fdecayKnob=nullptr,
+    *fsustainKnob=nullptr,
+    *freleaseKnob=nullptr,
+    *osc1MixKnob=nullptr,
+    *osc2MixKnob=nullptr,
+    *noiseMixKnob=nullptr,
+    *filterDetuneKnob=nullptr,
+    *envelopeDetuneKnob=nullptr,
+    *portamentoDetuneKnob=nullptr,
+    *tuneKnob=nullptr,
+    *lfoFrequencyKnob=nullptr,
+    *lfoAmt1Knob=nullptr,
+    *lfoAmt2Knob=nullptr,
+    *pan1Knob=nullptr,
+    *pan2Knob=nullptr,
+    *pan3Knob=nullptr,
+    *pan4Knob=nullptr,
+    *pan5Knob=nullptr,
+    *pan6Knob=nullptr,
+    *pan7Knob=nullptr,
+    *pan8Knob=nullptr,
+    *brightnessKnob=nullptr,
+    *envPitchModKnob=nullptr,
+    *bendLfoRateKnob=nullptr,
+    *veloAmpEnvKnob=nullptr,
+    *veloFltEnvKnob=nullptr,
+    *transposeKnob=nullptr;
 
-	//==============================================================================
-	Knob* cutoffKnob,*resonanceKnob,*osc1PitchKnob,*osc2PitchKnob,*osc2DetuneKnob,*volumeKnob,
-		*portamentoKnob,*voiceDetuneKnob,*filterEnvelopeAmtKnob,*pulseWidthKnob,*xmodKnob,*multimodeKnob,*attackKnob,*decayKnob,*sustainKnob,*releaseKnob,
-		*fattackKnob,*fdecayKnob,*fsustainKnob,*freleaseKnob,*osc1MixKnob,*osc2MixKnob,*noiseMixKnob,
-		*filterDetuneKnob,*envelopeDetuneKnob,*portamentoDetuneKnob,
-		*tuneKnob,
-		*lfoFrequencyKnob,*lfoAmt1Knob,*lfoAmt2Knob,
-		*pan1Knob,*pan2Knob,*pan3Knob,*pan4Knob,*pan5Knob,*pan6Knob,*pan7Knob,*pan8Knob,
-		*brightnessKnob,*envPitchModKnob,
-		*bendLfoRateKnob,*veloAmpEnvKnob,*veloFltEnvKnob,*transposeKnob;
+    TooglableButton* hardSyncButton=nullptr,
+    *osc1SawButton=nullptr,
+    *osc2SawButton=nullptr,
+    *osc1PulButton=nullptr,
+    *osc2PulButton=nullptr,
+    *filterKeyFollowButton=nullptr,
+    *unisonButton=nullptr,
+    *pitchQuantButton=nullptr,
+    *filterHQButton=nullptr,
+    *filterBPBlendButton=nullptr,
+    *lfoSinButton=nullptr,
+    *lfoSquareButton=nullptr,
+    *lfoSHButton=nullptr,
+    *lfoOsc1Button=nullptr,
+    *lfoOsc2Button=nullptr,
+    *lfoFilterButton=nullptr,
+    *lfoPwm1Button=nullptr,
+    *lfoPwm2Button=nullptr,
+    *bendRangeButton=nullptr,
+    *bendOsc2OnlyButton=nullptr,
+    *fourPoleButton=nullptr,
+    *asPlayedAllocButton=nullptr,
+    *midiLearnButton=nullptr,
+    *midiUnlearnButton=nullptr;
 
-	TooglableButton* hardSyncButton,*osc1SawButton,*osc2SawButton,*osc1PulButton,*osc2PulButton,*filterKeyFollowButton,*unisonButton,*pitchQuantButton,
-		*filterHQButton,*filterBPBlendButton,
-		*lfoSinButton,*lfoSquareButton,*lfoSHButton,*lfoOsc1Button,*lfoOsc2Button,*lfoFilterButton,
-		*lfoPwm1Button,*lfoPwm2Button,
-		*bendRangeButton,*bendOsc2OnlyButton,
-		*fourPoleButton,*asPlayedAllocButton,*midiLearnButton,*midiUnlearnButton;
-
-	ButtonList *voiceSwitch,*legatoSwitch;
+	ButtonList *voiceSwitch = nullptr,
+    *legatoSwitch = nullptr;
 
 	File skinFolder;
+    
+    //==============================================================================
+    OwnedArray<Knob::KnobAttachment>              knobAttachments;
+    OwnedArray<TooglableButton::ToggleAttachment> toggleAttachments;
+    OwnedArray<ButtonList::ButtonListAttachment>  buttonListAttachments;
+    
+    OwnedArray<ImageButton> imageButtons;
+    
+    OwnedArray<PopupMenu> popupMenus;
+    
+    int progStart;
+    int bankStart;
+    int skinStart;
+    Array<File> skins;
+    Array<File> banks;
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED

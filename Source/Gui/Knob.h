@@ -2,7 +2,7 @@
 	==============================================================================
 	This file is part of Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
+	Copyright ï¿½ 2013-2014 Filatov Vadim
 	
 	Contact author via email :
 	justdat_@_e1.ru
@@ -23,6 +23,7 @@
  */
 #pragma once
 #include "../Source/Engine/SynthEngine.h"
+
 class Knob  : public Slider
 {
 public:
@@ -33,23 +34,66 @@ public:
 	//	setSliderStyle(RotaryVerticalDrag);
 	//	setRange(0.0f, 1.0f, 0.001f);
 	//}
-	Knob(Image k,int fh) : Slider("Knob")
+	Knob (Image k, int fh) : Slider("Knob")
 	{
-		h2 =fh;
+		h2 = fh;
 		w2 = k.getWidth();
 		numFr = k.getHeight() / h2;
 		kni = k;
 	};
-	
-	void paint(Graphics& g)
-	{
-		int ofs = (int)((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFr - 1));
-				g.drawImage(kni, 0, 0, getWidth(), getHeight(),
-					0, h2*ofs, w2, h2);
 
+// Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
+public:
+    class KnobAttachment  : public juce::AudioProcessorValueTreeState::SliderAttachment
+    {
+        RangedAudioParameter* parameter = nullptr;
+        Knob* sliderToControl = nullptr;
+    public:
+        KnobAttachment (juce::AudioProcessorValueTreeState& stateToControl,
+                        const juce::String& parameterID,
+                        Knob& sliderToControl) : AudioProcessorValueTreeState::SliderAttachment (stateToControl, parameterID, sliderToControl), sliderToControl(&sliderToControl)
+        {
+            parameter = stateToControl.getParameter (parameterID);
+            sliderToControl.setParameter (parameter);
+        }
+        
+        
+        /*KnobAttachment (juce::AudioProcessorValueTreeState& stateToControl,
+                        const juce::String& parameterID,
+                        Slider& sliderToControl) : AudioProcessorValueTreeState::SliderAttachment (stateToControl, parameterID, sliderToControl)
+        {
+        }*/
+        
+        void updateToSlider(){
+            float val = parameter->getValue();
+            //sliderToControl->setValue(parameter->convertFrom0to1(val0to1));
+            sliderToControl->setValue(val, NotificationType::dontSendNotification);
+            DBG(" Slider: " << sliderToControl->getName() << " " << sliderToControl->getValue() << "  Parameter: "<< " " << parameter->getValue());
+        }
+        
+        virtual ~KnobAttachment() = default;
+    };
+    
+    void setParameter (AudioProcessorParameter* p)
+    {
+        if (parameter == p)
+            return;
+        
+        parameter = p;
+        updateText();
+        repaint();
+    }
+
+	void paint (Graphics& g) override
+	{
+		int ofs = (int) ((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFr - 1));
+        g.drawImage (kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs, w2, h2);
 	}
+    
+    ~Knob() override {};
 private:
 	Image kni;
-	int fh,numFr;
-	int w2,h2;
+	int fh, numFr;
+	int w2, h2;
+    AudioProcessorParameter* parameter {nullptr};
 };

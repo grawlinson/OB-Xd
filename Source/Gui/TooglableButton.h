@@ -2,7 +2,7 @@
 	==============================================================================
 	This file is part of Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
+	Copyright ï¿½ 2013-2014 Filatov Vadim
 	
 	Contact author via email :
 	justdat_@_e1.ru
@@ -23,24 +23,64 @@
  */
 #pragma once
 #include "../Source/Engine/SynthEngine.h"
-class TooglableButton : public ImageButton
+
+class TooglableButton  : public ImageButton
 {
 public:
-	bool toogled;
-	TooglableButton(Image k) :ImageButton()
+	TooglableButton (Image k) : ImageButton()
 	{
 		//this->setImages
 		kni = k;
 		toogled = false;
 		width = kni.getWidth();
 		height = kni.getHeight();
-		w2=width;
+		w2 = width;
 		h2 = height / 2;
-		this->setClickingTogglesState(true);
+		this->setClickingTogglesState (true);
 	}
-	void clicked()
+    ~TooglableButton() override{
+        
+    };
+// Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
+public:
+    class ToggleAttachment  : public juce::AudioProcessorValueTreeState::ButtonAttachment
+    {
+        RangedAudioParameter* parameter = nullptr;
+        TooglableButton* buttonToControl = nullptr;
+    public:
+        ToggleAttachment (juce::AudioProcessorValueTreeState& stateToControl,
+                          const juce::String& parameterID,
+                          TooglableButton& buttonToControl) : AudioProcessorValueTreeState::ButtonAttachment (stateToControl, parameterID, buttonToControl), buttonToControl(&buttonToControl)
+        {
+            parameter = stateToControl.getParameter (parameterID);
+            buttonToControl.setParameter (parameter);
+        }
+        /*
+        ToggleAttachment (juce::AudioProcessorValueTreeState& stateToControl,
+                          const juce::String& parameterID,
+                          Button& buttonToControl) : AudioProcessorValueTreeState::ButtonAttachment (stateToControl, parameterID, buttonToControl)
+        {
+        }*/
+        void updateToSlider(){
+            float val = parameter->getValue();
+            //buttonToControl->setValue(parameter->convertFrom0to1(val0to1), NotificationType::dontSendNotification);
+            buttonToControl->setValue(val, NotificationType::dontSendNotification);
+        }
+        virtual ~ToggleAttachment() = default;
+    };
+    
+    void setParameter (const AudioProcessorParameter* p)
+    {
+        if (parameter == p)
+            return;
+        
+        parameter = p;
+        repaint();
+    }
+    
+	void clicked() override
 	{
-		toogled = !toogled;
+		toogled = ! toogled;
 		//this->setColour(1,Colours::blue);
 		//if(toogled)
 		//	this->setColour(TextButton::ColourIds::buttonColourId,Colours::lightgreen);
@@ -50,34 +90,43 @@ public:
 		Button::clicked();
 
 	};
-	void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown)
+    
+	void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
-		        int offset = 0;
+        int offset = 0;
+        
         if (toogled)
         {
             offset = 1;
         }
-		g.drawImage(kni, 0, 0, getWidth(), getHeight(),
-				0, offset *h2, w2,h2);
+        
+		g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, offset * h2, w2, h2);
 	}
-	void setValue(float state,int notify)
+    
+	void setValue (float state, int notify)
 	{
-		if(state > 0.5)
-			toogled = true;
+		if (state > 0.5)
+            toogled = true;
 		else toogled = false;
+        
 		repaint();
 	}
+    
 	float getValue()
 	{
-		if(toogled)
-			return 1;
+		if (toogled)
+           return 1;
 		else return 0;
 	}
 	//void paint(Graphics& g)
 	//{
 	//	g.drawImageTransformed(kni,AffineTransform::rotation(((getValue() - getMinimum())/(getMaximum() - getMinimum()))*float_Pi - float_Pi*2));
 	//}
+    
+    bool toogled;
+    
 private:
 	Image kni;
-	int width,height,w2,h2;
+	int width, height, w2, h2;
+    const AudioProcessorParameter* parameter {nullptr};
 };
