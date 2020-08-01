@@ -1,5 +1,5 @@
 # discoDSP OB-Xd
-![](https://www.discodsp.com/img/obxd.png)
+![](https://www.discodsp.com/img/obxd20_ilkka_rosma.jpg)
 
 # About
 
