@@ -275,7 +275,7 @@ public:
         
         midicc = 119;
         controllers[midicc] = controllers_default[midicc] = SELF_OSC_PUSH;
-        
+
     }
     
     
@@ -304,5 +304,16 @@ public:
             
             controllers[i] = tmp;
         }
+        
+        // Backward keys
+        if (controllers[100] > 0) {
+            controllers[77] = controllers_default[77];
+            controllers[100] = 0;
+        }
+        if ( controllers[101] > 0) {
+            controllers[78] = controllers_default[78];
+            controllers[101] = 0;
+        }
     }
+    
 };
