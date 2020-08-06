@@ -159,10 +159,10 @@ public:
         midicc = 63;
         controllers[midicc] = controllers_default[midicc] = ENVPITCH;
         
-        midicc = 100;
+        midicc = 120;
         controllers[midicc] = controllers_default[midicc] = OSC1MIX;
         
-        midicc = 101;
+        midicc = 121;
         controllers[midicc] = controllers_default[midicc] = OSC2MIX;
         
         midicc = 102;

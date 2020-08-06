@@ -275,16 +275,18 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
 #else
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
 #endif
-
-    toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
-                                                                  filter.getEngineParameterId (parameter),
-                                                                  *button));
-    
+    if (parameter != UNLEARN){
+        toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
+                                                                      filter.getEngineParameterId (parameter),
+                                                                      *button));
+    } else {
+        button->addListener(this);
+    }
 	button->setBounds (x, y, w, h);
 	button->setButtonText (name);
     button->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
                       dontSendNotification);
-    button->addListener(this);
+    
     addAndMakeVisible (button);
     
 	return button;
@@ -442,7 +444,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
     
     auto toggleButton = dynamic_cast<TooglableButton*> (b);
     if (toggleButton == midiUnlearnButton){
-        if (midiUnlearnButton->toogled){
+        if (midiUnlearnButton->getToggleState()){
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
             processor.sendChangeMessage();
@@ -471,7 +473,9 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
     }
     
     // Set to unlearn to false
-    midiUnlearnButton->setValue(0.0, false);
+    if ( midiUnlearnButton->getToggleState()) {
+        midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
+    }
     
     repaint();
 }

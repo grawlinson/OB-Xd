@@ -69,10 +69,10 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	options.storageFormat = PropertiesFile::storeAsXML;
 	options.millisecondsBeforeSaving = 2500;
 	options.processLock = &configLock;
-	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Settings.xml"), options));
+	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
 
-	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "discoDSP Blue";
-	currentBank = "Init";
+	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
+	currentBank = "000 - FMR OB-Xa Patch Book";
 
 	scanAndUpdateBanks();
     scanAndUpdateSkins();
