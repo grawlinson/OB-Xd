@@ -155,7 +155,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                                         
                     if (name == "voiceSwitch"){
                         //if (voiceSwitch) voiceSwitch->setVisible(false);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices.png"))); }
 #else
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices@2x.png"))); }
@@ -163,7 +163,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
 
                     if (name == "legatoSwitch"){
                         //if (legatoSwitch) legatoSwitch->setVisible(false);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato.png"))); }
 #else
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato@2x.png"))); }
@@ -173,7 +173,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     if (name == "menu")
                     {
                         addMenuButton (x, y, d,
+#if JUCE_WINDOWS || JUCE_LINUX
                                  ImageCache::getFromFile (skinFolder.getChildFile ("menu.png")));
+#else
+                                 ImageCache::getFromFile (skinFolder.getChildFile ("menu@2x.png")));
+#endif
                     }
                     
                     //DBG(" Name: " << name << " X: " <<x <<" Y: "<<y);
@@ -240,7 +244,7 @@ ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int heig
 
 Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String /*name*/, float defval)
 {
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
     Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 48);
 #else
     Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob@2x.png")), 96);
@@ -270,7 +274,7 @@ void ObxdAudioProcessorEditor::clean()
 
 TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name)
 {
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
 #else
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
@@ -491,7 +495,7 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 void ObxdAudioProcessorEditor::paint(Graphics& g)
 {
 	g.fillAll (Colours::black);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
 	const File mainFile(skinFolder.getChildFile("main.png"));
 #else
     const File mainFile(skinFolder.getChildFile("main@2x.png"));
@@ -502,7 +506,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
         
         const Image image = ImageCache::getFromFile(mainFile);
         
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
         g.drawImage (image,
                      0, 0, image.getWidth(), image.getHeight(),
                      0, 0, image.getWidth(), image.getHeight());
