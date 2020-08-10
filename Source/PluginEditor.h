@@ -37,6 +37,8 @@ public:
 	void mouseUp (const MouseEvent& e) override;
 	void paint (Graphics& g) override;
     
+    void updateFromHost();
+    
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;
     void buttonClicked (Button *) override;
@@ -134,7 +136,7 @@ private:
     
     //==============================================================================
     OwnedArray<Knob::KnobAttachment>              knobAttachments;
-    OwnedArray<TooglableButton::ToggleAttachment> toggleAttachments;
+    OwnedArray<AudioProcessorValueTreeState::ButtonAttachment> toggleAttachments;
     OwnedArray<ButtonList::ButtonListAttachment>  buttonListAttachments;
     
     OwnedArray<ImageButton> imageButtons;

@@ -25,6 +25,8 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     loadSkin (processor);
     repaint();
+    
+    updateFromHost();
 }
 
 void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
@@ -285,7 +287,7 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
 #endif
     if (parameter != UNLEARN){
-        toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
+        toggleAttachments.add (new AudioProcessorValueTreeState::ButtonAttachment (filter.getPluginState(),
                                                                       filter.getEngineParameterId (parameter),
                                                                       *button));
     } else {
@@ -293,7 +295,7 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
     }
 	button->setBounds (x, y, w, h);
 	button->setButtonText (name);
-    button->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
+    button->setToggleState(filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
                       dontSendNotification);
     
     addAndMakeVisible (button);
@@ -463,18 +465,17 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 }
 
 //==============================================================================
-void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source)
-{
-    
+
+void ObxdAudioProcessorEditor::updateFromHost() {
     for (int i = 0; i < knobAttachments.size(); ++i)
     {
         knobAttachments[i]->updateToSlider();
     }
-    
+    /*
     for (int i = 0; i < toggleAttachments.size(); ++i)
     {
         toggleAttachments[i]->updateToSlider();
-    }
+    }*/
     
     for (int i = 0; i < buttonListAttachments.size(); ++i)
     {
@@ -487,6 +488,10 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
     }
     
     repaint();
+}
+void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source)
+{
+    updateFromHost();
 }
 
 void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)

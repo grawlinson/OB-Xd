@@ -102,7 +102,7 @@ void ObxdAudioProcessor::initAllParams()
 {
     for (int i = 0; i < PARAM_COUNT; ++i)
     {
-        setEngineParameterValue (i, programs.currentProgramPtr->values[i]);
+        setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
     }
 }
 
@@ -173,7 +173,7 @@ void ObxdAudioProcessor::setCurrentProgram (int index)
 	isHostAutomatedChange = false;
     
 	for (int i = 0; i < PARAM_COUNT; ++i)
-		setEngineParameterValue (i, programs.currentProgramPtr->values[i]);
+		setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
     
 	isHostAutomatedChange = true;
 	sendChangeMessage();
