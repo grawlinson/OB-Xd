@@ -230,7 +230,12 @@ void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 
 ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, Image img)
 {
-	ButtonList *bl = new ButtonList (img, height*2);
+    #if JUCE_WINDOWS || JUCE_LINUX
+    ButtonList *bl = new ButtonList (img, height);
+    #else
+    ButtonList *bl = new ButtonList (img, height*2);
+    #endif
+
     buttonListAttachments.add (new ButtonList::ButtonListAttachment (filter.getPluginState(),
                                                                      filter.getEngineParameterId (parameter),
                                                                      *bl));
