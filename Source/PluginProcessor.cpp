@@ -242,9 +242,9 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 			{
 				midiControlledParamSet = true;
 				setEngineParameterValue (bindings[lastMovedController],
-                                         midiMsg->getControllerValue() / 127.0f);
+                                         midiMsg->getControllerValue() / 127.0f, true);
                 
-				setEngineParameterValue (MIDILEARN, 0);
+				setEngineParameterValue (MIDILEARN, 0, true);
 				lastMovedController = 0;
 				lastUsedParameter = 0;
 
