@@ -31,7 +31,7 @@ public:
 	{
 		//this->setImages
 		kni = k;
-		toogled = false;
+		//toogled = false;
 		width = kni.getWidth();
 		height = kni.getHeight();
 		w2 = width;
@@ -53,7 +53,7 @@ public:
                           TooglableButton& buttonToControl) : AudioProcessorValueTreeState::ButtonAttachment (stateToControl, parameterID, buttonToControl), buttonToControl(&buttonToControl)
         {
             parameter = stateToControl.getParameter (parameterID);
-            buttonToControl.setParameter (parameter);
+            //buttonToControl.setParameter (parameter);
         }
         /*
         ToggleAttachment (juce::AudioProcessorValueTreeState& stateToControl,
@@ -64,11 +64,12 @@ public:
         void updateToSlider(){
             float val = parameter->getValue();
             //buttonToControl->setValue(parameter->convertFrom0to1(val0to1), NotificationType::dontSendNotification);
-            buttonToControl->setValue(val, NotificationType::dontSendNotification);
+            DBG("Toggle Parameter: " << parameter->name << " Val: " << val);
+            buttonToControl->setToggleState(val, NotificationType::dontSendNotification);
         }
         virtual ~ToggleAttachment() = default;
     };
-    
+    /*
     void setParameter (const AudioProcessorParameter* p)
     {
         if (parameter == p)
@@ -76,8 +77,8 @@ public:
         
         parameter = p;
         repaint();
-    }
-    
+    }*/
+    /*
 	void clicked() override
 	{
 		toogled = ! toogled;
@@ -89,20 +90,21 @@ public:
 		//this->setColour(DrawableButton::ColourIds::backgroundColourId,Colours::lightpink);
 		Button::clicked();
 
-	};
+	};*/
     
 	void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override
 	{
         int offset = 0;
         
-        if (toogled)
+        //if (toogled)
+        if (getToggleState())
         {
             offset = 1;
         }
         
 		g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, offset * h2, w2, h2);
 	}
-    
+    /*
 	void setValue (float state, int notify)
 	{
 		if (state > 0.5)
@@ -110,23 +112,23 @@ public:
 		else toogled = false;
         
 		repaint();
-	}
+	}*/
     
-	float getValue()
+	/*float getValue()
 	{
 		if (toogled)
            return 1;
 		else return 0;
-	}
+	}*/
 	//void paint(Graphics& g)
 	//{
 	//	g.drawImageTransformed(kni,AffineTransform::rotation(((getValue() - getMinimum())/(getMaximum() - getMinimum()))*float_Pi - float_Pi*2));
 	//}
     
-    bool toogled;
+    //bool toogled;
     
 private:
 	Image kni;
 	int width, height, w2, h2;
-    const AudioProcessorParameter* parameter {nullptr};
+    //const AudioProcessorParameter* parameter;
 };

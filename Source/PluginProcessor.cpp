@@ -69,10 +69,10 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	options.storageFormat = PropertiesFile::storeAsXML;
 	options.millisecondsBeforeSaving = 2500;
 	options.processLock = &configLock;
-	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Settings.xml"), options));
+	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
 
-	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "discoDSP Blue";
-	currentBank = "Init";
+	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
+	currentBank = "000 - FMR OB-Xa Patch Book";
 
 	scanAndUpdateBanks();
     scanAndUpdateSkins();
@@ -102,7 +102,7 @@ void ObxdAudioProcessor::initAllParams()
 {
     for (int i = 0; i < PARAM_COUNT; ++i)
     {
-        setEngineParameterValue (i, programs.currentProgramPtr->values[i]);
+        setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
     }
 }
 
@@ -173,7 +173,7 @@ void ObxdAudioProcessor::setCurrentProgram (int index)
 	isHostAutomatedChange = false;
     
 	for (int i = 0; i < PARAM_COUNT; ++i)
-		setEngineParameterValue (i, programs.currentProgramPtr->values[i]);
+		setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
     
 	isHostAutomatedChange = true;
 	sendChangeMessage();
@@ -242,9 +242,9 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 			{
 				midiControlledParamSet = true;
 				setEngineParameterValue (bindings[lastMovedController],
-                                         midiMsg->getControllerValue() / 127.0f);
+                                         midiMsg->getControllerValue() / 127.0f, true);
                 
-				setEngineParameterValue (MIDILEARN, 0);
+				setEngineParameterValue (MIDILEARN, 0, true);
 				lastMovedController = 0;
 				lastUsedParameter = 0;
 

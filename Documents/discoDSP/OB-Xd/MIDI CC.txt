@@ -1,4 +1,4 @@
-OB-Xd 2.0 default MIDI CC controller table.
+OB-Xd default MIDI CC controller table.
 Modify by clicking LEARN button, moving a GUI element and then sending MIDI CC data.
 All values can be reset using CLEAN button.
 
@@ -45,13 +45,13 @@ CC#	 CONTROL
 104	 MULTIMODE
 102	 NOISEMIX
 17	 OCTAVE
-100	 OSC1MIX
+77	 OSC1MIX
 54	 OSC1P
 58	 OSC1Pul
 57	 OSC1Saw
 43	 OSC2_DET
 52	 OSC2HS
-101	 OSC2MIX
+78	 OSC2MIX
 55	 OSC2P
 60	 OSC2Pul
 59	 OSC2Saw

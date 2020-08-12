@@ -68,7 +68,7 @@ public:
             float val = parameter->getValue();
             //sliderToControl->setValue(parameter->convertFrom0to1(val0to1));
             sliderToControl->setValue(val, NotificationType::dontSendNotification);
-            DBG(" Slider: " << sliderToControl->getName() << " " << sliderToControl->getValue() << "  Parameter: "<< " " << parameter->getValue());
+            DBG(" Slider: " << parameter->name << " " << sliderToControl->getValue() << "  Parameter: "<< " " << parameter->getValue());
         }
         
         virtual ~KnobAttachment() = default;

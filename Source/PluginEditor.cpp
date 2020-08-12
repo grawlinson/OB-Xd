@@ -25,6 +25,8 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     loadSkin (processor);
     repaint();
+    
+    updateFromHost();
 }
 
 void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
@@ -155,7 +157,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                                         
                     if (name == "voiceSwitch"){
                         //if (voiceSwitch) voiceSwitch->setVisible(false);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices.png"))); }
 #else
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices@2x.png"))); }
@@ -163,7 +165,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
 
                     if (name == "legatoSwitch"){
                         //if (legatoSwitch) legatoSwitch->setVisible(false);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato.png"))); }
 #else
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato@2x.png"))); }
@@ -173,7 +175,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     if (name == "menu")
                     {
                         addMenuButton (x, y, d,
+#if JUCE_WINDOWS || JUCE_LINUX
                                  ImageCache::getFromFile (skinFolder.getChildFile ("menu.png")));
+#else
+                                 ImageCache::getFromFile (skinFolder.getChildFile ("menu@2x.png")));
+#endif
                     }
                     
                     //DBG(" Name: " << name << " X: " <<x <<" Y: "<<y);
@@ -226,7 +232,12 @@ void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 
 ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, Image img)
 {
-	ButtonList *bl = new ButtonList (img, height*2);
+    #if JUCE_WINDOWS || JUCE_LINUX
+    ButtonList *bl = new ButtonList (img, height);
+    #else
+    ButtonList *bl = new ButtonList (img, height*2);
+    #endif
+
     buttonListAttachments.add (new ButtonList::ButtonListAttachment (filter.getPluginState(),
                                                                      filter.getEngineParameterId (parameter),
                                                                      *bl));
@@ -240,7 +251,7 @@ ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int heig
 
 Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String /*name*/, float defval)
 {
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
     Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 48);
 #else
     Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob@2x.png")), 96);
@@ -270,21 +281,23 @@ void ObxdAudioProcessorEditor::clean()
 
 TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name)
 {
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
 #else
     TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
 #endif
-
-    toggleAttachments.add (new TooglableButton::ToggleAttachment (filter.getPluginState(),
-                                                                  filter.getEngineParameterId (parameter),
-                                                                  *button));
-    
+    if (parameter != UNLEARN){
+        toggleAttachments.add (new AudioProcessorValueTreeState::ButtonAttachment (filter.getPluginState(),
+                                                                      filter.getEngineParameterId (parameter),
+                                                                      *button));
+    } else {
+        button->addListener(this);
+    }
 	button->setBounds (x, y, w, h);
 	button->setButtonText (name);
-    button->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
+    button->setToggleState(filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue(),
                       dontSendNotification);
-    button->addListener(this);
+    
     addAndMakeVisible (button);
     
 	return button;
@@ -442,7 +455,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
     
     auto toggleButton = dynamic_cast<TooglableButton*> (b);
     if (toggleButton == midiUnlearnButton){
-        if (midiUnlearnButton->toogled){
+        if (midiUnlearnButton->getToggleState()){
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
             processor.sendChangeMessage();
@@ -452,18 +465,17 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 }
 
 //==============================================================================
-void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source)
-{
-    
+
+void ObxdAudioProcessorEditor::updateFromHost() {
     for (int i = 0; i < knobAttachments.size(); ++i)
     {
         knobAttachments[i]->updateToSlider();
     }
-    
+    /*
     for (int i = 0; i < toggleAttachments.size(); ++i)
     {
         toggleAttachments[i]->updateToSlider();
-    }
+    }*/
     
     for (int i = 0; i < buttonListAttachments.size(); ++i)
     {
@@ -471,9 +483,15 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
     }
     
     // Set to unlearn to false
-    midiUnlearnButton->setValue(0.0, false);
+    if ( midiUnlearnButton->getToggleState()) {
+        midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
+    }
     
     repaint();
+}
+void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source)
+{
+    updateFromHost();
 }
 
 void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
@@ -487,7 +505,7 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 void ObxdAudioProcessorEditor::paint(Graphics& g)
 {
 	g.fillAll (Colours::black);
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
 	const File mainFile(skinFolder.getChildFile("main.png"));
 #else
     const File mainFile(skinFolder.getChildFile("main@2x.png"));
@@ -498,7 +516,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
         
         const Image image = ImageCache::getFromFile(mainFile);
         
-#if JUCE_WIN || JUCE_LINUX
+#if JUCE_WINDOWS || JUCE_LINUX
         g.drawImage (image,
                      0, 0, image.getWidth(), image.getHeight(),
                      0, 0, image.getWidth(), image.getHeight());
