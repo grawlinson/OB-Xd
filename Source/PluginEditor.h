@@ -143,6 +143,7 @@ private:
     
     OwnedArray<PopupMenu> popupMenus;
     
+    bool notLoadSkin = false;
     int progStart;
     int bankStart;
     int skinStart;

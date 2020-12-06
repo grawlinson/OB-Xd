@@ -47,9 +47,15 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         return;
     }
     
+    //if (coords.createInputStream())
+    
     XmlDocument skin (coords);
     auto doc = skin.getDocumentElement();
-    if (doc) {
+    if (!doc) {
+        notLoadSkin = true;
+        setSize (1440, 450);
+    }
+    else {
         
         if (doc->getTagName() == "PROPERTIES"){
             
@@ -483,7 +489,7 @@ void ObxdAudioProcessorEditor::updateFromHost() {
     }
     
     // Set to unlearn to false
-    if ( midiUnlearnButton->getToggleState()) {
+    if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
         midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
     }
     
@@ -511,7 +517,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
     const File mainFile(skinFolder.getChildFile("main@2x.png"));
 #endif
     
-    if (skinFolder.exists() && mainFile.exists())
+    if (!notLoadSkin && skinFolder.exists() && mainFile.exists())
 	{
         
         const Image image = ImageCache::getFromFile(mainFile);
