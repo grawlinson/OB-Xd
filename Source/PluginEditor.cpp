@@ -23,6 +23,23 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
       banks (processor.getBankFiles())
 {
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
+    commandManager.registerAllCommandsForTarget(this);
+    commandManager.setFirstCommandTarget(this);
+
+    // reset KeyPressMappingSet
+    commandManager.getKeyMappings()->resetToDefaultMappings();
+
+    // having set up the default key-mappings, you might now want to load the last set
+    // of mappings that the user configured.
+    //commandManager.getKeyMappings()->restoreFromXml(lastSavedKeyMappingsXML);
+
+    // Now tell our top-level window to send any keypresses that arrive to the
+    // KeyPressMappingSet, which will use them to invoke the appropriate commands.
+    //addKeyListener(commandManager.getKeyMappings());
+    getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
+    
+    //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
+    startTimer(100);
     loadSkin (processor);
     repaint();
     
@@ -47,9 +64,15 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         return;
     }
     
+    //if (coords.createInputStream())
+    
     XmlDocument skin (coords);
     auto doc = skin.getDocumentElement();
-    if (doc) {
+    if (!doc) {
+        notLoadSkin = true;
+        setSize (1440, 450);
+    }
+    else {
         
         if (doc->getTagName() == "PROPERTIES"){
             
@@ -483,7 +506,7 @@ void ObxdAudioProcessorEditor::updateFromHost() {
     }
     
     // Set to unlearn to false
-    if ( midiUnlearnButton->getToggleState()) {
+    if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
         midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
     }
     
@@ -511,7 +534,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
     const File mainFile(skinFolder.getChildFile("main@2x.png"));
 #endif
     
-    if (skinFolder.exists() && mainFile.exists())
+    if (!notLoadSkin && skinFolder.exists() && mainFile.exists())
 	{
         
         const Image image = ImageCache::getFromFile(mainFile);
