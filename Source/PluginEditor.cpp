@@ -23,6 +23,23 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
       banks (processor.getBankFiles())
 {
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
+    commandManager.registerAllCommandsForTarget(this);
+    commandManager.setFirstCommandTarget(this);
+
+    // reset KeyPressMappingSet
+    commandManager.getKeyMappings()->resetToDefaultMappings();
+
+    // having set up the default key-mappings, you might now want to load the last set
+    // of mappings that the user configured.
+    //commandManager.getKeyMappings()->restoreFromXml(lastSavedKeyMappingsXML);
+
+    // Now tell our top-level window to send any keypresses that arrive to the
+    // KeyPressMappingSet, which will use them to invoke the appropriate commands.
+    //addKeyListener(commandManager.getKeyMappings());
+    getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
+    
+    //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
+    startTimer(100);
     loadSkin (processor);
     repaint();
     

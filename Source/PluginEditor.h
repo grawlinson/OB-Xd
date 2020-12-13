@@ -18,7 +18,14 @@
 #include "Gui/TooglableButton.h"
 #include "Gui/ButtonList.h"
 
-
+enum KeyPressCommandIDs
+{
+    buttonNextProgram = 1,
+    buttonPrevProgram,
+    buttonPadNextProgram,
+    buttonPadPrevProgram,
+   
+};
 //==============================================================================
 /**
 */
@@ -28,6 +35,9 @@ class ObxdAudioProcessorEditor  : public AudioProcessorEditor
 //                                  , public Slider::Listener
                                 , public Button::Listener
 //                                  , public ComboBox::Listener
+                                , public ApplicationCommandTarget
+                                , public Timer
+                                
 {
 public:
     ObxdAudioProcessorEditor(ObxdAudioProcessor& ownerFilter);
@@ -42,7 +52,73 @@ public:
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;
     void buttonClicked (Button *) override;
+    //bool keyPressed(const KeyPress & press) override;
+    void timerCallback() override {
+        this->grabKeyboardFocus();
+    }
+    ApplicationCommandTarget* getNextCommandTarget() override {
+        return nullptr;
+    };
+    void getAllCommands (Array<CommandID>& commands) override {
+        Array<CommandID> ids { KeyPressCommandIDs::buttonNextProgram, KeyPressCommandIDs::buttonPrevProgram,
+                               KeyPressCommandIDs::buttonPadNextProgram, KeyPressCommandIDs::buttonPadPrevProgram
+                               };
 
+        commands.addArray (ids);
+    };
+    void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result) override {
+        switch (commandID)
+        {
+            case KeyPressCommandIDs::buttonNextProgram:
+                result.setInfo ("Move up", "Move the button + ", "Button", 0);
+                result.addDefaultKeypress ('+', 0);
+                result.setActive (true);
+                break;
+            case KeyPressCommandIDs::buttonPrevProgram:
+                result.setInfo ("Move right", "Move the button - ", "Button", 0);
+                result.addDefaultKeypress ('-', 0);
+                result.setActive (true);
+                break;
+            case KeyPressCommandIDs::buttonPadNextProgram:
+                result.setInfo ("Move down", "Move the button Pad + ", "Button", 0);
+                result.addDefaultKeypress (KeyPress::numberPadAdd, 0);
+                result.setActive (true);
+                break;
+            case KeyPressCommandIDs::buttonPadPrevProgram:
+                result.setInfo ("Move left", "Move the button Pad -", "Button", 0);
+                result.addDefaultKeypress (KeyPress::numberPadSubtract, 0);
+                result.setActive (true);
+                break;
+            default:
+                break;
+        }
+    };
+    bool perform (const InvocationInfo& info) override {
+
+       switch (info.commandID)
+       {
+           case KeyPressCommandIDs::buttonNextProgram:
+           case KeyPressCommandIDs::buttonPadNextProgram:
+                nextProgram();
+                break;
+
+           case KeyPressCommandIDs::buttonPrevProgram:
+           case KeyPressCommandIDs::buttonPadPrevProgram:
+                prevProgram();
+                break;
+           default:
+               return false;
+       }
+       return true;
+    };/*
+    bool keyPressed (const KeyPress& key,
+                     Component* originatingComponent) override {
+        DBG("--- " << key.getKeyCode());
+        
+    };*/
+    
+    void nextProgram();
+    void prevProgram();
 private:
 	Knob* addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String name, float defval);
 	void placeLabel (int x, int y, String text);
@@ -149,6 +225,9 @@ private:
     int skinStart;
     Array<File> skins;
     Array<File> banks;
+    
+    // Command manager
+    ApplicationCommandManager commandManager;
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED
