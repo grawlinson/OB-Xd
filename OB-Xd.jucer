@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.0.0"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.3.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
               pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
               pluginChannelConfigs="{0, 2}" pluginIsSynth="1" pluginWantsMidiIn="1"
               pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier=""
-              pluginAAXCategory="" jucerVersion="5.4.7" companyName="discoDSP"
-              companyWebsite="https://www.discodsp.com/" companyEmail="contactus@discodsp.com"
-              pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginAAXCategory="" companyName="discoDSP" companyWebsite="https://www.discodsp.com/"
+              companyEmail="contactus@discodsp.com" pluginIsMidiEffectPlugin="0"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginFormats="buildAU,buildStandalone,buildVST3" buildVST="0"
               buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="1" enableIAA="0">
+              buildStandalone="1" enableIAA="0" jucerFormatVersion="1">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{5F0B15D1-4D92-B2FF-5904-9CF4C3CE645F}" name="Images">
@@ -179,7 +179,8 @@
     <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_WEB_BROWSER="0"/>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_WEB_BROWSER="0" JUCE_ASIO="1"
+               JUCE_JACK="1" JUCE_VST3_CAN_REPLACE_VST2="1"/>
   <LIVE_SETTINGS>
     <OSX/>
     <WINDOWS/>
