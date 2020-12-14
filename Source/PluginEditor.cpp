@@ -460,6 +460,24 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     }
 }
 
+void ObxdAudioProcessorEditor::nextProgram() {
+    int cur = processor.getCurrentProgram() +  1;
+    if (cur == processor.getNumPrograms()) {
+        cur = 0;
+    }
+    processor.setCurrentProgram (cur);
+    clean();
+    loadSkin (processor);
+}
+void ObxdAudioProcessorEditor::prevProgram() {
+    int cur = processor.getCurrentProgram() -  1;
+    if (cur < 0) {
+        cur = processor.getNumPrograms() - 1;
+    }
+    processor.setCurrentProgram (cur);
+    clean();
+    loadSkin (processor);
+}
 void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 {
     /*
@@ -562,3 +580,19 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 	}
 
 }
+
+/*
+bool ObxdAudioProcessorEditor::keyPressed(const KeyPress & press) {
+    if (press.getKeyCode() == '+' || press.getKeyCode() == KeyPress::numberPadAdd)
+    {
+        nextProgram();
+        return false; // r+eturn true when the keypress was handled
+    }
+    if (press.getKeyCode() == '-' || press.getKeyCode() == KeyPress::numberPadSubtract)
+    {
+        prevProgram();
+        return false; // return true when the keypress was handled
+    }
+    
+    return false; // return false if you don't handle the keypress
+}*/
