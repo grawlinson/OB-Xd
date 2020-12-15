@@ -22,6 +22,7 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
       skins (processor.getSkinFiles()),
       banks (processor.getBankFiles())
 {
+
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     commandManager.registerAllCommandsForTarget(this);
     commandManager.setFirstCommandTarget(this);
