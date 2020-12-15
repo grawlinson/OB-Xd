@@ -22,6 +22,7 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
       skins (processor.getSkinFiles()),
       banks (processor.getBankFiles())
 {
+
 //    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     commandManager.registerAllCommandsForTarget(this);
     commandManager.setFirstCommandTarget(this);
@@ -39,7 +40,11 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
     
     //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
-    startTimer(100);
+#if JUCE_WINDOWS
+	// No run timer to grab component on  window
+#else
+	startTimer(100); // This will fix the issue
+#endif
     loadSkin (processor);
     repaint();
     

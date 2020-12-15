@@ -100,11 +100,13 @@ public:
            case KeyPressCommandIDs::buttonNextProgram:
            case KeyPressCommandIDs::buttonPadNextProgram:
                 nextProgram();
+				grabKeyboardFocus();
                 break;
 
            case KeyPressCommandIDs::buttonPrevProgram:
            case KeyPressCommandIDs::buttonPadPrevProgram:
                 prevProgram();
+				grabKeyboardFocus();
                 break;
            default:
                return false;
