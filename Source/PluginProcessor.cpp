@@ -268,6 +268,18 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 		{
 			synth.allSoundOff();
 		}
+        char* midi_data = (char*)midiMsg->getRawData();
+        int const status = midi_data[0] & 0xF0;
+        if (status == 0xC0)
+        {
+            {
+                //const ScopedUnlock unlocker(criticalSection);
+                // TODO - must issue setProgram
+                setCurrentProgram(midi_data[1]);
+            }
+            //sendChangeMessage();
+            //updateHostDisplay();
+        }
 
 	}
 }
@@ -381,7 +393,7 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 	if (xmlState)
 	{
 		XmlElement* xprogs = xmlState->getFirstChildElement();
-		if (xprogs->hasTagName(S("programs")))
+		if (xprogs && xprogs->hasTagName(S("programs")))
 		{
 			int i = 0;
 			forEachXmlChildElement(*xprogs, e)
