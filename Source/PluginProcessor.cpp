@@ -468,6 +468,7 @@ bool ObxdAudioProcessor::deleteBank() {
     {
         loadFromFXBFile (bankFiles[0]);
     }
+    return true;
 }
 
 void ObxdAudioProcessor::saveBank() {
@@ -478,6 +479,7 @@ bool ObxdAudioProcessor::loadPreset(const File& fxpFile) {
     loadFromFXBFile(fxpFile);
     currentPreset = fxpFile.getFileName();
     currentPresetFile = fxpFile;
+    return true;
 }
 
 bool ObxdAudioProcessor::saveFXPFile(const File& fxpFile){
@@ -544,6 +546,7 @@ void ObxdAudioProcessor::savePreset() {
 bool ObxdAudioProcessor::saveBank(const File& fxbFile){
     saveFXBFile(fxbFile);
     currentBankFile = fxbFile;
+    return true;
 }
 
 bool ObxdAudioProcessor::saveFXBFile(const File& fxbFile) {
