@@ -63,7 +63,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	lastUsedParameter = 0;
 
 	synth.setSampleRate (44100);
-
+    
 	PropertiesFile::Options options;
 	options.applicationName = JucePlugin_Name;
 	options.storageFormat = PropertiesFile::storeAsXML;
@@ -225,33 +225,6 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
         {
 			synth.procModWheel (midiMsg->getControllerValue() / 127.0f);
         }
-		if (midiMsg->isController())
-		{
-			lastMovedController = midiMsg->getControllerNumber();
-            
-            if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
-                midiControlledParamSet = true;
-				bindings[lastMovedController] = lastUsedParameter;
-                setEngineParameterValue (MIDILEARN, 0, true);
-                lastMovedController = 0;
-                lastUsedParameter = 0;
-                midiControlledParamSet = false;
-            }
-
-			if (bindings[lastMovedController] > 0)
-			{
-				midiControlledParamSet = true;
-				setEngineParameterValue (bindings[lastMovedController],
-                                         midiMsg->getControllerValue() / 127.0f, true);
-                
-				setEngineParameterValue (MIDILEARN, 0, true);
-				lastMovedController = 0;
-				lastUsedParameter = 0;
-
-				midiControlledParamSet = false;
-			}
-
-		}
 		if(midiMsg->isSustainPedalOn())
 		{
 			synth.sustainOn();
@@ -267,20 +240,39 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
 		if(midiMsg->isAllSoundOff())
 		{
 			synth.allSoundOff();
-		}
-        char* midi_data = (char*)midiMsg->getRawData();
-        int const status = midi_data[0] & 0xF0;
-        if (status == 0xC0)
-        {
-            {
-                //const ScopedUnlock unlocker(criticalSection);
-                // TODO - must issue setProgram
-                setCurrentProgram(midi_data[1]);
-            }
-            //sendChangeMessage();
-            //updateHostDisplay();
         }
+        
+        DBG(" Message: " << midiMsg->getChannel() << " "<<midiMsg->getRawData()[0] << " "<< midiMsg->getRawData()[1] << " "<< midiMsg->getRawData()[2]);
+        
+        if (midiMsg->isProgramChange()){ // xC0
+            setCurrentProgram(midiMsg->getProgramChangeNumber());
+            
+        } else
+        if (midiMsg->isController()) // xB0
+        {
+            lastMovedController = midiMsg->getControllerNumber();
+            if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
+                midiControlledParamSet = true;
+                bindings[lastMovedController] = lastUsedParameter;
+                setEngineParameterValue (MIDILEARN, 0, true);
+                lastMovedController = 0;
+                lastUsedParameter = 0;
+                midiControlledParamSet = false;
+            }
 
+            if (bindings[lastMovedController] > 0)
+            {
+                midiControlledParamSet = true;
+                setEngineParameterValue (bindings[lastMovedController],
+                                         midiMsg->getControllerValue() / 127.0f, true);
+                
+                setEngineParameterValue (MIDILEARN, 0, true);
+                lastMovedController = 0;
+                lastUsedParameter = 0;
+
+                midiControlledParamSet = false;
+            }
+        }
 	}
 }
 
@@ -469,6 +461,119 @@ void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data, in
 }
 
 //==============================================================================
+bool ObxdAudioProcessor::deleteBank() {
+    currentBankFile.deleteFile();
+    scanAndUpdateBanks();
+    if (bankFiles.size() > 0)
+    {
+        loadFromFXBFile (bankFiles[0]);
+    }
+}
+
+void ObxdAudioProcessor::saveBank() {
+    saveFXBFile(currentBankFile);
+}
+
+bool ObxdAudioProcessor::loadPreset(const File& fxpFile) {
+    loadFromFXBFile(fxpFile);
+    currentPreset = fxpFile.getFileName();
+    currentPresetFile = fxpFile;
+}
+
+bool ObxdAudioProcessor::saveFXPFile(const File& fxpFile){
+    //auto xml = std::unique_ptr<juce::XmlElement>(new juce::XmlElement(""));
+    juce::MemoryBlock m, memoryBlock;
+    getCurrentProgramStateInformation(m);
+    {
+        memoryBlock.reset();
+        auto totalLen = sizeof (fxProgramSet) + m.getSize() - 8;
+        memoryBlock.setSize (totalLen, true);
+
+        auto set = static_cast<fxProgramSet*>(memoryBlock.getData());
+        set->chunkMagic = fxbName ("CcnK");
+        set->byteSize = 0;
+        set->fxMagic = fxbName ("FPCh");
+        set->version = fxbSwap (fxbVersionNum);
+        set->fxID = fxbName ("Obxd");
+        set->fxVersion = fxbSwap (fxbVersionNum);
+        set->numPrograms = fxbSwap (getNumPrograms());
+        programs.currentProgramPtr->name.copyToUTF8(set->name, 28);
+        set->chunkSize = fxbSwap (static_cast<int32>(m.getSize()));
+
+        m.copyTo (set->chunk, 0, m.getSize());
+        
+        fxpFile.replaceWithData(memoryBlock.getData(), memoryBlock.getSize());
+    }
+}
+
+bool ObxdAudioProcessor::savePreset(const File& fxpFile) {
+    saveFXPFile(fxpFile);
+    currentPreset = fxpFile.getFileName();
+    currentPresetFile = fxpFile;
+}
+
+void ObxdAudioProcessor::changePresetName(const String &name){
+    programs.currentProgramPtr->name = name;
+    //savePreset();
+    saveBank();
+}
+
+void ObxdAudioProcessor::deletePreset(){
+    programs.currentProgramPtr->setDefaultValues();
+    programs.currentProgramPtr->name = "Default";
+    saveBank();
+}
+
+void ObxdAudioProcessor::newPreset(const String &name) {
+    for (int i = 0; i < PROGRAMCOUNT; ++i)
+    {
+        if (programs.programs[i].name == "Default"){
+            setCurrentProgram(i);
+            break;
+        }
+    }
+    //savePreset();
+    saveBank();
+}
+
+void ObxdAudioProcessor::savePreset() {
+    savePreset(currentPresetFile);
+    
+}
+
+bool ObxdAudioProcessor::saveBank(const File& fxbFile){
+    saveFXBFile(fxbFile);
+    currentBankFile = fxbFile;
+}
+
+bool ObxdAudioProcessor::saveFXBFile(const File& fxbFile) {
+    //auto xml = std::unique_ptr<juce::XmlElement>(new juce::XmlElement(""));
+    juce::MemoryBlock m, memoryBlock;
+    getStateInformation(m);
+
+    {
+        memoryBlock.reset();
+        auto totalLen = sizeof (fxChunkSet) + m.getSize() - 8;
+        memoryBlock.setSize (totalLen, true);
+
+        auto set = static_cast<fxChunkSet*>( memoryBlock.getData());
+        set->chunkMagic = fxbName ("CcnK");
+        set->byteSize = 0;
+        set->fxMagic = fxbName ("FBCh");
+        set->version = fxbSwap (fxbVersionNum);
+        set->fxID = fxbName ("Obxd");
+        set->fxVersion = fxbSwap (fxbVersionNum);
+        set->numPrograms = fxbSwap (getNumPrograms());
+        set->chunkSize = fxbSwap (static_cast<int32>(m.getSize()));
+
+        m.copyTo (set->chunk, 0, m.getSize());
+        fxbFile.replaceWithData(memoryBlock.getData(), memoryBlock.getSize());
+    }
+    
+    
+    return true;
+}
+
 bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 {
 	MemoryBlock mb;
@@ -563,7 +668,7 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 	}
 
 	currentBank = fxbFile.getFileName();
-
+    currentBankFile = fxbFile;
 	updateHostDisplay();
 
 	return true;
@@ -588,13 +693,14 @@ bool ObxdAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
 //==============================================================================
 void ObxdAudioProcessor::scanAndUpdateBanks()
 {
-	bankFiles.clearQuick();
+	bankFiles.clear();
 
 	DirectoryIterator it (getBanksFolder(), false, "*.fxb", File::findFiles);
 	
     while (it.next())
 	{
 		bankFiles.addUsingDefaultSort (it.getFile());
+        DBG("Scan Banks: " << it.getFile().getFullPathName());
 	}
 }
 
@@ -648,6 +754,11 @@ File ObxdAudioProcessor::getSkinFolder() const
 File ObxdAudioProcessor::getBanksFolder() const
 {
 	return getDocumentFolder().getChildFile("Banks");
+}
+
+File ObxdAudioProcessor::getPresetsFolder() const
+{
+    return getDocumentFolder().getChildFile("Presets");
 }
 
 File ObxdAudioProcessor::getCurrentSkinFolder() const
@@ -783,6 +894,7 @@ void ObxdAudioProcessor::setEngineParameterValue (int index, float newValue, boo
         apvtState.getParameter(getEngineParameterId(index))->setValue(newValue);
     }
     
+    //DBG("Set Value Parameter: " << getEngineParameterId(index) << " Val: " << newValue);
     switch (index)
     {
         case SELF_OSC_PUSH:

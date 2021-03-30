@@ -16,14 +16,19 @@ It contains the basic startup code for a Juce application.
 ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFilter)
 	: AudioProcessorEditor (&ownerFilter), processor (ownerFilter),
       skinFolder (processor.getSkinFolder()),
-      progStart (2000),
-      bankStart (1000),
-      skinStart (0),
+      progStart (3000),
+      bankStart (2000),
+      skinStart (1000),
       skins (processor.getSkinFiles()),
       banks (processor.getBankFiles())
 {
-
-//    skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
+    LookAndFeel& lf = getLookAndFeel();
+    // Popup Menu Look and Feel
+    lf.setColour(PopupMenu::backgroundColourId, Colour(20, 20, 20));
+    lf.setColour(PopupMenu::textColourId, Colour(245, 245, 245));
+    lf.setColour(PopupMenu::highlightedBackgroundColourId, Colour(60, 60, 60));
+    
+    //skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     commandManager.registerAllCommandsForTarget(this);
     commandManager.setFirstCommandTarget(this);
 
@@ -51,6 +56,26 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     updateFromHost();
 }
 
+
+void ObxdAudioProcessorEditor::resized() {
+    if (setPresetNameWindow != nullptr )
+    {
+        if (auto wrapper = dynamic_cast<ObxdAudioProcessorEditor*>(processor.getActiveEditor()))
+        {
+            
+            auto w = proportionOfWidth(0.25f);
+            auto h = proportionOfHeight(0.3f);
+            auto x = proportionOfWidth(0.5f) - (w / 2);
+            auto y = wrapper->getY();
+            
+            if (setPresetNameWindow != nullptr)
+            {
+                y += proportionOfHeight(0.15f);
+                setPresetNameWindow->setBounds(x, y, w, h);
+            }
+        }
+    }
+}
 void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
 {
     knobAttachments.clear();
@@ -377,13 +402,64 @@ void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilte
 
 void ObxdAudioProcessorEditor::createMenu ()
 {
+    popupMenus.clear();
     PopupMenu* menu = new PopupMenu();
     PopupMenu progMenu;
     PopupMenu bankMenu;
     PopupMenu skinMenu;
-
+    PopupMenu fileMenu;
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
+    {
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::ImportPreset),
+                     "Import Preset...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::ImportBank),
+                     "Import Bank...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::ExportPreset),
+                     "Export Preset...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::ExportBank),
+                     "Export Bank...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::SavePreset),
+                     "Save Preset...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::RenamePreset),
+                     "Rename Preset...",
+                     true,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::NewPreset),
+                     "New Preset...",
+                     true,//enableNewPresetOption,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::DeletePreset),
+                     "Delete Preset...",
+                     true,
+                     false);
+        
+        /*
+        fileMenu.addItem(static_cast<int>(MenuAction::DeleteBank),
+                     "Delete Bank...",
+                     true,
+                     false);
+        */
+        menu->addSubMenu("File", fileMenu);
+    }
     
     {
         for (int i = 0; i < processor.getNumPrograms(); ++i)
@@ -463,7 +539,179 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         clean();
         loadSkin (processor);
     }
+    else if (result < progStart){
+        MenuActionCallback(result);
+    }
 }
+
+void ObxdAudioProcessorEditor::MenuActionCallback(int action){
+    
+    
+    if (action == MenuAction::ImportBank)
+    {
+        fileChooser = std::make_unique<juce::FileChooser>("Import Bank (*.fxb)", juce::File(), "*.fxb", true);
+        
+        if (fileChooser->browseForFileToOpen()) {
+            File result = fileChooser->getResult();
+            auto name = result.getFileName().replace("%20", " ");
+            auto file = processor.getBanksFolder().getChildFile(name);
+            
+            if (result == file || result.copyFileTo(file)){
+                processor.loadFromFXBFile(file);
+                processor.scanAndUpdateBanks();
+                createMenu();
+            }
+        }
+    };
+    
+    if (action == MenuAction::ExportBank)
+    {
+        auto file = processor.getDocumentFolder().getChildFile("Banks");
+        FileChooser myChooser ("Export Bank (*.fxb)", file, "*.fxb", true);
+        if(myChooser.browseForFileToSave(true))
+        {
+            File result = myChooser.getResult();
+            
+            String temp = result.getFullPathName();
+            if (!temp.endsWith(".fxb")) {
+                temp += ".fxb";
+            }
+            processor.saveBank(File(temp));
+            
+        }
+    };
+    
+    if (action == MenuAction::DeleteBank)
+    {
+        if(NativeMessageBox::showOkCancelBox(AlertWindow::NoIcon, "Delete Bank", "Delete current bank: " + processor.currentBank + "?")){
+            processor.deleteBank();
+        }
+    }
+    
+    
+    if (action == MenuAction::SavePreset)
+    {
+        auto presetName = processor.currentPreset;
+        if (presetName.isEmpty() )
+        {
+            processor.saveBank();
+            return;
+        }
+        processor.savePreset();
+        processor.saveBank();
+    }
+    
+    if (action == MenuAction::NewPreset)
+    {
+        setPresetNameWindow = std::make_unique<SetPresetNameWindow>();
+        //preventBackgroundClick();
+        addAndMakeVisible(setPresetNameWindow.get());
+        resized();
+       
+        auto callback = [this](int i, juce::String name)
+        {
+            if (i)
+            {
+                if (name.isNotEmpty())
+                {
+                    processor.newPreset(name);
+                    createMenu();
+                }
+            }
+
+            setPresetNameWindow.reset();
+            //preventBackgroundClickComponent.reset();
+        };
+        
+        setPresetNameWindow->callback = callback;
+        setPresetNameWindow->grabTextEditorFocus();
+        
+        return;
+    }
+    
+    if (action == MenuAction::RenamePreset)
+    {
+        setPresetNameWindow = std::make_unique<SetPresetNameWindow>();
+        //preventBackgroundClick();
+        setPresetNameWindow->setText(processor.getProgramName(processor.getCurrentProgram()));
+        addAndMakeVisible(setPresetNameWindow.get());
+        resized();
+       
+        auto callback = [this](int i, juce::String name)
+        {
+            if (i)
+            {
+                if (name.isNotEmpty())
+                {
+                    processor.changePresetName(name);
+                    createMenu();
+                }
+            }
+
+            setPresetNameWindow.reset();
+            //preventBackgroundClickComponent.reset();
+        };
+        
+        setPresetNameWindow->callback = callback;
+        setPresetNameWindow->grabTextEditorFocus();
+        
+        return;
+    }
+    
+    if (action == MenuAction::DeletePreset)
+    {
+        if(NativeMessageBox::showOkCancelBox(AlertWindow::NoIcon, "Delete Preset", "Delete current preset " + processor.currentPreset + "?")){
+            processor.deletePreset();
+            createMenu();
+        }
+        return;
+    }
+    
+
+    if (action == MenuAction::ImportPreset)
+    {
+        DBG("Import Preset");
+        fileChooser = std::make_unique<juce::FileChooser>("Import Preset (*.fxp)", juce::File(), "*.fxp", true);
+
+        if (fileChooser->browseForFileToOpen()) {
+            File result = fileChooser->getResult();
+            //auto name = result.getFileName().replace("%20", " ");
+            //auto file = processor.getPresetsFolder().getChildFile(name);
+            DBG("Import Preset: " << result.getFileName());
+            //if (result == file || result.copyFileTo(file)){
+                processor.loadPreset(result);
+                createMenu();
+            //}
+        }
+    };
+    
+    if (action == MenuAction::ExportPreset)
+    {
+        
+        auto file = processor.getPresetsFolder();
+        FileChooser myChooser ("Export Preset (*.fxp)", file, "*.fxp", true);
+        if(myChooser.browseForFileToSave(true))
+        {
+            File result = myChooser.getResult();
+            
+            String temp = result.getFullPathName();
+            if (!temp.endsWith(".fxp")) {
+                temp += ".fxp";
+            }
+            processor.savePreset(File(temp));
+            
+        }
+    };
+
+}
+
+
+
+void ObxdAudioProcessorEditor::deleteBank()
+{
+}
+
+
 
 void ObxdAudioProcessorEditor::nextProgram() {
     int cur = processor.getCurrentProgram() +  1;

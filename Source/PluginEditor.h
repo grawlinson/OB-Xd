@@ -17,6 +17,7 @@
 #include "Gui/Knob.h"
 #include "Gui/TooglableButton.h"
 #include "Gui/ButtonList.h"
+#include "Components/SetPresetNameWindow.h"
 
 enum KeyPressCommandIDs
 {
@@ -25,6 +26,23 @@ enum KeyPressCommandIDs
     buttonPadNextProgram,
     buttonPadPrevProgram,
    
+};
+
+enum MenuAction
+{
+    Cancel = 0,
+    ToggleMidiKeyboard,
+    ImportPreset,
+    ImportBank,
+    ExportBank,
+    ExportPreset,
+    SavePreset,
+    NewPreset,
+    RenamePreset,
+    DeletePreset,
+    DeleteBank,
+    ShowBanks,
+    LoadBank // LoadBank must be the last enum value
 };
 //==============================================================================
 /**
@@ -121,6 +139,11 @@ public:
     
     void nextProgram();
     void prevProgram();
+    
+    void MenuActionCallback(int action);
+    void deleteBank();
+    
+    void resized() override;
 private:
 	Knob* addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String name, float defval);
 	void placeLabel (int x, int y, String text);
@@ -227,7 +250,8 @@ private:
     int skinStart;
     Array<File> skins;
     Array<File> banks;
-    
+    std::unique_ptr<SetPresetNameWindow> setPresetNameWindow;
+    std::unique_ptr<FileChooser> fileChooser;
     // Command manager
     ApplicationCommandManager commandManager;
 };
