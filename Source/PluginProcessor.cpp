@@ -517,13 +517,13 @@ bool ObxdAudioProcessor::savePreset(const File& fxpFile) {
 void ObxdAudioProcessor::changePresetName(const String &name){
     programs.currentProgramPtr->name = name;
     //savePreset();
-    saveBank();
+    //saveBank();
 }
 
 void ObxdAudioProcessor::deletePreset(){
     programs.currentProgramPtr->setDefaultValues();
     programs.currentProgramPtr->name = "Default";
-    saveBank();
+    //saveBank();
 }
 
 void ObxdAudioProcessor::newPreset(const String &name) {
@@ -535,7 +535,7 @@ void ObxdAudioProcessor::newPreset(const String &name) {
         }
     }
     //savePreset();
-    saveBank();
+    //saveBank();
 }
 
 void ObxdAudioProcessor::savePreset() {
