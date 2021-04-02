@@ -422,6 +422,8 @@ void ObxdAudioProcessorEditor::createMenu ()
                      true,
                      false);
         
+        fileMenu.addSeparator();
+        
         fileMenu.addItem(static_cast<int>(MenuAction::ExportPreset),
                      "Export Preset...",
                      true,
@@ -431,20 +433,22 @@ void ObxdAudioProcessorEditor::createMenu ()
                      "Export Bank...",
                      true,
                      false);
-        
-        fileMenu.addItem(static_cast<int>(MenuAction::SavePreset),
-                     "Save Preset...",
-                     true,
-                     false);
-        
-        fileMenu.addItem(static_cast<int>(MenuAction::RenamePreset),
-                     "Rename Preset...",
-                     true,
-                     false);
+
+        fileMenu.addSeparator();
         
         fileMenu.addItem(static_cast<int>(MenuAction::NewPreset),
                      "New Preset...",
                      true,//enableNewPresetOption,
+                     false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::RenamePreset),
+                         "Rename Preset...",
+                         true,
+                         false);
+        
+        fileMenu.addItem(static_cast<int>(MenuAction::SavePreset),
+                     "Save Preset...",
+                     true,
                      false);
         
         fileMenu.addItem(static_cast<int>(MenuAction::DeletePreset),
