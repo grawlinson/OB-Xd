@@ -523,6 +523,7 @@ void ObxdAudioProcessor::changePresetName(const String &name){
 void ObxdAudioProcessor::deletePreset(){
     programs.currentProgramPtr->setDefaultValues();
     programs.currentProgramPtr->name = "Default";
+    sendChangeMessage();
     //saveBank();
 }
 
