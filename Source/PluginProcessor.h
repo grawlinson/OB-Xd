@@ -167,7 +167,17 @@ public:
     void scanAndUpdateSkins();
 	const Array<File>& getBankFiles() const;
     const Array<File>& getSkinFiles() const;
+    bool deleteBank();
+    bool loadPreset(const File& fxpFile);
+    bool savePreset(const File& fxpFile);
+    void changePresetName(const String &name);
+    void newPreset(const String &name);
+    void deletePreset();
+    
 	bool loadFromFXBFile(const File& fxbFile);
+    bool saveFXBFile(const File& fxbFile);
+    bool saveFXPFile(const File& fxpFile);
+    bool saveBank(const File& fxbFile);
 	bool restoreProgramSettings(const fxProgram* const prog);
 	File getCurrentBankFile() const;
 
@@ -178,8 +188,9 @@ public:
 	//==============================================================================
 	File getDocumentFolder() const;
 	File getSkinFolder() const;
+    File getPresetsFolder() const;
 	File getBanksFolder() const;
-
+    
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
     
@@ -209,7 +220,16 @@ private:
 	ObxdBank programs;
 
 	String currentSkin;
+public:
 	String currentBank;
+    File currentBankFile;
+    void saveBank();
+    
+    
+    String currentPreset;
+    File currentPresetFile;
+    void savePreset();
+private:
 	Array<File> bankFiles;
     Array<File> skinFiles;
 
