@@ -653,6 +653,7 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 			return false;
 
 		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
+        setCurrentProgram(0); // Set to first preset position
 	}
 	else if (compareMagic (set->fxMagic, "FPCh"))
 	{
