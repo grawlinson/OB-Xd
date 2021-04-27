@@ -18,7 +18,7 @@
 #include "Gui/TooglableButton.h"
 #include "Gui/ButtonList.h"
 #include "Components/SetPresetNameWindow.h"
-
+#include "Components/PresetBar.h"
 enum KeyPressCommandIDs
 {
     buttonNextProgram = 1,
@@ -66,7 +66,10 @@ public:
 	void paint (Graphics& g) override;
     
     void updateFromHost();
-    
+    String getCurrentProgramName(){
+        return processor.getProgramName(processor.getCurrentProgram());
+    }
+    void updatePresetBar();
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;
     void buttonClicked (Button *) override;
@@ -154,6 +157,7 @@ private:
     void resultFromMenu (const Point<int>);
     void clean();
     
+
 	void rebuildComponents (ObxdAudioProcessor&);
     void loadSkin(ObxdAudioProcessor&);
 	//==============================================================================
@@ -248,9 +252,12 @@ private:
     int progStart;
     int bankStart;
     int skinStart;
+    
+    bool showPresetBar = false;
     Array<File> skins;
     Array<File> banks;
     std::unique_ptr<SetPresetNameWindow> setPresetNameWindow;
+    std::unique_ptr<PresetBar> presetBar;
     std::unique_ptr<FileChooser> fileChooser;
     // Command manager
     ApplicationCommandManager commandManager;

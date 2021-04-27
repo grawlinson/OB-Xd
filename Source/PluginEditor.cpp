@@ -50,7 +50,11 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
 #else
 	startTimer(100); // This will fix the issue
 #endif
+    
+    DBG("W: " <<getWidth() << " H:" << getHeight());
+
     loadSkin (processor);
+    
     repaint();
     
     updateFromHost();
@@ -264,7 +268,15 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
     }
     
     createMenu();
+
     ownerFilter.addChangeListener (this);
+
+    presetBar.reset(new PresetBar(*this));
+    addAndMakeVisible(*presetBar);
+    presetBar->setVisible(showPresetBar);
+    presetBar->setBounds(
+                         (getWidth() -  presetBar->getWidth())/2, getHeight(), presetBar->getWidth(), presetBar->getHeight());
+    updatePresetBar();
     repaint();
 }
 ObxdAudioProcessorEditor::~ObxdAudioProcessorEditor()
@@ -505,7 +517,7 @@ void ObxdAudioProcessorEditor::createMenu ()
         menu->addSubMenu ("Themes", skinMenu);
         // About // menu.addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
     }
-    
+    menu->addItem(progStart + 1000, "Preset Bar", true, false, Image());
     popupMenus.add (menu);
 }
 
@@ -546,6 +558,25 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     else if (result < progStart){
         MenuActionCallback(result);
     }
+    else if (result == progStart + 1000){
+        this->showPresetBar = !this->showPresetBar;
+        updatePresetBar();
+    }
+}
+
+void ObxdAudioProcessorEditor::updatePresetBar(){
+    DBG(" H: " << getHeight() <<" W:" <<getWidth() << " CW:"<<presetBar->getWidth() << " CH" <<presetBar->getHeight() << " CX:" <<presetBar->getX()  << " CY: " <<presetBar->getY());
+    if (this->showPresetBar){
+        this->setSize(this->getWidth(), this->getHeight() + 40);
+        presetBar->setVisible(true);
+    }
+    else if (presetBar->isVisible()) {
+        this->setSize(this->getWidth(), this->getHeight() - 40);
+        presetBar->setVisible(false);
+    }
+    
+    presetBar->update();
+    
 }
 
 void ObxdAudioProcessorEditor::MenuActionCallback(int action){

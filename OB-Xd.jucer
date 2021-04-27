@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.3.0"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.4.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
               pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
@@ -17,6 +17,8 @@
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{BD020CFA-798B-F1A1-A6C7-7559BD467248}" name="Components">
+        <FILE id="XnxhrR" name="PresetBar.h" compile="0" resource="0" file="Source/Components/PresetBar.h"/>
+        <FILE id="GHGyel" name="PresetBar.cpp" compile="1" resource="0" file="Source/Components/PresetBar.cpp"/>
         <FILE id="qhLBZY" name="SetPresetNameWindow.cpp" compile="1" resource="0"
               file="Source/Components/SetPresetNameWindow.cpp"/>
         <FILE id="ysasLl" name="SetPresetNameWindow.h" compile="0" resource="0"
@@ -26,6 +28,8 @@
         <FILE id="nnY63W" name="appicon.png" compile="0" resource="1" file="Source/Images/appicon.png"/>
         <FILE id="kwaOoZ" name="main.png" compile="0" resource="1" file="Source/Images/main.png"/>
         <FILE id="l84SVW" name="menu.png" compile="0" resource="1" file="Source/Images/menu.png"/>
+        <FILE id="NKGY6X" name="presetnavigation.svg" compile="0" resource="1"
+              file="Source/Images/presetnavigation.svg"/>
       </GROUP>
       <GROUP id="{6995BDF2-263F-3CA7-8CA4-4E21F325477A}" name="Gui">
         <FILE id="zJoidp" name="ButtonList.h" compile="0" resource="0" file="Source/Gui/ButtonList.h"/>
@@ -76,7 +80,7 @@
                        stripLocalSymbols="0" linkTimeOptimisation="0"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="OB-Xd"
                        stripLocalSymbols="1" linkTimeOptimisation="1" osxCompatibility="10.9 SDK"
-                       enablePluginBinaryCopyStep="0" usePrecompiledHeaderFile="1"/>
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -124,7 +128,8 @@
         <CONFIGURATION isDebug="1" name="Debug" targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"
                        useRuntimeLibDLL="0" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION isDebug="0" name="Release64" useRuntimeLibDLL="0" winArchitecture="x64"
-                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"/>
+                       targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
