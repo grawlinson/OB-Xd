@@ -253,7 +253,6 @@ private:
     int bankStart;
     int skinStart;
     
-    bool showPresetBar = false;
     Array<File> skins;
     Array<File> banks;
     std::unique_ptr<SetPresetNameWindow> setPresetNameWindow;

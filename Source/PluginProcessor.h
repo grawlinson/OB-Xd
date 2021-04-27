@@ -200,7 +200,15 @@ public:
     void setEngineParameterValue (int, float, bool notifyToHost= false);
     void parameterChanged (const String&, float) override;
     AudioProcessorValueTreeState& getPluginState();
-
+    
+    bool getShowPresetBar(){
+        return this->showPresetBar;
+    }
+    
+    void setShowPresetBar(bool val){
+        this->showPresetBar = val;
+        config->setValue("presetnavigation", this->showPresetBar);
+    }
 private:
 	//==============================================================================
 	bool isHostAutomatedChange;
@@ -229,6 +237,8 @@ public:
     String currentPreset;
     File currentPresetFile;
     void savePreset();
+    
+    bool showPresetBar = false;
 private:
 	Array<File> bankFiles;
     Array<File> skinFiles;

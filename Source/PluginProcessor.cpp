@@ -70,7 +70,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	options.millisecondsBeforeSaving = 2500;
 	options.processLock = &configLock;
 	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
-
+    showPresetBar = config->getBoolValue("presetnavigation");
 	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
 	currentBank = "000 - FMR OB-Xa Patch Book";
 
@@ -93,6 +93,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 
 ObxdAudioProcessor::~ObxdAudioProcessor()
 {
+    
 	config->saveIfNeeded();
 	config = nullptr;
 }

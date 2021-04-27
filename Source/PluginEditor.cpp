@@ -273,7 +273,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
 
     presetBar.reset(new PresetBar(*this));
     addAndMakeVisible(*presetBar);
-    presetBar->setVisible(showPresetBar);
+    presetBar->setVisible(processor.getShowPresetBar());
     presetBar->setBounds(
                          (getWidth() -  presetBar->getWidth())/2, getHeight(), presetBar->getWidth(), presetBar->getHeight());
     updatePresetBar();
@@ -559,14 +559,14 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         MenuActionCallback(result);
     }
     else if (result == progStart + 1000){
-        this->showPresetBar = !this->showPresetBar;
+        processor.setShowPresetBar(!processor.getShowPresetBar());
         updatePresetBar();
     }
 }
 
 void ObxdAudioProcessorEditor::updatePresetBar(){
     DBG(" H: " << getHeight() <<" W:" <<getWidth() << " CW:"<<presetBar->getWidth() << " CH" <<presetBar->getHeight() << " CX:" <<presetBar->getX()  << " CY: " <<presetBar->getY());
-    if (this->showPresetBar){
+    if (processor.getShowPresetBar()){
         this->setSize(this->getWidth(), this->getHeight() + 40);
         presetBar->setVisible(true);
     }
