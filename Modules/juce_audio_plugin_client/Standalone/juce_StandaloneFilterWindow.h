@@ -74,7 +74,7 @@ public:
                            #if JUCE_ANDROID || JUCE_IOS
                             bool shouldAutoOpenMidiDevices = true
                            #else
-                            bool shouldAutoOpenMidiDevices = false
+                            bool shouldAutoOpenMidiDevices = true
                            #endif
                             )
 
@@ -576,10 +576,10 @@ public:
                             bool autoOpenMidiDevices = false
                            #endif
                             )
-        : DocumentWindow (title, backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
+        : DocumentWindow ("", backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
           menuBar(this)
          #if ! JUCE_MAC
-         , optionsButton ("Options")
+         , optionsButton ("Settings")
          #endif
     {
        #if JUCE_IOS || JUCE_ANDROID
@@ -815,7 +815,7 @@ private:
                  #if JUCE_IOS || JUCE_ANDROID
                   settingsButton ("Unmute Input")
                  #else
-                  settingsButton ("Settings...")
+                  settingsButton ("Settings")
                  #endif
             {
                 setOpaque (true);
