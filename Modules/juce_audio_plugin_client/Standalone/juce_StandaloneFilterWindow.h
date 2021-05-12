@@ -576,8 +576,15 @@ public:
                             bool autoOpenMidiDevices = false
                            #endif
                             )
+#if JUCE_MAC
         : DocumentWindow ("", backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-          menuBar(this)
+#endif
+
+#if ! JUCE_MAC
+        : DocumentWindow (title, Colour::fromHSV (0.0f, 0.0f, 0.1f, 0.5f), DocumentWindow::minimiseButton | DocumentWindow::closeButton),
+#endif
+    
+        menuBar(this)
          #if ! JUCE_MAC
          , optionsButton ("Settings")
          #endif
@@ -585,10 +592,16 @@ public:
        #if JUCE_IOS || JUCE_ANDROID
         setTitleBarHeight (0);
        #else
+        
+        LookAndFeel_V4 *lfv4 = dynamic_cast<LookAndFeel_V4*>(&getLookAndFeel());
+if (lfv4) {
+lfv4->getCurrentColourScheme().setUIColour (LookAndFeel_V4::ColourScheme::widgetBackground, Colour::fromHSV (0.0f, 0.0f, 0.1f, 1.0f));
+}
+        
         setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
-
+        
        #if JUCE_MAC
-        setUsingNativeTitleBar(true);
+        setUsingNativeTitleBar(false);
         menu.addItem (1, TRANS("Audio/MIDI Settings..."));
         MenuBarModel::setMacMainMenu (this, &menu);
        #else
