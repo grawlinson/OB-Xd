@@ -153,6 +153,7 @@ public:
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
+    void setCurrentProgram (int index, bool updateHost);
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 

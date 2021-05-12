@@ -167,6 +167,23 @@ int ObxdAudioProcessor::getCurrentProgram()
 	return programs.currentProgram;
 }
 
+void ObxdAudioProcessor::setCurrentProgram (int index, bool updateHost){
+    programs.currentProgram = index;
+    programs.currentProgramPtr = programs.programs + programs.currentProgram;
+    isHostAutomatedChange = false;
+    
+    for (int i = 0; i < PARAM_COUNT; ++i)
+        setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
+    
+    isHostAutomatedChange = true;
+    
+    sendChangeMessage();
+    // Will delay
+    if (updateHost) {
+        updateHostDisplay();
+    }
+}
+
 void ObxdAudioProcessor::setCurrentProgram (int index)
 {
 	programs.currentProgram = index;

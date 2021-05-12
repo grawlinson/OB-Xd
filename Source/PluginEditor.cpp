@@ -45,11 +45,9 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
     
     //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
-#if JUCE_WINDOWS
-	// No run timer to grab component on  window
-#else
+
 	startTimer(100); // This will fix the issue
-#endif
+
     
     DBG("W: " <<getWidth() << " H:" << getHeight());
 
@@ -420,6 +418,7 @@ void ObxdAudioProcessorEditor::createMenu ()
     PopupMenu bankMenu;
     PopupMenu skinMenu;
     PopupMenu fileMenu;
+    PopupMenu viewMenu;
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
     {
@@ -517,7 +516,8 @@ void ObxdAudioProcessorEditor::createMenu ()
         menu->addSubMenu ("Themes", skinMenu);
         // About // menu.addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
     }
-    menu->addItem(progStart + 1000, "Preset Bar", true, false, Image());
+    viewMenu.addItem(progStart + 1000, "Preset Bar", true, processor.showPresetBar);
+    menu->addSubMenu ("View", viewMenu);
     popupMenus.add (menu);
 }
 
@@ -560,6 +560,7 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     }
     else if (result == progStart + 1000){
         processor.setShowPresetBar(!processor.getShowPresetBar());
+        createMenu();
         updatePresetBar();
     }
 }
@@ -753,7 +754,11 @@ void ObxdAudioProcessorEditor::nextProgram() {
     if (cur == processor.getNumPrograms()) {
         cur = 0;
     }
-    processor.setCurrentProgram (cur);
+    processor.setCurrentProgram (cur, false);
+    
+    needNotifytoHost = true;
+    countTimer = 0;
+    
     clean();
     loadSkin (processor);
 }
@@ -762,7 +767,11 @@ void ObxdAudioProcessorEditor::prevProgram() {
     if (cur < 0) {
         cur = processor.getNumPrograms() - 1;
     }
-    processor.setCurrentProgram (cur);
+    processor.setCurrentProgram (cur, false);
+    
+    needNotifytoHost = true;
+    countTimer = 0;
+    
     clean();
     loadSkin (processor);
 }
