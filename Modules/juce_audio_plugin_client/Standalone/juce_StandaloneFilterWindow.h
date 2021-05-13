@@ -265,6 +265,13 @@ public:
             maxNumOutputs = jmax (0, bus->getDefaultLayout().size());
 
         o.content.setOwned (new SettingsComponent (*this, deviceManager, maxNumInputs, maxNumOutputs));
+        
+        LookAndFeel_V4 *lfv4 = dynamic_cast<LookAndFeel_V4*>(&o.content->getLookAndFeel());
+        
+        if (lfv4) {
+            lfv4->setColour(ResizableWindow::backgroundColourId, Colour::fromHSV (0.0f, 0.0f, 0.1f, 1.0f));
+        }
+        
         o.content->setSize (500, 400);
 
         o.dialogTitle                   = TRANS("Audio/MIDI Settings");
@@ -407,7 +414,7 @@ private:
                            int maxAudioOutputChannels)
             : owner (pluginHolder),
               deviceSelector (deviceManagerToUse,
-                              0, maxAudioInputChannels,
+                              0, 0, // maxAudioInputChannels, // force zero to fully disable input selection
                               0, maxAudioOutputChannels,
                               true,
                               (pluginHolder.processor.get() != nullptr && pluginHolder.processor->producesMidi()),
@@ -428,6 +435,17 @@ private:
                 addAndMakeVisible (shouldMuteLabel);
 
                 shouldMuteLabel.attachToComponent (&shouldMuteButton, true);
+            }
+            
+            for (int i =0; i < deviceSelector.getNumChildComponents(); i ++){
+                
+                LookAndFeel_V4 *lfv4 = dynamic_cast<LookAndFeel_V4*>(&deviceSelector.getChildComponent(i) ->getLookAndFeel());
+                if (lfv4) {
+                    lfv4->setColour(ComboBox::ColourIds::backgroundColourId, Colour::fromHSV (0.0f, 0.0f, 0.2f, 1.0f));
+                    lfv4->setColour(ListBox::ColourIds::backgroundColourId, Colour::fromHSV (0.0f, 0.0f, 0.2f, 1.0f));
+                    lfv4->setColour(TextButton::ColourIds::buttonColourId, Colour::fromHSV (0.0f, 0.0f, 0.1f, 1.0f));
+
+                }
             }
         }
 
