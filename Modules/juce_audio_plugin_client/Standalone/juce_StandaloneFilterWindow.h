@@ -601,7 +601,7 @@ lfv4->getCurrentColourScheme().setUIColour (LookAndFeel_V4::ColourScheme::widget
         setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
         
        #if JUCE_MAC
-        setUsingNativeTitleBar(false);
+        setUsingNativeTitleBar(true);
         menu.addItem (1, TRANS("Audio/MIDI Settings..."));
         MenuBarModel::setMacMainMenu (this, &menu);
        #else
