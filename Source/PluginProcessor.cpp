@@ -89,6 +89,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
     }
     
     apvtState.state = ValueTree (JucePlugin_Name);
+    initMidi();
 }
 
 ObxdAudioProcessor::~ObxdAudioProcessor()
@@ -271,11 +272,19 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
             lastMovedController = midiMsg->getControllerNumber();
             if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
                 midiControlledParamSet = true;
-                bindings[lastMovedController] = lastUsedParameter;
+                //bindings[lastMovedController] = lastUsedParameter;
+                bindings.updateCC(lastMovedController, lastUsedParameter);
+                File midi_file = getDocumentFolder().getChildFile("Midi")
+                                             .getChildFile("Custom.xml");
+                bindings.saveFile(midi_file);
+                currentMidiPath = midi_file.getFullPathName();
+                
                 setEngineParameterValue (MIDILEARN, 0, true);
                 lastMovedController = 0;
                 lastUsedParameter = 0;
                 midiControlledParamSet = false;
+                
+                
             }
 
             if (bindings[lastMovedController] > 0)
@@ -373,7 +382,7 @@ void ObxdAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	xmlState.addChildElement(xprogs);
 
-    bindings.setXml(xmlState);
+    //bindings.setXml(xmlState);
 
 	copyXmlToBinary(xmlState, destData);
 }
@@ -430,7 +439,7 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 				}
 			}
 
-		bindings.getXml(*xmlState);
+		//bindings.getXml(*xmlState);
 #if ! DEMOVERSION
 		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
 
@@ -1183,4 +1192,28 @@ AudioProcessorValueTreeState& ObxdAudioProcessor::getPluginState()
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new ObxdAudioProcessor();
+}
+
+
+
+void ObxdAudioProcessor::initMidi(){
+    //Documents > Obxd > MIDI > Default.xml
+    File default_file = getDocumentFolder().getChildFile("Midi")
+                                             .getChildFile("Default.xml");
+    if (!default_file.exists()){
+        bindings.saveFile(default_file);
+    }
+    
+    File midi_custom_file = getDocumentFolder().getChildFile("Midi")
+                                                    .getChildFile("Custom.xml");
+   
+    if (midi_custom_file.exists()) {
+        if (bindings.loadFile(midi_custom_file)){
+            currentMidiPath = midi_custom_file.getFullPathName();
+        } else {
+            if (bindings.loadFile(default_file)){
+                currentMidiPath = default_file.getFullPathName();
+            }
+        }
+    }
 }

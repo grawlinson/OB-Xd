@@ -138,7 +138,7 @@ public:
 
 	//==============================================================================
     void initAllParams();
-    
+    void initMidi();
     const String getInputChannelName (int channelIndex) const override;  // WATCH OUT!
     const String getOutputChannelName (int channelIndex) const override;  // WATCH OUT!
     bool isInputChannelStereoPair (int index) const override;  // WATCH OUT!
@@ -234,7 +234,7 @@ public:
     File currentBankFile;
     void saveBank();
     
-    
+    String currentMidiPath;
     String currentPreset;
     File currentPresetFile;
     void savePreset();
