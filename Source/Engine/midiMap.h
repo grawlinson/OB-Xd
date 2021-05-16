@@ -316,4 +316,36 @@ public:
         }
     }
     
+    
+    bool loadFile(File& xml){
+        reset();
+        set_default();
+        if (xml.existsAsFile()){
+            XmlDocument xmlDoc (xml);
+            this->getXml(*xmlDoc.getDocumentElement());
+            return true;
+        }
+        
+        return false;
+    }
+    
+    void updateCC(int idx_para, int midiCC) {
+        for (int i =0; i < 255; i++) {
+            if (controllers[i] == midiCC){
+                controllers[i] = 0;
+            }
+        }
+        controllers[idx_para] = midiCC;
+    }
+    
+    void saveFile(File& xml){
+        XmlElement ele("Data");
+        this->setXml(ele);
+        ele.writeToFile(xml, String());
+    }
+    
+    void clean(){
+        reset();
+    }
+    
 };
