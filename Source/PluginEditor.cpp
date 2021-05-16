@@ -878,6 +878,64 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 
 }
 
+
+bool ObxdAudioProcessorEditor::isInterestedInFileDrag(const StringArray& files)
+{
+    StringArray extensions;
+    extensions.add(".fxp");
+    extensions.add(".fxb");
+
+    if (files.size() == 1) {
+        File file = File(files[0]);
+        String ext = file.getFileExtension().toLowerCase();
+        return file.existsAsFile() && extensions.contains(ext);
+    } else {
+        for (int q = 0; q < files.size(); q++) {
+            File file = File(files[q]);
+            String ext = file.getFileExtension().toLowerCase();
+            
+            if (ext == ".fxb" || ext == ".fxp") {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int y)
+{
+    if (files.size() == 1) {
+        File file = File(files[0]);
+        String ext = file.getFileExtension().toLowerCase();
+        
+        if (ext == ".fxp") {
+            processor.loadPreset(file);
+            createMenu();
+        } else if (ext == ".fxb") {
+            auto name = file.getFileName().replace("%20", " ");
+            auto result = processor.getBanksFolder().getChildFile(name);
+            
+            if (file.copyFileTo(result)){
+                processor.loadFromFXBFile(result);
+                processor.scanAndUpdateBanks();
+                createMenu();
+            }
+        } 
+    } else {
+        int i = processor.getCurrentProgram();
+
+        for (int q = 0; q < files.size(); q++) {
+            File file = File(files[q]);
+            String ext = file.getFileExtension().toLowerCase();
+            if (ext == ".fxp") {
+                processor.setCurrentProgram(i++);
+                processor.loadPreset(file);
+            }
+        }
+        processor.sendChangeMessage();
+        createMenu();
+    }
+}
 /*
 bool ObxdAudioProcessorEditor::keyPressed(const KeyPress & press) {
     if (press.getKeyCode() == '+' || press.getKeyCode() == KeyPress::numberPadAdd)

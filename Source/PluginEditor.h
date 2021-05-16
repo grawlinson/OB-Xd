@@ -55,12 +55,15 @@ class ObxdAudioProcessorEditor  : public AudioProcessorEditor
 //                                  , public ComboBox::Listener
                                 , public ApplicationCommandTarget
                                 , public Timer
+                                , public FileDragAndDropTarget
                                 
 {
 public:
     ObxdAudioProcessorEditor(ObxdAudioProcessor& ownerFilter);
     ~ObxdAudioProcessorEditor();
-    
+        
+    bool isInterestedInFileDrag(const StringArray& files) override;
+    void filesDropped(const StringArray& files, int x, int y) override;
     
 	void mouseUp (const MouseEvent& e) override;
 	void paint (Graphics& g) override;
