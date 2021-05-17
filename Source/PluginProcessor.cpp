@@ -533,12 +533,14 @@ bool ObxdAudioProcessor::saveFXPFile(const File& fxpFile){
         
         fxpFile.replaceWithData(memoryBlock.getData(), memoryBlock.getSize());
     }
+    return true;
 }
 
 bool ObxdAudioProcessor::savePreset(const File& fxpFile) {
     saveFXPFile(fxpFile);
     currentPreset = fxpFile.getFileName();
     currentPresetFile = fxpFile;
+    return true;
 }
 
 void ObxdAudioProcessor::changePresetName(const String &name){

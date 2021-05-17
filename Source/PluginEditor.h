@@ -72,7 +72,7 @@ public:
     String getCurrentProgramName(){
         return processor.getProgramName(processor.getCurrentProgram());
     }
-    void updatePresetBar();
+    void updatePresetBar(bool resize=true);
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;
     void buttonClicked (Button *) override;
