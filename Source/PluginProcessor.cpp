@@ -273,7 +273,7 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
             if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
                 midiControlledParamSet = true;
                 //bindings[lastMovedController] = lastUsedParameter;
-                bindings.updateCC(lastMovedController, lastUsedParameter);
+                bindings.updateCC(lastUsedParameter, lastMovedController);
                 File midi_file = getDocumentFolder().getChildFile("Midi")
                                              .getChildFile("Custom.xml");
                 bindings.saveFile(midi_file);
@@ -605,7 +605,7 @@ bool ObxdAudioProcessor::saveFXBFile(const File& fxbFile) {
     return true;
 }
 
-bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
+bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile, bool changeProgram)
 {
 	MemoryBlock mb;
 	if (! fxbFile.loadFileAsData(mb))
@@ -680,7 +680,8 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 			return false;
 
 		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
-        setCurrentProgram(0); // Set to first preset position
+        if (changeProgram)
+            setCurrentProgram(0); // Set to first preset position
 	}
 	else if (compareMagic (set->fxMagic, "FPCh"))
 	{

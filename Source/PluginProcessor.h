@@ -175,7 +175,7 @@ public:
     void newPreset(const String &name);
     void deletePreset();
     
-	bool loadFromFXBFile(const File& fxbFile);
+	bool loadFromFXBFile(const File& fxbFile, bool changeProgram=true);
     bool saveFXBFile(const File& fxbFile);
     bool saveFXPFile(const File& fxpFile);
     bool saveBank(const File& fxbFile);

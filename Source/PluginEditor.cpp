@@ -931,6 +931,9 @@ void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int
                 processor.setCurrentProgram(i++);
                 processor.loadPreset(file);
             }
+            if (i >=processor.getNumPrograms()){
+                i = 0;
+            }
         }
         processor.sendChangeMessage();
         createMenu();
