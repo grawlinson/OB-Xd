@@ -435,6 +435,7 @@ void ObxdAudioProcessorEditor::createMenu ()
     PopupMenu skinMenu;
     PopupMenu fileMenu;
     PopupMenu viewMenu;
+    PopupMenu midiMenu;
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
     {
@@ -534,7 +535,55 @@ void ObxdAudioProcessorEditor::createMenu ()
     }
     viewMenu.addItem(progStart + 1000, "Preset Bar", true, processor.showPresetBar);
     menu->addSubMenu ("View", viewMenu);
+    menuMidiNum = progStart +2000;
+    createMidi(menuMidiNum, midiMenu);
+    menu->addSubMenu ("MIDI", midiMenu);
     popupMenus.add (menu);
+}
+
+void ObxdAudioProcessorEditor::createMidi(int menuNo, PopupMenu &menuMidi) {
+    File midi_dir = processor.getMidiFolder();
+    File default_file = midi_dir.getChildFile("Default.xml");
+    if(default_file.exists()){
+        if (processor.currentMidiPath != default_file.getFullPathName()){
+            menuMidi.addItem(menuNo++, default_file.getFileNameWithoutExtension(), true, false);
+        } else {
+            menuMidi.addItem(menuNo++, default_file.getFileNameWithoutExtension(), true, true);
+        }
+        midiFiles.add(default_file.getFullPathName());
+    }
+    
+    File custom_file = midi_dir.getChildFile("Custom.xml");
+    
+    if(custom_file.exists()){
+         if (processor.currentMidiPath != custom_file.getFullPathName()){
+             menuMidi.addItem(menuNo++, custom_file.getFileNameWithoutExtension(), true, false);
+         } else {
+             menuMidi.addItem(menuNo++, custom_file.getFileNameWithoutExtension(), true, true);
+         }
+        midiFiles.add(custom_file.getFullPathName());
+    }
+    
+    DirectoryIterator iter (midi_dir, true, "*.xml");
+    StringArray list;
+    while (iter.next())
+    {
+        list.add(iter.getFile().getFullPathName());
+    }
+    
+    list.sort(true);
+    
+    for (int i =0; i < list.size() ; i ++){
+        File f (list[i]);
+        if (f.getFileNameWithoutExtension() != "Default" && f.getFileNameWithoutExtension() != "Custom" && f.getFileNameWithoutExtension() != "Config") {
+            if (processor.currentMidiPath != f.getFullPathName()){
+                menuMidi.addItem(menuNo++, f.getFileNameWithoutExtension(), true, false);
+            } else {
+                menuMidi.addItem(menuNo++, f.getFileNameWithoutExtension(), true, true);
+            }
+            midiFiles.add(f.getFullPathName());
+        }
+    }
 }
 
 void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
@@ -578,6 +627,19 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         processor.setShowPresetBar(!processor.getShowPresetBar());
         createMenu();
         updatePresetBar();
+    }
+    else if (result >= menuMidiNum){
+        unsigned int selected_idx = result - menuMidiNum;
+        if (selected_idx >= 0 && selected_idx < midiFiles.size()){
+            File f(midiFiles[selected_idx]);
+            if (f.exists()) {
+                processor.currentMidiPath = midiFiles[selected_idx];
+                processor.bindings.loadFile(f);
+                processor.updateConfig();
+                
+                createMenu();
+            }
+        }
     }
 }
 

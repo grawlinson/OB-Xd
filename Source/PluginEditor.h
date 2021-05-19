@@ -167,6 +167,7 @@ private:
 	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, Image img);
     void addMenuButton (int x, int y, int d, const Image&);
     void createMenu ();
+    void createMidi(int, PopupMenu &);
     void resultFromMenu (const Point<int>);
     void clean();
     
@@ -275,6 +276,8 @@ private:
     ApplicationCommandManager commandManager;
     int countTimer =0;
     bool needNotifytoHost = false;
+    Array<String> midiFiles;
+    int menuMidiNum;
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED

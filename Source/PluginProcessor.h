@@ -175,7 +175,7 @@ public:
     void newPreset(const String &name);
     void deletePreset();
     
-	bool loadFromFXBFile(const File& fxbFile, bool changeProgram=true);
+	bool loadFromFXBFile(const File& fxbFile);
     bool saveFXBFile(const File& fxbFile);
     bool saveFXPFile(const File& fxpFile);
     bool saveBank(const File& fxbFile);
@@ -191,6 +191,7 @@ public:
 	File getSkinFolder() const;
     File getPresetsFolder() const;
 	File getBanksFolder() const;
+    File getMidiFolder() const;
     
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
@@ -219,7 +220,7 @@ private:
 
 	MidiMessage* nextMidi;
 	MidiMessage* midiMsg;
-	MidiMap bindings;
+	
 	bool midiControlledParamSet;
 
 	bool hasMidiMessage;
@@ -238,8 +239,10 @@ public:
     String currentPreset;
     File currentPresetFile;
     void savePreset();
-    
+    MidiMap bindings;
     bool showPresetBar = false;
+    
+    void updateConfig();
 private:
 	Array<File> bankFiles;
     Array<File> skinFiles;

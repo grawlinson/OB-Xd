@@ -274,8 +274,7 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
                 midiControlledParamSet = true;
                 //bindings[lastMovedController] = lastUsedParameter;
                 bindings.updateCC(lastUsedParameter, lastMovedController);
-                File midi_file = getDocumentFolder().getChildFile("Midi")
-                                             .getChildFile("Custom.xml");
+                File midi_file = getMidiFolder().getChildFile("Custom.xml");
                 bindings.saveFile(midi_file);
                 currentMidiPath = midi_file.getFullPathName();
                 
@@ -791,6 +790,12 @@ File ObxdAudioProcessor::getBanksFolder() const
 	return getDocumentFolder().getChildFile("Banks");
 }
 
+File ObxdAudioProcessor::getMidiFolder() const
+{
+    return getDocumentFolder().getChildFile("Midi");
+}
+
+
 File ObxdAudioProcessor::getPresetsFolder() const
 {
     return getDocumentFolder().getChildFile("Presets");
@@ -1201,22 +1206,37 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 void ObxdAudioProcessor::initMidi(){
     //Documents > Obxd > MIDI > Default.xml
-    File default_file = getDocumentFolder().getChildFile("Midi")
-                                             .getChildFile("Default.xml");
+    File default_file = getMidiFolder().getChildFile("Default.xml");
     if (!default_file.exists()){
         bindings.saveFile(default_file);
     }
     
-    File midi_custom_file = getDocumentFolder().getChildFile("Midi")
-                                                    .getChildFile("Custom.xml");
-   
-    if (midi_custom_file.exists()) {
-        if (bindings.loadFile(midi_custom_file)){
-            currentMidiPath = midi_custom_file.getFullPathName();
+    File midi_config_file = getMidiFolder().getChildFile("Config.xml");
+    XmlDocument xmlDoc (midi_config_file);
+    std::unique_ptr<XmlElement> ele_file = xmlDoc.getDocumentElementIfTagMatches("File");
+
+    if (ele_file) {
+        String file_name = ele_file->getStringAttribute("name");
+        // Midi cc loading
+        File midi_file = getMidiFolder().getChildFile(file_name);
+        if (bindings.loadFile(midi_file)){
+            currentMidiPath = midi_file.getFullPathName();
         } else {
-            if (bindings.loadFile(default_file)){
-                currentMidiPath = default_file.getFullPathName();
+            File midi_file = getMidiFolder().getChildFile("Default.xml");
+            if (bindings.loadFile(midi_file)){
+                currentMidiPath = midi_file.getFullPathName();
             }
         }
+    }
+}
+
+void ObxdAudioProcessor::updateConfig(){
+    File midi_config_file = getMidiFolder().getChildFile("Config.xml");
+    XmlDocument xmlDoc (midi_config_file);
+    std::unique_ptr<XmlElement> ele_file = xmlDoc.getDocumentElementIfTagMatches("File");
+    if (ele_file) {
+        File f(currentMidiPath);
+        ele_file->setAttribute("name", f.getFileName());
+        ele_file->writeTo(midi_config_file.getFullPathName());
     }
 }
