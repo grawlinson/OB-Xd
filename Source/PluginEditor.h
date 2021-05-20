@@ -89,6 +89,12 @@ public:
             needNotifytoHost= false;
             processor.updateHostDisplay();
         }
+
+        countTimerForLed++;
+        if (midiUnlearnButton && midiUnlearnButton->getToggleState() && countTimerForLed > 3) {
+            midiUnlearnButton->setToggleState(false, NotificationType::sendNotification);
+            countTimerForLed = 0;
+        }
     }
     ApplicationCommandTarget* getNextCommandTarget() override {
         return nullptr;
@@ -276,8 +282,11 @@ private:
     ApplicationCommandManager commandManager;
     int countTimer =0;
     bool needNotifytoHost = false;
+
     Array<String> midiFiles;
     int menuMidiNum;
+    int countTimerForLed = 0;
+
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED

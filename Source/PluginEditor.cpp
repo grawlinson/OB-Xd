@@ -877,6 +877,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
     auto toggleButton = dynamic_cast<TooglableButton*> (b);
     if (toggleButton == midiUnlearnButton){
         if (midiUnlearnButton->getToggleState()){
+            countTimerForLed = 0;
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
             processor.sendChangeMessage();
@@ -904,9 +905,10 @@ void ObxdAudioProcessorEditor::updateFromHost() {
     }
     
     // Set to unlearn to false
-    if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
-        midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
-    }
+    //if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
+    //    Thread::sleep(500);
+    //    midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
+    //}
     
     repaint();
 }
