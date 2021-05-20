@@ -588,6 +588,7 @@ void ObxdAudioProcessorEditor::createMidi(int menuNo, PopupMenu &menuMidi) {
 
 void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
 {
+    createMenu();
     int result = popupMenus[0]->showAt (Rectangle<int> (pos.getX(), pos.getY(), 1, 1));
     
     if (result >= (skinStart + 1) && result <= (skinStart + skins.size()))
@@ -625,7 +626,7 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     }
     else if (result == progStart + 1000){
         processor.setShowPresetBar(!processor.getShowPresetBar());
-        createMenu();
+        //createMenu();
         updatePresetBar();
     }
     else if (result >= menuMidiNum){
@@ -637,7 +638,7 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
                 processor.bindings.loadFile(f);
                 processor.updateConfig();
                 
-                createMenu();
+                //createMenu();
             }
         }
     }
@@ -677,7 +678,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
             if (result == file || result.copyFileTo(file)){
                 processor.loadFromFXBFile(file);
                 processor.scanAndUpdateBanks();
-                createMenu();
+                //createMenu();
             }
         }
     };
@@ -733,7 +734,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
                 if (name.isNotEmpty())
                 {
                     processor.newPreset(name);
-                    createMenu();
+                    //createMenu();
                 }
             }
 
@@ -762,7 +763,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
                 if (name.isNotEmpty())
                 {
                     processor.changePresetName(name);
-                    createMenu();
+                    //createMenu();
                 }
             }
 
@@ -780,7 +781,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
     {
         if(NativeMessageBox::showOkCancelBox(AlertWindow::NoIcon, "Delete Preset", "Delete current preset " + processor.currentPreset + "?")){
             processor.deletePreset();
-            createMenu();
+            //createMenu();
         }
         return;
     }
@@ -798,7 +799,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
             DBG("Import Preset: " << result.getFileName());
             //if (result == file || result.copyFileTo(file)){
                 processor.loadPreset(result);
-                createMenu();
+                //createMenu();
             //}
         }
     };
@@ -992,7 +993,7 @@ void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int
         
         if (ext == ".fxp") {
             processor.loadPreset(file);
-            createMenu();
+            //createMenu();
         } else if (ext == ".fxb") {
             auto name = file.getFileName().replace("%20", " ");
             auto result = processor.getBanksFolder().getChildFile(name);
@@ -1000,7 +1001,7 @@ void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int
             if (file.copyFileTo(result)){
                 processor.loadFromFXBFile(result);
                 processor.scanAndUpdateBanks();
-                createMenu();
+                //createMenu();
             }
         } 
     } else {
@@ -1018,7 +1019,7 @@ void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int
             }
         }
         processor.sendChangeMessage();
-        createMenu();
+        //createMenu();
     }
 }
 /*

@@ -606,7 +606,7 @@ bool ObxdAudioProcessor::saveFXBFile(const File& fxbFile) {
     return true;
 }
 
-bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile, bool changeProgram)
+bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 {
 	MemoryBlock mb;
 	if (! fxbFile.loadFileAsData(mb))
@@ -681,8 +681,7 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile, bool changeProgram
 			return false;
 
 		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
-        if (changeProgram)
-            setCurrentProgram(0); // Set to first preset position
+        setCurrentProgram(0); // Set to first preset position
 	}
 	else if (compareMagic (set->fxMagic, "FPCh"))
 	{
