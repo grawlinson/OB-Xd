@@ -18,7 +18,7 @@
 #include "Gui/TooglableButton.h"
 #include "Gui/ButtonList.h"
 #include "Components/SetPresetNameWindow.h"
-
+#include "Components/PresetBar.h"
 enum KeyPressCommandIDs
 {
     buttonNextProgram = 1,
@@ -55,24 +55,46 @@ class ObxdAudioProcessorEditor  : public AudioProcessorEditor
 //                                  , public ComboBox::Listener
                                 , public ApplicationCommandTarget
                                 , public Timer
+                                , public FileDragAndDropTarget
                                 
 {
 public:
     ObxdAudioProcessorEditor(ObxdAudioProcessor& ownerFilter);
     ~ObxdAudioProcessorEditor();
-    
+        
+    bool isInterestedInFileDrag(const StringArray& files) override;
+    void filesDropped(const StringArray& files, int x, int y) override;
     
 	void mouseUp (const MouseEvent& e) override;
 	void paint (Graphics& g) override;
     
     void updateFromHost();
-    
+    String getCurrentProgramName(){
+        return processor.getProgramName(processor.getCurrentProgram());
+    }
+    void updatePresetBar(bool resize=true);
 	//==============================================================================
 	void changeListenerCallback (ChangeBroadcaster* source) override;
     void buttonClicked (Button *) override;
     //bool keyPressed(const KeyPress & press) override;
     void timerCallback() override {
+#if JUCE_WINDOWS || JUCE_LINUX
+    // No run timer to grab component on  window
+#else
         this->grabKeyboardFocus();
+#endif
+        countTimer ++;
+        if (countTimer == 4 && needNotifytoHost){
+            countTimer = 0;
+            needNotifytoHost= false;
+            processor.updateHostDisplay();
+        }
+
+        countTimerForLed++;
+        if (midiUnlearnButton && midiUnlearnButton->getToggleState() && countTimerForLed > 3) {
+            midiUnlearnButton->setToggleState(false, NotificationType::sendNotification);
+            countTimerForLed = 0;
+        }
     }
     ApplicationCommandTarget* getNextCommandTarget() override {
         return nullptr;
@@ -151,9 +173,11 @@ private:
 	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, Image img);
     void addMenuButton (int x, int y, int d, const Image&);
     void createMenu ();
+    void createMidi(int, PopupMenu &);
     void resultFromMenu (const Point<int>);
     void clean();
     
+
 	void rebuildComponents (ObxdAudioProcessor&);
     void loadSkin(ObxdAudioProcessor&);
 	//==============================================================================
@@ -248,12 +272,21 @@ private:
     int progStart;
     int bankStart;
     int skinStart;
+    
     Array<File> skins;
     Array<File> banks;
     std::unique_ptr<SetPresetNameWindow> setPresetNameWindow;
+    std::unique_ptr<PresetBar> presetBar;
     std::unique_ptr<FileChooser> fileChooser;
     // Command manager
     ApplicationCommandManager commandManager;
+    int countTimer =0;
+    bool needNotifytoHost = false;
+
+    Array<String> midiFiles;
+    int menuMidiNum;
+    int countTimerForLed = 0;
+
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED

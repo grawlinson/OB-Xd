@@ -70,7 +70,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	options.millisecondsBeforeSaving = 2500;
 	options.processLock = &configLock;
 	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
-
+    showPresetBar = config->getBoolValue("presetnavigation");
 	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
 	currentBank = "000 - FMR OB-Xa Patch Book";
 
@@ -89,10 +89,12 @@ ObxdAudioProcessor::ObxdAudioProcessor()
     }
     
     apvtState.state = ValueTree (JucePlugin_Name);
+    initMidi();
 }
 
 ObxdAudioProcessor::~ObxdAudioProcessor()
 {
+    
 	config->saveIfNeeded();
 	config = nullptr;
 }
@@ -164,6 +166,23 @@ int ObxdAudioProcessor::getNumPrograms()
 int ObxdAudioProcessor::getCurrentProgram()
 {
 	return programs.currentProgram;
+}
+
+void ObxdAudioProcessor::setCurrentProgram (int index, bool updateHost){
+    programs.currentProgram = index;
+    programs.currentProgramPtr = programs.programs + programs.currentProgram;
+    isHostAutomatedChange = false;
+    
+    for (int i = 0; i < PARAM_COUNT; ++i)
+        setEngineParameterValue (i, programs.currentProgramPtr->values[i], true);
+    
+    isHostAutomatedChange = true;
+    
+    sendChangeMessage();
+    // Will delay
+    if (updateHost) {
+        updateHostDisplay();
+    }
 }
 
 void ObxdAudioProcessor::setCurrentProgram (int index)
@@ -253,11 +272,18 @@ inline void ObxdAudioProcessor::processMidiPerSample (MidiBuffer::Iterator* iter
             lastMovedController = midiMsg->getControllerNumber();
             if (programs.currentProgramPtr->values[MIDILEARN] > 0.5f){
                 midiControlledParamSet = true;
-                bindings[lastMovedController] = lastUsedParameter;
+                //bindings[lastMovedController] = lastUsedParameter;
+                bindings.updateCC(lastUsedParameter, lastMovedController);
+                File midi_file = getMidiFolder().getChildFile("Custom.xml");
+                bindings.saveFile(midi_file);
+                currentMidiPath = midi_file.getFullPathName();
+                
                 setEngineParameterValue (MIDILEARN, 0, true);
                 lastMovedController = 0;
                 lastUsedParameter = 0;
                 midiControlledParamSet = false;
+                
+                
             }
 
             if (bindings[lastMovedController] > 0)
@@ -355,7 +381,7 @@ void ObxdAudioProcessor::getStateInformation(MemoryBlock& destData)
 
 	xmlState.addChildElement(xprogs);
 
-    bindings.setXml(xmlState);
+    //bindings.setXml(xmlState);
 
 	copyXmlToBinary(xmlState, destData);
 }
@@ -412,7 +438,7 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 				}
 			}
 
-		bindings.getXml(*xmlState);
+		//bindings.getXml(*xmlState);
 #if ! DEMOVERSION
 		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
 
@@ -506,12 +532,14 @@ bool ObxdAudioProcessor::saveFXPFile(const File& fxpFile){
         
         fxpFile.replaceWithData(memoryBlock.getData(), memoryBlock.getSize());
     }
+    return true;
 }
 
 bool ObxdAudioProcessor::savePreset(const File& fxpFile) {
     saveFXPFile(fxpFile);
     currentPreset = fxpFile.getFileName();
     currentPresetFile = fxpFile;
+    return true;
 }
 
 void ObxdAudioProcessor::changePresetName(const String &name){
@@ -653,6 +681,7 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 			return false;
 
 		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
+        setCurrentProgram(0); // Set to first preset position
 	}
 	else if (compareMagic (set->fxMagic, "FPCh"))
 	{
@@ -759,6 +788,12 @@ File ObxdAudioProcessor::getBanksFolder() const
 {
 	return getDocumentFolder().getChildFile("Banks");
 }
+
+File ObxdAudioProcessor::getMidiFolder() const
+{
+    return getDocumentFolder().getChildFile("Midi");
+}
+
 
 File ObxdAudioProcessor::getPresetsFolder() const
 {
@@ -1164,4 +1199,43 @@ AudioProcessorValueTreeState& ObxdAudioProcessor::getPluginState()
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new ObxdAudioProcessor();
+}
+
+
+
+void ObxdAudioProcessor::initMidi(){
+    //Documents > Obxd > MIDI > Default.xml
+    File default_file = getMidiFolder().getChildFile("Default.xml");
+    if (!default_file.exists()){
+        bindings.saveFile(default_file);
+    }
+    
+    File midi_config_file = getMidiFolder().getChildFile("Config.xml");
+    XmlDocument xmlDoc (midi_config_file);
+    std::unique_ptr<XmlElement> ele_file = xmlDoc.getDocumentElementIfTagMatches("File");
+
+    if (ele_file) {
+        String file_name = ele_file->getStringAttribute("name");
+        // Midi cc loading
+        File midi_file = getMidiFolder().getChildFile(file_name);
+        if (bindings.loadFile(midi_file)){
+            currentMidiPath = midi_file.getFullPathName();
+        } else {
+            File midi_file = getMidiFolder().getChildFile("Default.xml");
+            if (bindings.loadFile(midi_file)){
+                currentMidiPath = midi_file.getFullPathName();
+            }
+        }
+    }
+}
+
+void ObxdAudioProcessor::updateConfig(){
+    File midi_config_file = getMidiFolder().getChildFile("Config.xml");
+    XmlDocument xmlDoc (midi_config_file);
+    std::unique_ptr<XmlElement> ele_file = xmlDoc.getDocumentElementIfTagMatches("File");
+    if (ele_file) {
+        File f(currentMidiPath);
+        ele_file->setAttribute("name", f.getFileName());
+        ele_file->writeTo(midi_config_file.getFullPathName());
+    }
 }

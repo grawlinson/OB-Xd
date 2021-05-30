@@ -138,7 +138,7 @@ public:
 
 	//==============================================================================
     void initAllParams();
-    
+    void initMidi();
     const String getInputChannelName (int channelIndex) const override;  // WATCH OUT!
     const String getOutputChannelName (int channelIndex) const override;  // WATCH OUT!
     bool isInputChannelStereoPair (int index) const override;  // WATCH OUT!
@@ -153,6 +153,7 @@ public:
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
+    void setCurrentProgram (int index, bool updateHost);
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 
@@ -190,6 +191,7 @@ public:
 	File getSkinFolder() const;
     File getPresetsFolder() const;
 	File getBanksFolder() const;
+    File getMidiFolder() const;
     
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
@@ -200,7 +202,15 @@ public:
     void setEngineParameterValue (int, float, bool notifyToHost= false);
     void parameterChanged (const String&, float) override;
     AudioProcessorValueTreeState& getPluginState();
-
+    
+    bool getShowPresetBar(){
+        return this->showPresetBar;
+    }
+    
+    void setShowPresetBar(bool val){
+        this->showPresetBar = val;
+        config->setValue("presetnavigation", this->showPresetBar);
+    }
 private:
 	//==============================================================================
 	bool isHostAutomatedChange;
@@ -210,7 +220,7 @@ private:
 
 	MidiMessage* nextMidi;
 	MidiMessage* midiMsg;
-	MidiMap bindings;
+	
 	bool midiControlledParamSet;
 
 	bool hasMidiMessage;
@@ -225,10 +235,14 @@ public:
     File currentBankFile;
     void saveBank();
     
-    
+    String currentMidiPath;
     String currentPreset;
     File currentPresetFile;
     void savePreset();
+    MidiMap bindings;
+    bool showPresetBar = false;
+    
+    void updateConfig();
 private:
 	Array<File> bankFiles;
     Array<File> skinFiles;

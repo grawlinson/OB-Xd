@@ -45,12 +45,14 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
     
     //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
-#if JUCE_WINDOWS
-	// No run timer to grab component on  window
-#else
+
 	startTimer(100); // This will fix the issue
-#endif
+
+    
+    DBG("W: " <<getWidth() << " H:" << getHeight());
+
     loadSkin (processor);
+    
     repaint();
     
     updateFromHost();
@@ -103,9 +105,9 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         setSize (1440, 450);
     }
     else {
-        
+        int xScreen = getWidth(), yScreen = getHeight();
         if (doc->getTagName() == "PROPERTIES"){
-            
+           
             forEachXmlChildElementWithTagName(*doc, child, "VALUE"){
                 if (child->hasAttribute("NAME") && child->hasAttribute("x") && child->hasAttribute("y")) {
                     String name = child->getStringAttribute("NAME");
@@ -115,7 +117,17 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     int w = child->getIntAttribute("w");
                     int h = child->getIntAttribute("h");
                     
-                    if (name == "guisize"){ setSize (x, y); }
+                    if (name == "guisize"){ 
+                        xScreen = x;
+                        yScreen = y;
+                        if (processor.getShowPresetBar()) {
+                            setSize(xScreen, yScreen +40);
+                        }
+                        else {
+                            setSize(xScreen, yScreen);
+                        }
+                        
+                    }
 
                     if (name == "resonanceKnob"){ resonanceKnob = addKnob (x, y, d, ownerFilter, RESONANCE, "Resonance", 0); }
                     if (name == "cutoffKnob"){ cutoffKnob = addKnob (x, y, d, ownerFilter, CUTOFF, "Cutoff", 0.4); }
@@ -239,6 +251,17 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                 }
             }
         }
+
+
+        presetBar.reset(new PresetBar(*this));
+        addAndMakeVisible(*presetBar);
+        presetBar->setVisible(processor.getShowPresetBar());
+
+
+        presetBar->setBounds(
+            (xScreen - presetBar->getWidth()) / 2, yScreen, presetBar->getWidth(), presetBar->getHeight());
+
+        updatePresetBar(false);
     }
     
     // Prepare data
@@ -264,7 +287,10 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
     }
     
     createMenu();
+
     ownerFilter.addChangeListener (this);
+
+   
     repaint();
 }
 ObxdAudioProcessorEditor::~ObxdAudioProcessorEditor()
@@ -408,6 +434,8 @@ void ObxdAudioProcessorEditor::createMenu ()
     PopupMenu bankMenu;
     PopupMenu skinMenu;
     PopupMenu fileMenu;
+    PopupMenu viewMenu;
+    PopupMenu midiMenu;
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
     {
@@ -505,12 +533,62 @@ void ObxdAudioProcessorEditor::createMenu ()
         menu->addSubMenu ("Themes", skinMenu);
         // About // menu.addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
     }
-    
+    viewMenu.addItem(progStart + 1000, "Preset Bar", true, processor.showPresetBar);
+    menu->addSubMenu ("View", viewMenu);
+    menuMidiNum = progStart +2000;
+    createMidi(menuMidiNum, midiMenu);
+    menu->addSubMenu ("MIDI", midiMenu);
     popupMenus.add (menu);
+}
+
+void ObxdAudioProcessorEditor::createMidi(int menuNo, PopupMenu &menuMidi) {
+    File midi_dir = processor.getMidiFolder();
+    File default_file = midi_dir.getChildFile("Default.xml");
+    if(default_file.exists()){
+        if (processor.currentMidiPath != default_file.getFullPathName()){
+            menuMidi.addItem(menuNo++, default_file.getFileNameWithoutExtension(), true, false);
+        } else {
+            menuMidi.addItem(menuNo++, default_file.getFileNameWithoutExtension(), true, true);
+        }
+        midiFiles.add(default_file.getFullPathName());
+    }
+    
+    File custom_file = midi_dir.getChildFile("Custom.xml");
+    
+    if(custom_file.exists()){
+         if (processor.currentMidiPath != custom_file.getFullPathName()){
+             menuMidi.addItem(menuNo++, custom_file.getFileNameWithoutExtension(), true, false);
+         } else {
+             menuMidi.addItem(menuNo++, custom_file.getFileNameWithoutExtension(), true, true);
+         }
+        midiFiles.add(custom_file.getFullPathName());
+    }
+    
+    DirectoryIterator iter (midi_dir, true, "*.xml");
+    StringArray list;
+    while (iter.next())
+    {
+        list.add(iter.getFile().getFullPathName());
+    }
+    
+    list.sort(true);
+    
+    for (int i =0; i < list.size() ; i ++){
+        File f (list[i]);
+        if (f.getFileNameWithoutExtension() != "Default" && f.getFileNameWithoutExtension() != "Custom" && f.getFileNameWithoutExtension() != "Config") {
+            if (processor.currentMidiPath != f.getFullPathName()){
+                menuMidi.addItem(menuNo++, f.getFileNameWithoutExtension(), true, false);
+            } else {
+                menuMidi.addItem(menuNo++, f.getFileNameWithoutExtension(), true, true);
+            }
+            midiFiles.add(f.getFullPathName());
+        }
+    }
 }
 
 void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
 {
+    createMenu();
     int result = popupMenus[0]->showAt (Rectangle<int> (pos.getX(), pos.getY(), 1, 1));
     
     if (result >= (skinStart + 1) && result <= (skinStart + skins.size()))
@@ -546,6 +624,43 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     else if (result < progStart){
         MenuActionCallback(result);
     }
+    else if (result == progStart + 1000){
+        processor.setShowPresetBar(!processor.getShowPresetBar());
+        //createMenu();
+        updatePresetBar();
+    }
+    else if (result >= menuMidiNum){
+        unsigned int selected_idx = result - menuMidiNum;
+        if (selected_idx >= 0 && selected_idx < midiFiles.size()){
+            File f(midiFiles[selected_idx]);
+            if (f.exists()) {
+                processor.currentMidiPath = midiFiles[selected_idx];
+                processor.bindings.loadFile(f);
+                processor.updateConfig();
+                
+                //createMenu();
+            }
+        }
+    }
+}
+
+void ObxdAudioProcessorEditor::updatePresetBar(bool resize){
+    DBG(" H: " << getHeight() <<" W:" <<getWidth() << " CW:"<<presetBar->getWidth() << " CH" <<presetBar->getHeight() << " CX:" <<presetBar->getX()  << " CY: " <<presetBar->getY());
+    
+    if (processor.getShowPresetBar()) {
+        if (resize) {
+            this->setSize(this->getWidth(), this->getHeight() + 40);
+        }
+        presetBar->setVisible(true);
+    }
+    else if (presetBar->isVisible()) {
+        if (resize) {
+            this->setSize(this->getWidth(), this->getHeight() - 40);
+        }
+        presetBar->setVisible(false);
+    }
+    presetBar->update();
+    
 }
 
 void ObxdAudioProcessorEditor::MenuActionCallback(int action){
@@ -563,7 +678,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
             if (result == file || result.copyFileTo(file)){
                 processor.loadFromFXBFile(file);
                 processor.scanAndUpdateBanks();
-                createMenu();
+                //createMenu();
             }
         }
     };
@@ -619,7 +734,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
                 if (name.isNotEmpty())
                 {
                     processor.newPreset(name);
-                    createMenu();
+                    //createMenu();
                 }
             }
 
@@ -648,7 +763,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
                 if (name.isNotEmpty())
                 {
                     processor.changePresetName(name);
-                    createMenu();
+                    //createMenu();
                 }
             }
 
@@ -666,7 +781,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
     {
         if(NativeMessageBox::showOkCancelBox(AlertWindow::NoIcon, "Delete Preset", "Delete current preset " + processor.currentPreset + "?")){
             processor.deletePreset();
-            createMenu();
+            //createMenu();
         }
         return;
     }
@@ -684,7 +799,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
             DBG("Import Preset: " << result.getFileName());
             //if (result == file || result.copyFileTo(file)){
                 processor.loadPreset(result);
-                createMenu();
+                //createMenu();
             //}
         }
     };
@@ -722,7 +837,11 @@ void ObxdAudioProcessorEditor::nextProgram() {
     if (cur == processor.getNumPrograms()) {
         cur = 0;
     }
-    processor.setCurrentProgram (cur);
+    processor.setCurrentProgram (cur, false);
+    
+    needNotifytoHost = true;
+    countTimer = 0;
+    
     clean();
     loadSkin (processor);
 }
@@ -731,7 +850,11 @@ void ObxdAudioProcessorEditor::prevProgram() {
     if (cur < 0) {
         cur = processor.getNumPrograms() - 1;
     }
-    processor.setCurrentProgram (cur);
+    processor.setCurrentProgram (cur, false);
+    
+    needNotifytoHost = true;
+    countTimer = 0;
+    
     clean();
     loadSkin (processor);
 }
@@ -754,6 +877,7 @@ void ObxdAudioProcessorEditor::buttonClicked (Button* b)
     auto toggleButton = dynamic_cast<TooglableButton*> (b);
     if (toggleButton == midiUnlearnButton){
         if (midiUnlearnButton->getToggleState()){
+            countTimerForLed = 0;
             processor.getMidiMap().reset();
             processor.getMidiMap().set_default();
             processor.sendChangeMessage();
@@ -781,9 +905,10 @@ void ObxdAudioProcessorEditor::updateFromHost() {
     }
     
     // Set to unlearn to false
-    if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
-        midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
-    }
+    //if ( midiUnlearnButton && midiUnlearnButton->getToggleState()) {
+    //    Thread::sleep(500);
+    //    midiUnlearnButton->setToggleState(false, NotificationType:: sendNotification);
+    //}
     
     repaint();
 }
@@ -838,6 +963,67 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 
 }
 
+
+bool ObxdAudioProcessorEditor::isInterestedInFileDrag(const StringArray& files)
+{
+    StringArray extensions;
+    extensions.add(".fxp");
+    extensions.add(".fxb");
+
+    if (files.size() == 1) {
+        File file = File(files[0]);
+        String ext = file.getFileExtension().toLowerCase();
+        return file.existsAsFile() && extensions.contains(ext);
+    } else {
+        for (int q = 0; q < files.size(); q++) {
+            File file = File(files[q]);
+            String ext = file.getFileExtension().toLowerCase();
+            
+            if (ext == ".fxb" || ext == ".fxp") {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int y)
+{
+    if (files.size() == 1) {
+        File file = File(files[0]);
+        String ext = file.getFileExtension().toLowerCase();
+        
+        if (ext == ".fxp") {
+            processor.loadPreset(file);
+            //createMenu();
+        } else if (ext == ".fxb") {
+            auto name = file.getFileName().replace("%20", " ");
+            auto result = processor.getBanksFolder().getChildFile(name);
+            
+            if (file.copyFileTo(result)){
+                processor.loadFromFXBFile(result);
+                processor.scanAndUpdateBanks();
+                //createMenu();
+            }
+        } 
+    } else {
+        int i = processor.getCurrentProgram();
+
+        for (int q = 0; q < files.size(); q++) {
+            File file = File(files[q]);
+            String ext = file.getFileExtension().toLowerCase();
+            if (ext == ".fxp") {
+                processor.setCurrentProgram(i++);
+                processor.loadPreset(file);
+            }
+            if (i >=processor.getNumPrograms()){
+                i = 0;
+            }
+        }
+        processor.sendChangeMessage();
+        //createMenu();
+    }
+}
 /*
 bool ObxdAudioProcessorEditor::keyPressed(const KeyPress & press) {
     if (press.getKeyCode() == '+' || press.getKeyCode() == KeyPress::numberPadAdd)
