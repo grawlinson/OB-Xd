@@ -19,6 +19,7 @@
 #include "Gui/ButtonList.h"
 #include "Components/SetPresetNameWindow.h"
 #include "Components/PresetBar.h"
+#include "Components/ScaleComponent.h"
 enum KeyPressCommandIDs
 {
     buttonNextProgram = 1,
@@ -49,6 +50,7 @@ enum MenuAction
 */
 class ObxdAudioProcessorEditor  : public AudioProcessorEditor
 //                                  , public AudioProcessorListener
+                                , public AsyncUpdater
                                 , public ChangeListener
 //                                  , public Slider::Listener
                                 , public Button::Listener
@@ -56,6 +58,7 @@ class ObxdAudioProcessorEditor  : public AudioProcessorEditor
                                 , public ApplicationCommandTarget
                                 , public Timer
                                 , public FileDragAndDropTarget
+                                , public ScalableComponent
                                 
 {
 public:
@@ -65,10 +68,13 @@ public:
     bool isInterestedInFileDrag(const StringArray& files) override;
     void filesDropped(const StringArray& files, int x, int y) override;
     
+    void scaleFactorChanged() override;
+    
 	void mouseUp (const MouseEvent& e) override;
 	void paint (Graphics& g) override;
     
     void updateFromHost();
+    void handleAsyncUpdate() override;
     String getCurrentProgramName(){
         return processor.getProgramName(processor.getCurrentProgram());
     }
@@ -166,12 +172,18 @@ public:
     void deleteBank();
     
     void resized() override;
+    
+    bool isHighResolutionDisplay() const
+    {
+        return processor.physicalPixelScaleFactor > 1.0;
+    }
 private:
+    Rectangle<int> transformBounds(int x, int y, int w, int h);
 	Knob* addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String name, float defval);
 	void placeLabel (int x, int y, String text);
 	TooglableButton* addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name);
-	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, Image img);
-    void addMenuButton (int x, int y, int d, const Image&);
+	ButtonList* addList(int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name, String nameImg);
+    ImageButton* addMenuButton (int x, int y, int d, String nameImg);
     void createMenu ();
     void createMidi(int, PopupMenu &);
     void resultFromMenu (const Point<int>);
@@ -181,8 +193,12 @@ private:
 	void rebuildComponents (ObxdAudioProcessor&);
     void loadSkin(ObxdAudioProcessor&);
 	//==============================================================================
+public:
     ObxdAudioProcessor& processor;
-
+private:
+    // images
+    Image backgroundImage;
+    std::map<String, Component*> mappingComps;
 	//==============================================================================
 	Knob* cutoffKnob=nullptr,
     *resonanceKnob=nullptr,
@@ -285,6 +301,7 @@ private:
 
     Array<String> midiFiles;
     int menuMidiNum;
+    int menuScaleNum;
     int countTimerForLed = 0;
 
 };

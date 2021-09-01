@@ -23,14 +23,18 @@
  */
 #pragma once
 #include "../Source/Engine/SynthEngine.h"
+#include "../Components/ScaleComponent.h"
+class ObxdAudioProcessor;
 
-class TooglableButton  : public ImageButton
+class TooglableButton  : public ImageButton, public ScalableComponent
 {
+    juce::String img_name;
 public:
-	TooglableButton (Image k) : ImageButton()
+	TooglableButton (juce::String name, ObxdAudioProcessor *owner) : ImageButton(),ScalableComponent(owner), img_name(name)
 	{
 		//this->setImages
-		kni = k;
+		//kni = k;
+        scaleFactorChanged();
 		//toogled = false;
 		width = kni.getWidth();
 		height = kni.getHeight();
@@ -38,6 +42,18 @@ public:
 		h2 = height / 2;
 		this->setClickingTogglesState (true);
 	}
+    void scaleFactorChanged() override
+    {
+        kni = getScaledImageFromCache(img_name, getScaleFactor(), getIsHighResolutionDisplay());
+        /*
+        backgroundImage =
+            allImage.getClippedImage(Rectangle<int>(0,
+                                                    allImage.getHeight() / 2,
+                                                    allImage.getWidth(),
+                                                    allImage.getHeight() / 2));
+         */
+        repaint();
+    }
     ~TooglableButton() override{
         
     };
@@ -102,7 +118,7 @@ public:
             offset = 1;
         }
         
-		g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, offset * h2, w2, h2);
+		g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, offset * h2 * getScaleInt() , w2 * getScaleInt(), h2 * getScaleInt());
 	}
     /*
 	void setValue (float state, int notify)

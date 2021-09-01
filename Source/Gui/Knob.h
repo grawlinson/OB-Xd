@@ -23,9 +23,11 @@
  */
 #pragma once
 #include "../Source/Engine/SynthEngine.h"
-
-class Knob  : public Slider
+#include "../Components/ScaleComponent.h"
+class ObxdAudioProcessor;
+class Knob  : public Slider, public ScalableComponent
 {
+    juce::String img_name;
 public:
 	//Knob(Image image, const int numFrames, const bool stripIsHorizontal) : Slider("Knob")
 	//{
@@ -34,14 +36,27 @@ public:
 	//	setSliderStyle(RotaryVerticalDrag);
 	//	setRange(0.0f, 1.0f, 0.001f);
 	//}
-	Knob (Image k, int fh) : Slider("Knob")
+	Knob (juce::String name, int fh, ObxdAudioProcessor* owner_) : Slider("Knob"), ScalableComponent(owner_), img_name(name)
 	{
+        scaleFactorChanged();
+        
 		h2 = fh;
-		w2 = k.getWidth();
-		numFr = k.getHeight() / h2;
-		kni = k;
+        w2 = kni.getWidth();
+		numFr = kni.getHeight() / h2;
+		
 	};
-
+    void scaleFactorChanged() override
+    {
+        kni = getScaledImageFromCache(img_name, getScaleFactor(), getIsHighResolutionDisplay());
+        /*
+        backgroundImage =
+            allImage.getClippedImage(Rectangle<int>(0,
+                                                    allImage.getHeight() / 2,
+                                                    allImage.getWidth(),
+                                                    allImage.getHeight() / 2));
+         */
+        repaint();
+    }
 // Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
 public:
     class KnobAttachment  : public juce::AudioProcessorValueTreeState::SliderAttachment
@@ -68,7 +83,7 @@ public:
             float val = parameter->getValue();
             //sliderToControl->setValue(parameter->convertFrom0to1(val0to1));
             sliderToControl->setValue(val, NotificationType::dontSendNotification);
-            DBG(" Slider: " << parameter->name << " " << sliderToControl->getValue() << "  Parameter: "<< " " << parameter->getValue());
+            //DBG(" Slider: " << parameter->name << " " << sliderToControl->getValue() << "  Parameter: "<< " " << parameter->getValue());
         }
         
         virtual ~KnobAttachment() = default;
@@ -87,7 +102,7 @@ public:
 	void paint (Graphics& g) override
 	{
 		int ofs = (int) ((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFr - 1));
-        g.drawImage (kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs, w2, h2);
+        g.drawImage (kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs * getScaleInt(), w2 * getScaleInt(), h2 * getScaleInt());
 	}
     
     ~Knob() override {};

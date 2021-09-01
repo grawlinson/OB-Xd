@@ -10,11 +10,12 @@ It contains the basic startup code for a Juce application.
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include <utility>
+#include "Gui/ImageButton.h"
 // #include "GUI/BinaryData.h"
 
 //==============================================================================
 ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFilter)
-	: AudioProcessorEditor (&ownerFilter), processor (ownerFilter),
+	: AudioProcessorEditor (&ownerFilter), ScalableComponent(&ownerFilter), processor (ownerFilter),
       skinFolder (processor.getSkinFolder()),
       progStart (3000),
       bankStart (2000),
@@ -52,10 +53,25 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     DBG("W: " <<getWidth() << " H:" << getHeight());
 
     loadSkin (processor);
-    
-    repaint();
+
     
     updateFromHost();
+    
+    switch(processor.gui_size)
+    {
+        case 1:
+                ScalableComponent::setScaleFactor(1.0f, isHighResolutionDisplay());
+            break;
+        case 2:
+                ScalableComponent::setScaleFactor(1.5f, isHighResolutionDisplay());
+            break;
+        case 4:
+                ScalableComponent::setScaleFactor(2.0f, isHighResolutionDisplay());
+            break;
+    }
+
+    //scaleFactorChanged();
+    //repaint();
 }
 
 
@@ -77,6 +93,51 @@ void ObxdAudioProcessorEditor::resized() {
             }
         }
     }
+    
+    
+    skinFolder = processor.getCurrentSkinFolder();
+    File coords = skinFolder.getChildFile ("coords.xml");
+    if (!coords.existsAsFile()) {
+        return;
+    }
+    XmlDocument skin (coords);
+    auto doc = skin.getDocumentElement();
+    if (doc){
+        //int xScreen = getWidth(), yScreen = getHeight();
+        if (doc->getTagName() == "PROPERTIES"){
+            forEachXmlChildElementWithTagName(*doc, child, "VALUE"){
+                if (child->hasAttribute("NAME") && child->hasAttribute("x") && child->hasAttribute("y")) {
+                    String name = child->getStringAttribute("NAME");
+                    int x = child->getIntAttribute("x");
+                    int y = child->getIntAttribute("y");
+                    int d = child->getIntAttribute("d");
+                    int w = child->getIntAttribute("w");
+                    int h = child->getIntAttribute("h");
+                    DBG(" COmponent : " << name);
+                    if (mappingComps[name] != nullptr){
+                        if (dynamic_cast<Knob*>(mappingComps[name])){
+                            mappingComps[name]->setBounds(transformBounds(x, y, d,d));
+                        }
+                        else if (dynamic_cast<ButtonList*>(mappingComps[name])){
+                            mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
+                        }
+
+                        else if (dynamic_cast<TooglableButton*>(mappingComps[name])){
+                            mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
+                        }
+                        else if (dynamic_cast<ImageMenu*>(mappingComps[name])){
+                            mappingComps[name]->setBounds(transformBounds(x, y,  d, d));
+                        }
+                        else if (dynamic_cast<ImageButton*>(mappingComps[name])){
+                            mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
+                        }
+                        
+                        
+                    }
+                }
+            }
+        }
+    }
 }
 void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
 {
@@ -85,13 +146,14 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
     toggleAttachments.clear();
     imageButtons.clear();
     popupMenus.clear();
+    mappingComps.clear();
     ownerFilter.removeChangeListener (this);
-    //File coords("/Users/jimmy/Downloads/coords.xml");
+
     skinFolder = ownerFilter.getCurrentSkinFolder();
     File coords = skinFolder.getChildFile ("coords.xml");
     bool useClassicSkin = coords.existsAsFile();
     if (!useClassicSkin) {
-        addMenuButton (14, 25, 20, ImageCache::getFromMemory(BinaryData::menu_png, BinaryData::menu_pngSize));
+        addMenuButton (14, 25, 20, "menu");
         rebuildComponents (processor);
         return;
     }
@@ -126,125 +188,320 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                         else {
                             setSize(xScreen, yScreen);
                         }
-                        
                     }
 
-                    if (name == "resonanceKnob"){ resonanceKnob = addKnob (x, y, d, ownerFilter, RESONANCE, "Resonance", 0); }
-                    if (name == "cutoffKnob"){ cutoffKnob = addKnob (x, y, d, ownerFilter, CUTOFF, "Cutoff", 0.4); }
-                    if (name == "filterEnvelopeAmtKnob"){ filterEnvelopeAmtKnob = addKnob (x, y, d, ownerFilter, ENVELOPE_AMT, "Envelope", 0); }
-                    if (name == "multimodeKnob"){ multimodeKnob = addKnob (x, y, d, ownerFilter, MULTIMODE, "Multimode", 0.5); }
+                    if (name == "resonanceKnob"){
+                        resonanceKnob = addKnob (x, y, d, ownerFilter, RESONANCE, "Resonance", 0);
+                        mappingComps["resonanceKnob"] = resonanceKnob;
+                    }
+                    if (name == "cutoffKnob"){
+                        cutoffKnob = addKnob (x, y, d, ownerFilter, CUTOFF, "Cutoff", 0.4);
+                        mappingComps["cutoffKnob"] = cutoffKnob;
+                    }
+                    if (name == "filterEnvelopeAmtKnob"){
+                        filterEnvelopeAmtKnob = addKnob (x, y, d, ownerFilter, ENVELOPE_AMT, "Envelope", 0);
+                        mappingComps["filterEnvelopeAmtKnob"] = filterEnvelopeAmtKnob;
+                    }
+                    if (name == "multimodeKnob"){
+                        multimodeKnob = addKnob (x, y, d, ownerFilter, MULTIMODE, "Multimode", 0.5);
+                        mappingComps["multimodeKnob"] = multimodeKnob;
+                    }
                     
-                    if (name == "volumeKnob"){ volumeKnob = addKnob (x, y, d, ownerFilter, VOLUME, "Volume", 0.4); }
-                    if (name == "portamentoKnob"){ portamentoKnob = addKnob (x, y, d, ownerFilter, PORTAMENTO, "Portamento", 0); }
-                    if (name == "osc1PitchKnob"){ osc1PitchKnob = addKnob (x, y, d, ownerFilter, OSC1P, "Osc1Pitch", 0); }
-                    if (name == "pulseWidthKnob"){ pulseWidthKnob = addKnob (x, y, d, ownerFilter, PW, "PW", 0); }
-                    if (name == "osc2PitchKnob"){ osc2PitchKnob = addKnob (x, y, d, ownerFilter, OSC2P, "Osc2Pitch", 0); }
+                    if (name == "volumeKnob"){
+                        volumeKnob = addKnob (x, y, d, ownerFilter, VOLUME, "Volume", 0.4);
+                        mappingComps["volumeKnob"] = volumeKnob;
+                    }
+                    if (name == "portamentoKnob"){
+                        portamentoKnob = addKnob (x, y, d, ownerFilter, PORTAMENTO, "Portamento", 0);
+                        mappingComps["portamentoKnob"] = portamentoKnob;
+                    }
+                    if (name == "osc1PitchKnob"){
+                        osc1PitchKnob = addKnob (x, y, d, ownerFilter, OSC1P, "Osc1Pitch", 0);
+                        mappingComps["osc1PitchKnob"] = osc1PitchKnob;
+                    }
+                    if (name == "pulseWidthKnob"){
+                        pulseWidthKnob = addKnob (x, y, d, ownerFilter, PW, "PW", 0);
+                        mappingComps["pulseWidthKnob"] = pulseWidthKnob;
+                    }
+                    if (name == "osc2PitchKnob"){
+                        osc2PitchKnob = addKnob (x, y, d, ownerFilter, OSC2P, "Osc2Pitch", 0);
+                        mappingComps["osc2PitchKnob"] = osc2PitchKnob;
+                    }
                     
-                    if (name == "osc1MixKnob"){ osc1MixKnob = addKnob (x, y, d, ownerFilter, OSC1MIX, "Osc1", 1); }
-                    if (name == "osc2MixKnob"){ osc2MixKnob = addKnob (x, y, d, ownerFilter, OSC2MIX, "Osc2", 1); }
-                    if (name == "noiseMixKnob"){ noiseMixKnob = addKnob (x, y, d, ownerFilter, NOISEMIX, "Noise", 0); }
+                    if (name == "osc1MixKnob"){
+                        osc1MixKnob = addKnob (x, y, d, ownerFilter, OSC1MIX, "Osc1", 1);
+                        mappingComps["osc1MixKnob"] = osc1MixKnob;
+                    }
+                    if (name == "osc2MixKnob"){
+                        osc2MixKnob = addKnob (x, y, d, ownerFilter, OSC2MIX, "Osc2", 1);
+                        mappingComps["osc2MixKnob"] = osc2MixKnob;
+                    }
+                    if (name == "noiseMixKnob"){
+                        noiseMixKnob = addKnob (x, y, d, ownerFilter, NOISEMIX, "Noise", 0);
+                        mappingComps["noiseMixKnob"] = noiseMixKnob;
+                    }
                     
-                    if (name == "xmodKnob"){ xmodKnob = addKnob (x, y, d, ownerFilter, XMOD, "Xmod", 0); }
-                    if (name == "osc2DetuneKnob"){ osc2DetuneKnob = addKnob (x, y, d, ownerFilter, OSC2_DET, "Detune", 0); }
+                    if (name == "xmodKnob"){
+                        xmodKnob = addKnob (x, y, d, ownerFilter, XMOD, "Xmod", 0);
+                        mappingComps["xmodKnob"] = xmodKnob;
+                    }
+                    if (name == "osc2DetuneKnob"){
+                        osc2DetuneKnob = addKnob (x, y, d, ownerFilter, OSC2_DET, "Detune", 0);
+                        mappingComps["osc2DetuneKnob"] = osc2DetuneKnob;
+                    }
                     
-                    if (name == "envPitchModKnob"){ envPitchModKnob = addKnob (x, y, d, ownerFilter, ENVPITCH, "PEnv", 0); }
-                    if (name == "brightnessKnob"){ brightnessKnob = addKnob (x, y, d, ownerFilter, BRIGHTNESS, "Bri", 1); }
+                    if (name == "envPitchModKnob"){
+                        envPitchModKnob = addKnob (x, y, d, ownerFilter, ENVPITCH, "PEnv", 0);
+                        mappingComps["envPitchModKnob"] = envPitchModKnob;
+                    }
+                    if (name == "brightnessKnob"){
+                        brightnessKnob = addKnob (x, y, d, ownerFilter, BRIGHTNESS, "Bri", 1);
+                        mappingComps["brightnessKnob"] = brightnessKnob;
+                    }
                     
-                    if (name == "attackKnob"){ attackKnob = addKnob (x, y, d, ownerFilter, LATK, "Atk", 0); }
-                    if (name == "decayKnob"){ decayKnob = addKnob (x, y, d, ownerFilter, LDEC, "Dec", 0); }
-                    if (name == "sustainKnob"){ sustainKnob = addKnob (x, y, d, ownerFilter, LSUS, "Sus", 1); }
-                    if (name == "releaseKnob"){ releaseKnob = addKnob (x, y, d, ownerFilter, LREL, "Rel", 0); }
+                    if (name == "attackKnob"){
+                        attackKnob = addKnob (x, y, d, ownerFilter, LATK, "Atk", 0);
+                        mappingComps["attackKnob"] = attackKnob;
+                    }
+                    if (name == "decayKnob"){ decayKnob = addKnob (x, y, d, ownerFilter, LDEC, "Dec", 0);
+                        mappingComps["decayKnob"] = decayKnob;
+                    }
+                    if (name == "sustainKnob"){
+                        sustainKnob = addKnob (x, y, d, ownerFilter, LSUS, "Sus", 1);
+                        mappingComps["sustainKnob"] = sustainKnob;
+                    }
+                    if (name == "releaseKnob"){
+                        releaseKnob = addKnob (x, y, d, ownerFilter, LREL, "Rel", 0);
+                        mappingComps["releaseKnob"] = releaseKnob;
+                    }
                     
-                    if (name == "fattackKnob"){ fattackKnob = addKnob (x, y, d, ownerFilter, FATK, "Atk", 0); }
-                    if (name == "fdecayKnob"){ fdecayKnob = addKnob (x, y, d, ownerFilter, FDEC, "Dec", 0); }
-                    if (name == "fsustainKnob"){ fsustainKnob = addKnob (x, y, d, ownerFilter, FSUS, "Sus", 1); }
-                    if (name == "freleaseKnob"){ freleaseKnob = addKnob (x, y, d, ownerFilter, FREL, "Rel", 0); }
+                    if (name == "fattackKnob"){
+                        fattackKnob = addKnob (x, y, d, ownerFilter, FATK, "Atk", 0);
+                        mappingComps["fattackKnob"] = fattackKnob;
+                    }
+                    if (name == "fdecayKnob"){
+                        fdecayKnob = addKnob (x, y, d, ownerFilter, FDEC, "Dec", 0);
+                        mappingComps["fdecayKnob"] = fdecayKnob;
+                    }
+                    if (name == "fsustainKnob"){
+                        fsustainKnob = addKnob (x, y, d, ownerFilter, FSUS, "Sus", 1);
+                        mappingComps["fsustainKnob"] = fsustainKnob;
+                    }
+                    if (name == "freleaseKnob"){
+                        freleaseKnob = addKnob (x, y, d, ownerFilter, FREL, "Rel", 0);
+                        mappingComps["freleaseKnob"] = freleaseKnob;
+                    }
                     
-                    if (name == "lfoFrequencyKnob"){ lfoFrequencyKnob = addKnob (x, y, d, ownerFilter, LFOFREQ, "Freq", 0); }
-                    if (name == "lfoAmt1Knob"){ lfoAmt1Knob = addKnob (x, y, d, ownerFilter, LFO1AMT, "Pitch", 0); }
-                    if (name == "lfoAmt2Knob"){ lfoAmt2Knob = addKnob (x, y, d, ownerFilter, LFO2AMT, "PWM", 0); }
+                    if (name == "lfoFrequencyKnob"){
+                        lfoFrequencyKnob = addKnob (x, y, d, ownerFilter, LFOFREQ, "Freq", 0);
+                        mappingComps["lfoFrequencyKnob"] = lfoFrequencyKnob;
+                    }
+                    if (name == "lfoAmt1Knob"){
+                        lfoAmt1Knob = addKnob (x, y, d, ownerFilter, LFO1AMT, "Pitch", 0);
+                        mappingComps["lfoAmt1Knob"] = lfoAmt1Knob;
+                    }
+                    if (name == "lfoAmt2Knob"){
+                        lfoAmt2Knob = addKnob (x, y, d, ownerFilter, LFO2AMT, "PWM", 0);
+                        mappingComps["lfoAmt2Knob"] = lfoAmt2Knob;
+                    }
                     
-                    if (name == "lfoSinButton"){ lfoSinButton = addButton (x, y, w, h, ownerFilter, LFOSINWAVE, "Sin"); }
-                    if (name == "lfoSquareButton"){ lfoSquareButton = addButton (x, y,  w, h, ownerFilter, LFOSQUAREWAVE, "SQ"); }
-                    if (name == "lfoSHButton"){ lfoSHButton = addButton (x, y,  w, h, ownerFilter, LFOSHWAVE, "S&H"); }
+                    if (name == "lfoSinButton"){
+                        lfoSinButton = addButton (x, y, w, h, ownerFilter, LFOSINWAVE, "Sin");
+                        mappingComps["lfoSinButton"] = lfoSinButton;
+                    }
+                    if (name == "lfoSquareButton"){
+                        lfoSquareButton = addButton (x, y,  w, h, ownerFilter, LFOSQUAREWAVE, "SQ");
+                        mappingComps["lfoSquareButton"] = lfoSquareButton;
+                    }
+                    if (name == "lfoSHButton"){
+                        lfoSHButton = addButton (x, y,  w, h, ownerFilter, LFOSHWAVE, "S&H");
+                        mappingComps["lfoSHButton"] = lfoSHButton;
+                    }
                     
-                    if (name == "lfoOsc1Button"){ lfoOsc1Button = addButton (x, y,  w, h, ownerFilter, LFOOSC1, "Osc1"); }
-                    if (name == "lfoOsc2Button"){ lfoOsc2Button = addButton (x, y,  w, h, ownerFilter, LFOOSC2, "Osc2"); }
-                    if (name == "lfoFilterButton"){ lfoFilterButton = addButton (x, y,  w, h, ownerFilter, LFOFILTER, "Filt"); }
+                    if (name == "lfoOsc1Button"){
+                        lfoOsc1Button = addButton (x, y,  w, h, ownerFilter, LFOOSC1, "Osc1");
+                        mappingComps["lfoOsc1Button"] = lfoOsc1Button;
+                    }
+                    if (name == "lfoOsc2Button"){
+                        lfoOsc2Button = addButton (x, y,  w, h, ownerFilter, LFOOSC2, "Osc2");
+                        mappingComps["lfoOsc2Button"] = lfoOsc2Button;
+                    }
+                    if (name == "lfoFilterButton"){
+                        lfoFilterButton = addButton (x, y,  w, h, ownerFilter, LFOFILTER, "Filt");
+                        mappingComps["lfoFilterButton"] = lfoFilterButton;
+                    }
                     
-                    if (name == "lfoPwm1Button"){ lfoPwm1Button = addButton (x, y,  w, h, ownerFilter, LFOPW1, "Osc1"); }
-                    if (name == "lfoPwm2Button"){ lfoPwm2Button = addButton (x, y,  w, h, ownerFilter, LFOPW2, "Osc2"); }
+                    if (name == "lfoPwm1Button"){
+                        lfoPwm1Button = addButton (x, y,  w, h, ownerFilter, LFOPW1, "Osc1");
+                        mappingComps["lfoPwm1Button"] = lfoPwm1Button;
+
+                    }
+                    if (name == "lfoPwm2Button"){
+                        lfoPwm2Button = addButton (x, y,  w, h, ownerFilter, LFOPW2, "Osc2");
+                        mappingComps["lfoPwm2Button"] = lfoPwm2Button;
+                    }
                     
-                    if (name == "hardSyncButton"){ hardSyncButton = addButton (x, y,  w, h, ownerFilter, OSC2HS, "Sync"); }
-                    if (name == "osc1SawButton"){ osc1SawButton = addButton (x, y,  w, h, ownerFilter, OSC1Saw, "S"); }
-                    if (name == "osc2SawButton"){ osc2SawButton = addButton (x, y,  w, h, ownerFilter, OSC2Saw, "S"); }
+                    if (name == "hardSyncButton"){
+                        hardSyncButton = addButton (x, y,  w, h, ownerFilter, OSC2HS, "Sync");
+                        mappingComps["hardSyncButton"] = hardSyncButton;
+                    }
+                    if (name == "osc1SawButton"){
+                        osc1SawButton = addButton (x, y,  w, h, ownerFilter, OSC1Saw, "S");
+                        mappingComps["osc1SawButton"] = osc1SawButton;
+                    }
+                    if (name == "osc2SawButton"){
+                        osc2SawButton = addButton (x, y,  w, h, ownerFilter, OSC2Saw, "S");
+                        mappingComps["osc2SawButton"] = osc2SawButton;
+                    }
                     
-                    if (name == "osc1PulButton"){ osc1PulButton = addButton (x, y,  w, h, ownerFilter, OSC1Pul, "P"); }
-                    if (name == "osc2PulButton"){ osc2PulButton = addButton (x, y,  w, h, ownerFilter, OSC2Pul, "P"); }
+                    if (name == "osc1PulButton"){
+                        osc1PulButton = addButton (x, y,  w, h, ownerFilter, OSC1Pul, "P");
+                        mappingComps["osc1PulButton"] = osc1PulButton;
+                    }
+                    if (name == "osc2PulButton"){
+                        osc2PulButton = addButton (x, y,  w, h, ownerFilter, OSC2Pul, "P");
+                        mappingComps["osc2PulButton"] = osc2PulButton;
+                    }
                     
-                    if (name == "pitchQuantButton"){ pitchQuantButton =  addButton (x, y,  w, h, ownerFilter, OSCQuantize, "Step"); }
+                    if (name == "pitchQuantButton"){
+                        pitchQuantButton =  addButton (x, y,  w, h, ownerFilter, OSCQuantize, "Step");
+                        mappingComps["pitchQuantButton"] = pitchQuantButton;
+                    }
                     
-                    if (name == "filterBPBlendButton"){ filterBPBlendButton = addButton (x, y,  w, h, ownerFilter, BANDPASS, "Bp"); }
-                    if (name == "fourPoleButton"){ fourPoleButton = addButton (x, y,  w, h, ownerFilter, FOURPOLE, "24"); }
-                    if (name == "filterHQButton"){ filterHQButton = addButton (x, y,  w, h, ownerFilter, FILTER_WARM, "HQ"); }
+                    if (name == "filterBPBlendButton"){
+                        filterBPBlendButton = addButton (x, y,  w, h, ownerFilter, BANDPASS, "Bp");
+                        mappingComps["filterBPBlendButton"] = filterBPBlendButton;
+                    }
+                    if (name == "fourPoleButton"){
+                        fourPoleButton = addButton (x, y,  w, h, ownerFilter, FOURPOLE, "24");
+                        mappingComps["fourPoleButton"] = fourPoleButton;
+                    }
+                    if (name == "filterHQButton"){
+                        filterHQButton = addButton (x, y,  w, h, ownerFilter, FILTER_WARM, "HQ");
+                        mappingComps["filterHQButton"] = filterHQButton;
+                    }
                     
-                    if (name == "filterKeyFollowButton"){ filterKeyFollowButton =  addButton (x, y,  w, h, ownerFilter, FLT_KF, "Key"); }
-                    if (name == "unisonButton"){ unisonButton = addButton (x, y,  w, h, ownerFilter, UNISON, "Uni"); }
+                    if (name == "filterKeyFollowButton"){
+                        filterKeyFollowButton =  addButton (x, y,  w, h, ownerFilter, FLT_KF, "Key");
+                        mappingComps["filterKeyFollowButton"] = filterKeyFollowButton;
+                    }
+                    if (name == "unisonButton"){
+                        unisonButton = addButton (x, y,  w, h, ownerFilter, UNISON, "Uni");
+                        mappingComps["unisonButton"] = unisonButton;
+                    }
                     
-                    if (name == "tuneKnob"){ tuneKnob = addKnob (x, y, d, ownerFilter, TUNE, "Tune", 0.5); }
-                    if (name == "transposeKnob"){ transposeKnob = addKnob (x, y, d, ownerFilter, OCTAVE, "Transpose", 0.5); }
+                    if (name == "tuneKnob"){
+                        tuneKnob = addKnob (x, y, d, ownerFilter, TUNE, "Tune", 0.5);
+                        mappingComps["tuneKnob"] = tuneKnob;
+                    }
+                    if (name == "transposeKnob"){
+                        transposeKnob = addKnob (x, y, d, ownerFilter, OCTAVE, "Transpose", 0.5);
+                        mappingComps["transposeKnob"] = transposeKnob;
+                    }
                     
-                    if (name == "voiceDetuneKnob"){ voiceDetuneKnob =addKnob (x, y, d, ownerFilter, UDET, "VoiceDet", 0); }
+                    if (name == "voiceDetuneKnob"){
+                        voiceDetuneKnob =addKnob (x, y, d, ownerFilter, UDET, "VoiceDet", 0);
+                        mappingComps["voiceDetuneKnob"] = voiceDetuneKnob;
+                    }
                     
-                    if (name == "bendLfoRateKnob"){ bendLfoRateKnob = addKnob (x, y, d, ownerFilter, BENDLFORATE, "ModRate", 0.4); }
-                    if (name == "veloFltEnvKnob"){ veloFltEnvKnob = addKnob (x, y, d, ownerFilter, VFLTENV, "VFE", 0); }
-                    if (name == "veloAmpEnvKnob"){ veloAmpEnvKnob = addKnob (x, y, d, ownerFilter, VAMPENV, "VAE", 0); }
-                    if (name == "midiLearnButton"){ midiLearnButton = addButton (x, y,  w, h, ownerFilter, MIDILEARN, "LEA"); }
-                    if (name == "midiUnlearnButton"){ midiUnlearnButton = addButton (x, y,  w, h, ownerFilter, UNLEARN, "UNL"); }
+                    if (name == "bendLfoRateKnob"){
+                        bendLfoRateKnob = addKnob (x, y, d, ownerFilter, BENDLFORATE, "ModRate", 0.4);
+                        mappingComps["bendLfoRateKnob"] = bendLfoRateKnob;
+                    }
+                    if (name == "veloFltEnvKnob"){
+                        veloFltEnvKnob = addKnob (x, y, d, ownerFilter, VFLTENV, "VFE", 0);
+                        mappingComps["veloFltEnvKnob"] = veloFltEnvKnob;
+                    }
+                    if (name == "veloAmpEnvKnob"){
+                        veloAmpEnvKnob = addKnob (x, y, d, ownerFilter, VAMPENV, "VAE", 0);
+                        mappingComps["veloAmpEnvKnob"] = veloAmpEnvKnob;
+                    }
+                    if (name == "midiLearnButton"){
+                        midiLearnButton = addButton (x, y,  w, h, ownerFilter, MIDILEARN, "LEA");
+                        mappingComps["midiLearnButton"] = midiLearnButton;
+                    }
+                    if (name == "midiUnlearnButton"){
+                        midiUnlearnButton = addButton (x, y,  w, h, ownerFilter, UNLEARN, "UNL");
+                        mappingComps["midiUnlearnButton"] = midiUnlearnButton;
+                    }
                     
-                    if (name == "pan1Knob"){ pan1Knob = addKnob (x, y, d, ownerFilter, PAN1, "1", 0.5); }
-                    if (name == "pan2Knob"){ pan2Knob = addKnob (x, y, d, ownerFilter, PAN2, "2", 0.5); }
-                    if (name == "pan3Knob"){ pan3Knob = addKnob (x, y, d, ownerFilter, PAN3, "3", 0.5); }
-                    if (name == "pan4Knob"){ pan4Knob = addKnob (x, y, d, ownerFilter, PAN4, "4", 0.5); }
+                    if (name == "pan1Knob"){
+                        pan1Knob = addKnob (x, y, d, ownerFilter, PAN1, "1", 0.5);
+                        mappingComps["pan1Knob"] = pan1Knob;
+                    }
+                    if (name == "pan2Knob"){
+                        pan2Knob = addKnob (x, y, d, ownerFilter, PAN2, "2", 0.5);
+                        mappingComps["pan2Knob"] = pan2Knob;
+                    }
+                    if (name == "pan3Knob"){
+                        pan3Knob = addKnob (x, y, d, ownerFilter, PAN3, "3", 0.5);
+                        mappingComps["pan3Knob"] = pan3Knob;
+                    }
+                    if (name == "pan4Knob"){
+                        pan4Knob = addKnob (x, y, d, ownerFilter, PAN4, "4", 0.5);
+                        mappingComps["pan4Knob"] = pan4Knob;
+                    }
                     
-                    if (name == "pan5Knob"){ pan5Knob = addKnob (x, y, d, ownerFilter, PAN5, "5", 0.5); }
-                    if (name == "pan6Knob"){ pan6Knob = addKnob (x, y, d, ownerFilter, PAN6, "6", 0.5); }
-                    if (name == "pan7Knob"){ pan7Knob = addKnob (x, y, d, ownerFilter, PAN7, "7", 0.5); }
-                    if (name == "pan8Knob"){ pan8Knob = addKnob (x, y, d, ownerFilter, PAN8, "8", 0.5); }
+                    if (name == "pan5Knob"){
+                        pan5Knob = addKnob (x, y, d, ownerFilter, PAN5, "5", 0.5);
+                        mappingComps["pan5Knob"] = pan5Knob;
+                    }
+                    if (name == "pan6Knob"){
+                        pan6Knob = addKnob (x, y, d, ownerFilter, PAN6, "6", 0.5);
+                        mappingComps["pan6Knob"] = pan6Knob;
+                    }
+                    if (name == "pan7Knob"){
+                        pan7Knob = addKnob (x, y, d, ownerFilter, PAN7, "7", 0.5);
+                        mappingComps["pan7Knob"] = pan7Knob;
+                    }
+                    if (name == "pan8Knob"){
+                        pan8Knob = addKnob (x, y, d, ownerFilter, PAN8, "8", 0.5);
+                        mappingComps["pan8Knob"] = pan8Knob;
+                    }
                     
-                    if (name == "bendOsc2OnlyButton"){ bendOsc2OnlyButton = addButton (x, y,  w, h, ownerFilter, BENDOSC2, "Osc2"); }
-                    if (name == "bendRangeButton"){ bendRangeButton = addButton (x, y,  w, h, ownerFilter, BENDRANGE, "12"); }
-                    if (name == "asPlayedAllocButton"){ asPlayedAllocButton = addButton (x, y,  w, h, ownerFilter, ASPLAYEDALLOCATION, "APA"); }
+                    if (name == "bendOsc2OnlyButton"){
+                        bendOsc2OnlyButton = addButton (x, y,  w, h, ownerFilter, BENDOSC2, "Osc2");
+                        mappingComps["bendOsc2OnlyButton"] = bendOsc2OnlyButton;
+                    }
+                    if (name == "bendRangeButton"){
+                        bendRangeButton = addButton (x, y,  w, h, ownerFilter, BENDRANGE, "12");
+                        mappingComps["bendRangeButton"] = bendRangeButton;
+                    }
+                    if (name == "asPlayedAllocButton"){
+                        asPlayedAllocButton = addButton (x, y,  w, h, ownerFilter, ASPLAYEDALLOCATION, "APA");
+                        mappingComps["asPlayedAllocButton"] = asPlayedAllocButton;
+                    }
                     
-                    if (name == "filterDetuneKnob"){ filterDetuneKnob = addKnob (x, y, d, ownerFilter, FILTERDER, "Flt", 0.2); }
-                    if (name == "portamentoDetuneKnob"){ portamentoDetuneKnob = addKnob (x, y, d, ownerFilter, PORTADER, "Port", 0.2); }
-                    if (name == "envelopeDetuneKnob"){ envelopeDetuneKnob = addKnob (x, y, d, ownerFilter, ENVDER, "Env", 0.2); }
+                    if (name == "filterDetuneKnob"){
+                        filterDetuneKnob = addKnob (x, y, d, ownerFilter, FILTERDER, "Flt", 0.2);
+                        mappingComps["filterDetuneKnob"] = filterDetuneKnob;
+                    }
+                    if (name == "portamentoDetuneKnob"){
+                        portamentoDetuneKnob = addKnob (x, y, d, ownerFilter, PORTADER, "Port", 0.2);
+                        mappingComps["portamentoDetuneKnob"] = portamentoDetuneKnob;
+                    }
+                    if (name == "envelopeDetuneKnob"){
+                        envelopeDetuneKnob = addKnob (x, y, d, ownerFilter, ENVDER, "Env", 0.2);
+                        mappingComps["envelopeDetuneKnob"] = envelopeDetuneKnob;
+                    }
                                         
                     if (name == "voiceSwitch"){
-                        //if (voiceSwitch) voiceSwitch->setVisible(false);
-#if JUCE_WINDOWS || JUCE_LINUX
-                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices.png"))); }
-#else
-                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", ImageCache::getFromFile(skinFolder.getChildFile("voices@2x.png"))); }
-#endif
+                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices");
+                        mappingComps["voiceSwitch"] = voiceSwitch;
+                    }
+
 
                     if (name == "legatoSwitch"){
-                        //if (legatoSwitch) legatoSwitch->setVisible(false);
-#if JUCE_WINDOWS || JUCE_LINUX
-                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato.png"))); }
-#else
-                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", ImageCache::getFromFile(skinFolder.getChildFile("legato@2x.png"))); }
-#endif
+                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato");
+                        mappingComps["legatoSwitch"] = legatoSwitch;
+                    }
+
 
                     
                     if (name == "menu")
                     {
-                        addMenuButton (x, y, d,
-#if JUCE_WINDOWS || JUCE_LINUX
-                                 ImageCache::getFromFile (skinFolder.getChildFile ("menu.png")));
-#else
-                                 ImageCache::getFromFile (skinFolder.getChildFile ("menu@2x.png")));
-#endif
+                        ImageButton *img = addMenuButton (x, y, d, "menu");
+                        mappingComps["menu"] = img;
                     }
                     
                     //DBG(" Name: " << name << " X: " <<x <<" Y: "<<y);
@@ -256,11 +513,6 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         presetBar.reset(new PresetBar(*this));
         addAndMakeVisible(*presetBar);
         presetBar->setVisible(processor.getShowPresetBar());
-
-
-        presetBar->setBounds(
-            (xScreen - presetBar->getWidth()) / 2, yScreen, presetBar->getWidth(), presetBar->getHeight());
-
         updatePresetBar(false);
     }
     
@@ -289,8 +541,8 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
     createMenu();
 
     ownerFilter.addChangeListener (this);
-
-   
+    
+    scaleFactorChanged();
     repaint();
 }
 ObxdAudioProcessorEditor::~ObxdAudioProcessorEditor()
@@ -298,6 +550,74 @@ ObxdAudioProcessorEditor::~ObxdAudioProcessorEditor()
 	processor.removeChangeListener (this);
 //    deleteAllChildren();  // WATCH OUT!
 }
+
+void ObxdAudioProcessorEditor::scaleFactorChanged()
+{
+    // update background
+    const bool highResolutionDisplay = isHighResolutionDisplay();
+    const float scaleFactor = getScaleFactor();
+
+    // notify child components
+    for (int i = 0; i < getNumChildComponents(); i++)
+    {
+        ScalableComponent* object =
+            dynamic_cast<ScalableComponent*>(getChildComponent(i));
+
+        if (object != nullptr)
+        {
+            object->setScaleFactor(scaleFactor, highResolutionDisplay);
+        }
+    }
+
+    // update look and feel
+
+    // redraw everything
+    backgroundImage = getScaledImageFromCache("main", scaleFactor, highResolutionDisplay);
+
+    int width = backgroundImage.getWidth();
+    int height = backgroundImage.getHeight();
+    
+    
+    if (!highResolutionDisplay)
+    {
+        if (scaleFactor == 1.5f)
+        {
+            width = roundFloatToInt(width * 0.75f);
+            height = roundFloatToInt(height * 0.75f);
+            
+        }
+        else if (scaleFactor == 2.0f)
+        {
+            width /= 2;
+            height /= 2;
+        }
+    } else {
+        if (scaleFactor == 1.0f) //2x image
+        {
+            width /= 2;
+            height /= 2;
+        }
+        else if (scaleFactor == 1.5f) //4x images =>150%
+        {
+            width = roundFloatToInt(width * (0.25f + 0.125f));
+            height = roundFloatToInt(height * (0.25f + 0.125f));
+            
+        }
+        else if (scaleFactor == 2.0f) //4x images =>200x
+        {
+            width /= 2;
+            height /= 2;
+        }
+    }
+
+    if (processor.getShowPresetBar())
+    {
+        setSize(width, height + presetBar->getHeight());
+        presetBar->setBounds((width - presetBar->getWidth()) / 2, height, presetBar->getWidth(), presetBar->getHeight());
+    } else
+        setSize(width, height);
+}
+
 
 void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 {
@@ -309,12 +629,12 @@ void ObxdAudioProcessorEditor::placeLabel (int x, int y, String text)
 	addAndMakeVisible (lab);
 }
 
-ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, Image img)
+ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int height, ObxdAudioProcessor& filter, int parameter, String /*name*/, String imgName)
 {
     #if JUCE_WINDOWS || JUCE_LINUX
-    ButtonList *bl = new ButtonList (img, height);
+    ButtonList *bl = new ButtonList (imgName, height, &processor);
     #else
-    ButtonList *bl = new ButtonList (img, height*2);
+    ButtonList *bl = new ButtonList (imgName, height, &processor);
     #endif
 
     buttonListAttachments.add (new ButtonList::ButtonListAttachment (filter.getPluginState(),
@@ -330,11 +650,9 @@ ButtonList* ObxdAudioProcessorEditor::addList (int x, int y, int width, int heig
 
 Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String /*name*/, float defval)
 {
-#if JUCE_WINDOWS || JUCE_LINUX
-    Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob.png")), 48);
-#else
-    Knob* knob = new Knob (ImageCache::getFromFile(skinFolder.getChildFile("knob@2x.png")), 96);
-#endif
+
+    Knob* knob = new Knob ("knob", 48, &processor);
+
 
     knobAttachments.add (new Knob::KnobAttachment (filter.getPluginState(),
                                                    filter.getEngineParameterId (parameter),
@@ -360,11 +678,8 @@ void ObxdAudioProcessorEditor::clean()
 
 TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h, ObxdAudioProcessor& filter, int parameter, String name)
 {
-#if JUCE_WINDOWS || JUCE_LINUX
-    TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button.png")));
-#else
-    TooglableButton* button = new TooglableButton (ImageCache::getFromFile(skinFolder.getChildFile("button@2x.png")));
-#endif
+    TooglableButton* button = new TooglableButton ("button", &processor);
+
     if (parameter != UNLEARN){
         toggleAttachments.add (new AudioProcessorValueTreeState::ButtonAttachment (filter.getPluginState(),
                                                                       filter.getEngineParameterId (parameter),
@@ -381,26 +696,21 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
     
 	return button;
 }
-
-void ObxdAudioProcessorEditor::addMenuButton (int x, int y, int d, const Image& image)
+Rectangle<int> ObxdAudioProcessorEditor::transformBounds(int x, int y, int w, int h)
 {
-    ImageButton* imageButton;
-    imageButtons.add (imageButton = new ImageButton());
-    imageButton->setBounds (x, y, d, d);
-    imageButton->setImages (false,
-                            true,
-                            true,
-                            image,
-                            1.0f, // menu transparency
-                            Colour(),
-                            image,
-                            1.0f, // menu hover transparency
-                            Colour(),
-                            image,
-                            0.3f, // menu click transparency
-                            Colour());
+    if (getScaleFactor() == 1.0f)
+        return Rectangle<int>(x, y, w, h);
+
+    return Rectangle<int>(x, y, w, h).toFloat().transformedBy(AffineTransform::scale(getScaleFactor())).toNearestInt();
+}
+ImageButton* ObxdAudioProcessorEditor::addMenuButton (int x, int y, int d, String imgName)
+{
     
-    //imageButton->addListener (this);
+    ImageMenu* imageButton = new ImageMenu(imgName, &processor);
+    imageButtons.add (imageButton);
+    imageButton->setBounds (x, y, d, d);
+    
+
     imageButton->onClick = [this](){
         ImageButton *imageButton = this->imageButtons[0];
         auto x   = imageButton->getScreenX();
@@ -410,6 +720,7 @@ void ObxdAudioProcessorEditor::addMenuButton (int x, int y, int d, const Image& 
         resultFromMenu (pos);
     };
     addAndMakeVisible (imageButton);
+    return imageButton;
 }
 
 void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilter)
@@ -420,10 +731,11 @@ void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilte
 
     // deleteAllChildren();  // WATCH OUT!
 
-		setSize (1440, 450);
+    setSize (1440, 450);
 
 	ownerFilter.addChangeListener (this);
 	repaint();
+    
 }
 
 void ObxdAudioProcessorEditor::createMenu ()
@@ -539,6 +851,13 @@ void ObxdAudioProcessorEditor::createMenu ()
     createMidi(menuMidiNum, midiMenu);
     menu->addSubMenu ("MIDI", midiMenu);
     popupMenus.add (menu);
+    
+    PopupMenu scaleMenu;
+    menuScaleNum =progStart +2000 + 3000;
+    scaleMenu.addItem(menuScaleNum, "1x", true, getScaleFactor() == 1.0f);
+    scaleMenu.addItem(menuScaleNum+1, "1.5x", true, getScaleFactor() == 1.5f);
+    scaleMenu.addItem(menuScaleNum+2, "2x", true, getScaleFactor() == 2.0f);
+    menu->addSubMenu("GUI Size", scaleMenu, true);
 }
 
 void ObxdAudioProcessorEditor::createMidi(int menuNo, PopupMenu &menuMidi) {
@@ -629,6 +948,21 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         //createMenu();
         updatePresetBar();
     }
+    else if (result >= menuScaleNum){
+        
+        if (result ==menuScaleNum){
+            ScalableComponent::setScaleFactor(1.0f, isHighResolutionDisplay());
+            processor.setGuiSize(1);
+        }
+        else if (result == menuScaleNum+1){
+            ScalableComponent::setScaleFactor(1.5f, isHighResolutionDisplay());
+            processor.setGuiSize(2);
+        }
+        else if (result == menuScaleNum+2) {
+            ScalableComponent::setScaleFactor(2.0f, isHighResolutionDisplay());
+            processor.setGuiSize(4);
+        }
+    }
     else if (result >= menuMidiNum){
         unsigned int selected_idx = result - menuMidiNum;
         if (selected_idx >= 0 && selected_idx < midiFiles.size()){
@@ -661,6 +995,7 @@ void ObxdAudioProcessorEditor::updatePresetBar(bool resize){
     }
     presetBar->update();
     
+    presetBar->setBounds((getWidth() - presetBar->getWidth()) / 2, getHeight() -40, presetBar->getWidth(), presetBar->getHeight());
 }
 
 void ObxdAudioProcessorEditor::MenuActionCallback(int action){
@@ -925,9 +1260,38 @@ void ObxdAudioProcessorEditor::mouseUp (const MouseEvent& e)
 	}
 }
 
+
+void ObxdAudioProcessorEditor::handleAsyncUpdate() {
+    scaleFactorChanged();
+    repaint();
+}
+
 void ObxdAudioProcessorEditor::paint(Graphics& g)
 {
+    
+    const float newPhysicalPixelScaleFactor =
+        g.getInternalContext().getPhysicalPixelScaleFactor();
+
+    if (newPhysicalPixelScaleFactor != processor.physicalPixelScaleFactor)
+    {
+        processor.physicalPixelScaleFactor = newPhysicalPixelScaleFactor;
+        //triggerAsyncUpdate();
+    }
+
 	g.fillAll (Colours::black);
+    
+    // background gui
+    if(processor.showPresetBar){
+        g.drawImage(backgroundImage,
+                    0, 0, getWidth(), getHeight() - 40,
+                    0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
+    } else {
+        g.drawImage(backgroundImage,
+                    0, 0, getWidth(), getHeight(),
+                    0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
+    }
+    
+    /*
 #if JUCE_WINDOWS || JUCE_LINUX
 	const File mainFile(skinFolder.getChildFile("main.png"));
 #else
@@ -960,6 +1324,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
 					 0, 0, image.getWidth(), image.getHeight(),
 					 0, 0, image.getWidth(), image.getHeight());
 	}
+     */
 
 }
 
