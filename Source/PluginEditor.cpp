@@ -13,6 +13,19 @@ It contains the basic startup code for a Juce application.
 #include "Gui/ImageButton.h"
 // #include "GUI/BinaryData.h"
 
+void openInPdf(const File &file)
+{
+#if WINDOWS
+    ShellExecuteW(NULL, L"open",
+                  file.getFullPathName().toWideCharPointer(),
+                  file.getFullPathName().toWideCharPointer(),
+                  NULL, SW_SHOWNORMAL);
+#endif
+#if __APPLE__ || LINUX
+    file.startAsProcess();
+#endif
+}
+
 //==============================================================================
 ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFilter)
 	: AudioProcessorEditor (&ownerFilter), ScalableComponent(&ownerFilter), processor (ownerFilter),
@@ -70,7 +83,7 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
             break;
     }
 
-    //scaleFactorChanged();
+    scaleFactorChanged();
     //repaint();
 }
 
@@ -131,8 +144,6 @@ void ObxdAudioProcessorEditor::resized() {
                         else if (dynamic_cast<ImageButton*>(mappingComps[name])){
                             mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
                         }
-                        
-                        
                     }
                 }
             }
@@ -513,7 +524,24 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         presetBar.reset(new PresetBar(*this));
         addAndMakeVisible(*presetBar);
         presetBar->setVisible(processor.getShowPresetBar());
-        updatePresetBar(false);
+        presetBar->leftClicked = [this](juce::Point<int> &pos){
+            PopupMenu menu;
+            for (int i = 0; i < processor.getNumPrograms(); ++i)
+            {
+                menu.addItem (i + progStart + 1,
+                                  processor.getProgramName (i),
+                                  true,
+                                  i == processor.getCurrentProgram());
+            }
+            int result = menu.showAt (Rectangle<int> (pos.getX(), pos.getY(), 1, 1));
+        
+            if (result >= (progStart + 1) && result <= (progStart + processor.getNumPrograms())){
+                result -= 1;
+                result -= progStart;
+                processor.setCurrentProgram (result);
+            }
+        };
+        resized();
     }
     
     // Prepare data
@@ -746,7 +774,7 @@ void ObxdAudioProcessorEditor::createMenu ()
     PopupMenu bankMenu;
     PopupMenu skinMenu;
     PopupMenu fileMenu;
-    PopupMenu viewMenu;
+    //PopupMenu viewMenu;
     PopupMenu midiMenu;
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
@@ -816,6 +844,8 @@ void ObxdAudioProcessorEditor::createMenu ()
         
         menu->addSubMenu("Programs", progMenu);
     }
+
+    menu->addItem(progStart + 1000, "Preset Bar", true, processor.showPresetBar);
     
     {
         const String currentBank = processor.getCurrentBankFile().getFileName();
@@ -831,6 +861,7 @@ void ObxdAudioProcessorEditor::createMenu ()
         
         menu->addSubMenu ("Banks", bankMenu);
     }
+
     
     {
         for (int i = 0; i < skins.size(); ++i)
@@ -845,8 +876,8 @@ void ObxdAudioProcessorEditor::createMenu ()
         menu->addSubMenu ("Themes", skinMenu);
         // About // menu.addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
     }
-    viewMenu.addItem(progStart + 1000, "Preset Bar", true, processor.showPresetBar);
-    menu->addSubMenu ("View", viewMenu);
+
+    //menu->addSubMenu ("View", viewMenu);
     menuMidiNum = progStart +2000;
     createMidi(menuMidiNum, midiMenu);
     menu->addSubMenu ("MIDI", midiMenu);
@@ -858,6 +889,13 @@ void ObxdAudioProcessorEditor::createMenu ()
     scaleMenu.addItem(menuScaleNum+1, "1.5x", true, getScaleFactor() == 1.5f);
     scaleMenu.addItem(menuScaleNum+2, "2x", true, getScaleFactor() == 2.0f);
     menu->addSubMenu("GUI Size", scaleMenu, true);
+    
+    
+    PopupMenu helpMenu;
+    String version = String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2);
+    helpMenu.addItem(menuScaleNum+3, version, false);
+    helpMenu.addItem(menuScaleNum+4, "Manual", true);
+    menu->addSubMenu("Help", helpMenu, true);
 }
 
 void ObxdAudioProcessorEditor::createMidi(int menuNo, PopupMenu &menuMidi) {
@@ -946,7 +984,7 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
     else if (result == progStart + 1000){
         processor.setShowPresetBar(!processor.getShowPresetBar());
         //createMenu();
-        updatePresetBar();
+        updatePresetBar(true);
     }
     else if (result >= menuScaleNum){
         
@@ -961,6 +999,10 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         else if (result == menuScaleNum+2) {
             ScalableComponent::setScaleFactor(2.0f, isHighResolutionDisplay());
             processor.setGuiSize(4);
+        }
+        else if (result == menuScaleNum+4) {
+            File manualFile = processor.getDocumentFolder().getChildFile("OB-Xd Manual.pdf");
+            openInPdf(manualFile);
         }
     }
     else if (result >= menuMidiNum){
@@ -983,19 +1025,18 @@ void ObxdAudioProcessorEditor::updatePresetBar(bool resize){
     
     if (processor.getShowPresetBar()) {
         if (resize) {
-            this->setSize(this->getWidth(), this->getHeight() + 40);
+            this->setSize(this->getWidth(), this->getHeight() + presetBar->getHeight());
         }
         presetBar->setVisible(true);
+        presetBar->update();
+        presetBar->setBounds((getWidth() - presetBar->getWidth()) / 2, getHeight() -presetBar->getHeight(), presetBar->getWidth(), presetBar->getHeight());
     }
     else if (presetBar->isVisible()) {
         if (resize) {
-            this->setSize(this->getWidth(), this->getHeight() - 40);
+            this->setSize(this->getWidth(), this->getHeight() - presetBar->getHeight());
         }
         presetBar->setVisible(false);
     }
-    presetBar->update();
-    
-    presetBar->setBounds((getWidth() - presetBar->getWidth()) / 2, getHeight() -40, presetBar->getWidth(), presetBar->getHeight());
 }
 
 void ObxdAudioProcessorEditor::MenuActionCallback(int action){

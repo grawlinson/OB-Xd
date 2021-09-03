@@ -22,6 +22,19 @@
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
 class ObxdAudioProcessorEditor;
+class CustomLabel: public juce::Label {
+public:
+    CustomLabel (const String& componentName = String(),
+                 const String& labelText = String()): juce::Label(componentName, labelText) {
+        
+    }
+    std::function<void(juce::Point<int> pos)> leftClicked;
+    void mouseDown (const MouseEvent& event) override {
+        if (this->getBounds().contains(event.getMouseDownPosition()) && event.mods.isLeftButtonDown()){
+            leftClicked(event.getMouseDownPosition());
+        }
+    };
+};
 //[/Headers]
 
 
@@ -47,6 +60,9 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     void timerCallback() override;
     void update();
+    
+    
+    std::function<void(juce::Point<int> &pos)> leftClicked;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -64,7 +80,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::Label> presetNameLb;
+    std::unique_ptr<CustomLabel> presetNameLb;
     std::unique_ptr<juce::ImageButton> previousBtn;
     std::unique_ptr<juce::ImageButton> nextBtn;
     std::unique_ptr<juce::Drawable> drawable1;
