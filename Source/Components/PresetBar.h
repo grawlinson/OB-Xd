@@ -29,9 +29,9 @@ public:
         
     }
     std::function<void(juce::Point<int> pos)> leftClicked;
-    void mouseDown (const MouseEvent& event) override {
+    void mouseDown (const juce::MouseEvent& event) override {
         if (this->getBounds().contains(event.getMouseDownPosition()) && event.mods.isLeftButtonDown()){
-            leftClicked(event.getMouseDownPosition());
+            leftClicked(event.getScreenPosition());
         }
     };
 };

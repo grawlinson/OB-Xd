@@ -5,32 +5,32 @@
 
 	<!------- MANUAL ----->
 
-	<VALUE NAME="volumeKnob" x="51" y="77" d="48"/>
+	<VALUE NAME="volumeKnob" x="55" y="77" d="56"/>
 
 	<VALUE NAME="asPlayedAllocButton" x="25" y="162" w="19" h="35"/>
 	<VALUE NAME="midiLearnButton" x="74" y="162" w="19" h="35"/>
 	<VALUE NAME="midiUnlearnButton" x="122" y="162" w="19" h="35"/>
 
-	<VALUE NAME="tuneKnob" x="25" y="252" d="48"/>
-	<VALUE NAME="transposeKnob" x="85" y="252" d="48"/>
+	<VALUE NAME="tuneKnob" x="25" y="252" d="56"/>
+	<VALUE NAME="transposeKnob" x="85" y="252" d="56"/>
 
 	<VALUE NAME="voiceSwitch" x="124" y="338" w="17" h="24"/>
 	<VALUE NAME="legatoSwitch" x="25" y="338" w="65" h="24"/>
 
 	<!------- CONTROL ----->
 
-	<VALUE NAME="portamentoKnob" x="185" y="77" d="48"/>
+	<VALUE NAME="portamentoKnob" x="186" y="77" d="56"/>
 	<VALUE NAME="unisonButton" x="205" y="162" w="19" h="35"/>
-	<VALUE NAME="voiceDetuneKnob" x="185" y="252" d="48"/>
+	<VALUE NAME="voiceDetuneKnob" x="185" y="252" d="56"/>
 
 	<VALUE NAME="bendRangeButton" x="183" y="335" w="19" h="35"/>
 	<VALUE NAME="bendOsc2OnlyButton" x="228" y="335" w="19" h="35"/>
 
 	<!------- MODULATION ----->
 	
-	<VALUE NAME="lfoFrequencyKnob" x="293" y="77" d="48"/>
-	<VALUE NAME="lfoAmt1Knob" x="390" y="77" d="48"/>
-	<VALUE NAME="lfoAmt2Knob" x="488" y="77" d="48"/>
+	<VALUE NAME="lfoFrequencyKnob" x="291" y="77" d="56"/>
+	<VALUE NAME="lfoAmt1Knob" x="387" y="77" d="56"/>
+	<VALUE NAME="lfoAmt2Knob" x="486" y="77" d="56"/>
 	
 	<VALUE NAME="lfoSinButton" x="309" y="162" w="19" h="35"/>
 	<VALUE NAME="lfoSquareButton" x="309" y="252" w="19" h="35"/>
@@ -45,9 +45,9 @@
 
 	<!------- OSCILLATORS ----->
 
-	<VALUE NAME="osc1PitchKnob" x="593" y="77" d="48"/>
-	<VALUE NAME="pulseWidthKnob" x="691" y="77" d="48"/>
-	<VALUE NAME="osc2PitchKnob" x="788" y="77" d="48"/>
+	<VALUE NAME="osc1PitchKnob" x="591" y="77" d="56"/>
+	<VALUE NAME="pulseWidthKnob" x="689" y="77" d="56"/>
+	<VALUE NAME="osc2PitchKnob" x="786" y="77" d="56"/>
 
 	<VALUE NAME="osc1SawButton" x="587" y="162" w="19" h="35"/>
 	<VALUE NAME="osc1PulButton" x="632" y="162" w="19" h="35"/>
@@ -58,22 +58,22 @@
 	<VALUE NAME="osc2SawButton" x="782" y="162" w="19" h="35"/>
 	<VALUE NAME="osc2PulButton" x="827" y="162" w="19" h="35"/>
 	
-	<VALUE NAME="osc1MixKnob" x="592" y="237" d="48"/>
-	<VALUE NAME="noiseMixKnob" x="686" y="237" d="48"/>
-	<VALUE NAME="osc2MixKnob" x="783" y="237" d="48"/>
+	<VALUE NAME="osc1MixKnob" x="591" y="237" d="56"/>
+	<VALUE NAME="noiseMixKnob" x="689" y="237" d="56"/>
+	<VALUE NAME="osc2MixKnob" x="786" y="237" d="56"/>
 
-	<VALUE NAME="brightnessKnob" x="581" y="324" d="48"/>	
-	<VALUE NAME="xmodKnob" x="656" y="324" d="48"/>
+	<VALUE NAME="brightnessKnob" x="581" y="324" d="56"/>	
+	<VALUE NAME="xmodKnob" x="654" y="324" d="56"/>
 	
-	<VALUE NAME="envPitchModKnob" x="723" y="324" d="48"/>
-	<VALUE NAME="osc2DetuneKnob" x="795" y="324" d="48"/>
+	<VALUE NAME="envPitchModKnob" x="723" y="324" d="56"/>
+	<VALUE NAME="osc2DetuneKnob" x="795" y="324" d="56"/>
 
 	<!------- FILTER ----->
 
-	<VALUE NAME="cutoffKnob" x="893" y="77" d="48"/>
-	<VALUE NAME="resonanceKnob" x="990" y="77" d="48"/>
-	<VALUE NAME="filterEnvelopeAmtKnob" x="1088" y="77" d="48"/>
-	<VALUE NAME="multimodeKnob" x="990" y="167" d="48"/>
+	<VALUE NAME="cutoffKnob" x="893" y="77" d="56"/>
+	<VALUE NAME="resonanceKnob" x="990" y="77" d="56"/>
+	<VALUE NAME="filterEnvelopeAmtKnob" x="1088" y="77" d="56"/>
+	<VALUE NAME="multimodeKnob" x="990" y="167" d="56"/>
 
 	<VALUE NAME="filterBPBlendButton" x="1082" y="162" w="19" h="35"/>
 	<VALUE NAME="filterHQButton" x="932" y="162" w="19" h="35"/>
@@ -83,34 +83,34 @@
 
 	<!------- FILTER ENVELOPE ----->
 	
-	<VALUE NAME="attackKnob" x="1182" y="165" d="48"/>
-	<VALUE NAME="decayKnob" x="1246" y="165" d="48"/>
-	<VALUE NAME="sustainKnob" x="1309" y="165" d="48"/>
-	<VALUE NAME="releaseKnob" x="1373" y="165" d="48"/>
+	<VALUE NAME="attackKnob" x="1182" y="165" d="56"/>
+	<VALUE NAME="decayKnob" x="1246" y="165" d="56"/>
+	<VALUE NAME="sustainKnob" x="1309" y="165" d="56"/>
+	<VALUE NAME="releaseKnob" x="1373" y="165" d="56"/>
 
 	<!------- LOUDNESS ENVELOPE ----->
 	
-	<VALUE NAME="fattackKnob" x="1182" y="75" d="48"/>
-	<VALUE NAME="fdecayKnob" x="1246" y="75" d="48"/>
-	<VALUE NAME="fsustainKnob" x="1309" y="75" d="48"/>
-	<VALUE NAME="freleaseKnob" x="1373" y="75" d="48"/>
+	<VALUE NAME="fattackKnob" x="1182" y="75" d="56"/>
+	<VALUE NAME="fdecayKnob" x="1246" y="75" d="56"/>
+	<VALUE NAME="fsustainKnob" x="1309" y="75" d="56"/>
+	<VALUE NAME="freleaseKnob" x="1373" y="75" d="56"/>
 
 	<!------- VOICE VARIATION ----->
 
-	<VALUE NAME="bendLfoRateKnob" x="928" y="300" d="36"/>
-	<VALUE NAME="veloFltEnvKnob" x="1013" y="300" d="36"/>
-	<VALUE NAME="veloAmpEnvKnob" x="1111" y="300" d="36"/>
+	<VALUE NAME="bendLfoRateKnob" x="928" y="300" d="42"/>
+	<VALUE NAME="veloFltEnvKnob" x="1013" y="300" d="42"/>
+	<VALUE NAME="veloAmpEnvKnob" x="1111" y="300" d="42"/>
 	
-	<VALUE NAME="pan1Knob" x="914" y="368" d="36"/>
-	<VALUE NAME="pan2Knob" x="977" y="368" d="36"/>
-	<VALUE NAME="pan3Knob" x="1040" y="368" d="36"/>
-	<VALUE NAME="pan4Knob" x="1103" y="368" d="36"/>
-	<VALUE NAME="pan5Knob" x="1165" y="368" d="36"/>
-	<VALUE NAME="pan6Knob" x="1228" y="368" d="36"/>
-	<VALUE NAME="pan7Knob" x="1290" y="368" d="36"/>
-	<VALUE NAME="pan8Knob" x="1353" y="368" d="36"/>
+	<VALUE NAME="pan1Knob" x="911" y="368" d="42"/>
+	<VALUE NAME="pan2Knob" x="974" y="368" d="42"/>
+	<VALUE NAME="pan3Knob" x="1036" y="368" d="42"/>
+	<VALUE NAME="pan4Knob" x="1100" y="368" d="42"/>
+	<VALUE NAME="pan5Knob" x="1161" y="368" d="42"/>
+	<VALUE NAME="pan6Knob" x="1224" y="368" d="42"/>
+	<VALUE NAME="pan7Knob" x="1287" y="368" d="42"/>
+	<VALUE NAME="pan8Knob" x="1349" y="368" d="42"/>
 	
-	<VALUE NAME="filterDetuneKnob" x="1228" y="300" d="36"/>
-	<VALUE NAME="portamentoDetuneKnob" x="1291" y="300" d="36"/>
-	<VALUE NAME="envelopeDetuneKnob" x="1353" y="300" d="36"/>
+	<VALUE NAME="filterDetuneKnob" x="1225" y="300" d="42"/>
+	<VALUE NAME="portamentoDetuneKnob" x="1287" y="300" d="42"/>
+	<VALUE NAME="envelopeDetuneKnob" x="1350" y="300" d="42"/>
 </PROPERTIES>

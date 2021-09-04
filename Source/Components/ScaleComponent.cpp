@@ -101,8 +101,11 @@ Image ScalableComponent::getScaledImageFromCache(const String& imageName,
     jassert(scaleFactor == 1.0f || scaleFactor == 1.5f || scaleFactor == 2.0f);
     this->isHighResolutionDisplay = isHighResolutionDisplay;
     int scaleFactorInt = getScaleInt();
-    const String resourceName = imageName
-        + String::formatted("_png", scaleFactorInt);
+    String resourceName = imageName + "_png";
+    if (scaleFactorInt != 1){
+        resourceName = imageName + String::formatted("%dx_png", scaleFactorInt);
+    }
+        
 
     int size = 0;
     File skin;
@@ -125,10 +128,9 @@ Image ScalableComponent::getScaledImageFromCache(const String& imageName,
         return ImageCache::getFromFile(file);
     } else {
         data = BinaryData::getNamedResource((const char*)resourceName.toUTF8(), size);
+        DBG(" Image: " << resourceName);
         return ImageCache::getFromMemory(data, size);
     }
-    
-    
 }
 
 void ScalableComponent::scaleFactorChanged()

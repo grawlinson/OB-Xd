@@ -12,19 +12,8 @@ It contains the basic startup code for a Juce application.
 #include <utility>
 #include "Gui/ImageButton.h"
 // #include "GUI/BinaryData.h"
+#include "Utils.h"
 
-void openInPdf(const File &file)
-{
-#if WINDOWS
-    ShellExecuteW(NULL, L"open",
-                  file.getFullPathName().toWideCharPointer(),
-                  file.getFullPathName().toWideCharPointer(),
-                  NULL, SW_SHOWNORMAL);
-#endif
-#if __APPLE__ || LINUX
-    file.startAsProcess();
-#endif
-}
 
 //==============================================================================
 ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFilter)
@@ -190,17 +179,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     int w = child->getIntAttribute("w");
                     int h = child->getIntAttribute("h");
                     
-                    if (name == "guisize"){ 
-                        xScreen = x;
-                        yScreen = y;
-                        if (processor.getShowPresetBar()) {
-                            setSize(xScreen, yScreen +40);
-                        }
-                        else {
-                            setSize(xScreen, yScreen);
-                        }
-                    }
-
+                    
                     if (name == "resonanceKnob"){
                         resonanceKnob = addKnob (x, y, d, ownerFilter, RESONANCE, "Resonance", 0);
                         mappingComps["resonanceKnob"] = resonanceKnob;
@@ -514,6 +493,19 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                         ImageButton *img = addMenuButton (x, y, d, "menu");
                         mappingComps["menu"] = img;
                     }
+
+                    /*
+                    if (name == "guisize") {
+                        xScreen = x;
+                        yScreen = y;
+                        if (processor.getShowPresetBar()) {
+                            setSize(xScreen, yScreen + 40);
+                        }
+                        else {
+                            setSize(xScreen, yScreen);
+                        }
+                    }
+                    */
                     
                     //DBG(" Name: " << name << " X: " <<x <<" Y: "<<y);
                 }
@@ -894,7 +886,9 @@ void ObxdAudioProcessorEditor::createMenu ()
     PopupMenu helpMenu;
     String version = String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2);
     helpMenu.addItem(menuScaleNum+3, version, false);
+#ifndef WIN32
     helpMenu.addItem(menuScaleNum+4, "Manual", true);
+#endif
     menu->addSubMenu("Help", helpMenu, true);
 }
 
@@ -967,16 +961,16 @@ void ObxdAudioProcessorEditor::resultFromMenu (const Point<int> pos)
         
         const File bankFile = banks.getUnchecked (result);
         processor.loadFromFXBFile (bankFile);
-        clean();
-        loadSkin (processor);
+        //clean();
+        //loadSkin (processor); // Check this
     }
     else if (result >= (progStart + 1) && result <= (progStart + processor.getNumPrograms()))
     {
         result -= 1;
         result -= progStart;
         processor.setCurrentProgram (result);
-        clean();
-        loadSkin (processor);
+        //clean();
+        //loadSkin (processor); // Check this
     }
     else if (result < progStart){
         MenuActionCallback(result);
@@ -1217,9 +1211,9 @@ void ObxdAudioProcessorEditor::nextProgram() {
     
     needNotifytoHost = true;
     countTimer = 0;
-    
-    clean();
-    loadSkin (processor);
+// Define for win and mac?
+    //clean();
+    //loadSkin (processor); // check
 }
 void ObxdAudioProcessorEditor::prevProgram() {
     int cur = processor.getCurrentProgram() -  1;
@@ -1231,8 +1225,8 @@ void ObxdAudioProcessorEditor::prevProgram() {
     needNotifytoHost = true;
     countTimer = 0;
     
-    clean();
-    loadSkin (processor);
+    //clean();
+    //loadSkin (processor);
 }
 void ObxdAudioProcessorEditor::buttonClicked (Button* b)
 {
