@@ -70,10 +70,10 @@
 
 	<!------- FILTER ----->
 
-	<VALUE NAME="cutoffKnob" x="893" y="77" d="56"/>
-	<VALUE NAME="resonanceKnob" x="990" y="77" d="56"/>
-	<VALUE NAME="filterEnvelopeAmtKnob" x="1088" y="77" d="56"/>
-	<VALUE NAME="multimodeKnob" x="990" y="167" d="56"/>
+	<VALUE NAME="cutoffKnob" x="891" y="77" d="56"/>
+	<VALUE NAME="resonanceKnob" x="988" y="77" d="56"/>
+	<VALUE NAME="filterEnvelopeAmtKnob" x="1086" y="77" d="56"/>
+	<VALUE NAME="multimodeKnob" x="988" y="167" d="56"/>
 
 	<VALUE NAME="filterBPBlendButton" x="1082" y="162" w="19" h="35"/>
 	<VALUE NAME="filterHQButton" x="932" y="162" w="19" h="35"/>
@@ -83,17 +83,17 @@
 
 	<!------- FILTER ENVELOPE ----->
 	
-	<VALUE NAME="attackKnob" x="1182" y="165" d="56"/>
-	<VALUE NAME="decayKnob" x="1246" y="165" d="56"/>
-	<VALUE NAME="sustainKnob" x="1309" y="165" d="56"/>
-	<VALUE NAME="releaseKnob" x="1373" y="165" d="56"/>
+	<VALUE NAME="fattackKnob" x="1180" y="75" d="56"/>
+	<VALUE NAME="fdecayKnob" x="1242" y="75" d="56"/>
+	<VALUE NAME="fsustainKnob" x="1304" y="75" d="56"/>
+	<VALUE NAME="freleaseKnob" x="1368" y="75" d="56"/>
 
 	<!------- LOUDNESS ENVELOPE ----->
-	
-	<VALUE NAME="fattackKnob" x="1182" y="75" d="56"/>
-	<VALUE NAME="fdecayKnob" x="1246" y="75" d="56"/>
-	<VALUE NAME="fsustainKnob" x="1309" y="75" d="56"/>
-	<VALUE NAME="freleaseKnob" x="1373" y="75" d="56"/>
+
+	<VALUE NAME="attackKnob" x="1180" y="165" d="56"/>
+	<VALUE NAME="decayKnob" x="1242" y="165" d="56"/>
+	<VALUE NAME="sustainKnob" x="1304" y="165" d="56"/>
+	<VALUE NAME="releaseKnob" x="1368" y="165" d="56"/>
 
 	<!------- VOICE VARIATION ----->
 

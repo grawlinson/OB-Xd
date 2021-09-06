@@ -19,7 +19,7 @@
 	<VALUE NAME="legatoSwitch" x="53" y="350" w="122" h="35"/>
  
 	<VALUE NAME="asPlayedAllocButton" x="102" y="423" w="37" h="37"/>  
-	<VALUE NAME="midiLearnButton" x="152" y="423" w="37" h="37"/>  
+	<VALUE NAME="midiLearnButton" x="151" y="423" w="37" h="37"/>  
 	<VALUE NAME="midiUnlearnButton" x="200" y="423" w="37" h="37"/> 
 
 	<!--CONTROL-->
@@ -40,7 +40,7 @@
 	<VALUE NAME="osc1SawButton" x="269" y="126" w="37" h="37"/>
 	<VALUE NAME="osc1PulButton" x="313" y="126" w="37" h="37"/>  
 	<VALUE NAME="osc2DetuneKnob" x="357" y="123" d="40"/>
-	<VALUE NAME="osc2SawButton" x="404" y="126" w="37" h="37"/>  
+	<VALUE NAME="osc2SawButton" x="403" y="126" w="37" h="37"/>  
 	<VALUE NAME="osc2PulButton" x="447" y="126" w="37" h="37"/> 
 
 	<VALUE NAME="hardSyncButton" x="291" y="201" w="37" h="37"/>
@@ -65,7 +65,7 @@
 	<VALUE NAME="filterKeyFollowButton" x="598" y="126" w="37" h="37"/>
 	<VALUE NAME="filterHQButton" x="642" y="126" w="37" h="37"/>
 	<VALUE NAME="multimodeKnob" x="686" y="123" d="40"/>  
-	<VALUE NAME="filterBPBlendButton" x="733" y="126" w="37" h="37"/>  
+	<VALUE NAME="filterBPBlendButton" x="732" y="126" w="37" h="37"/>  
 	<VALUE NAME="fourPoleButton" x="776" y="126" w="37" h="37"/>  
 
 	<!--ENVELOPES-->

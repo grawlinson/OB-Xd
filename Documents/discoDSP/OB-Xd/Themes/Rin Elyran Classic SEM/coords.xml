@@ -53,10 +53,10 @@
 	<!------- FILTER ----->
 
 	<VALUE NAME="cutoffKnob" x="582" y="40" d="42"/>  
-	<VALUE NAME="resonanceKnob" x="640" y="40" d="42"/>  
+	<VALUE NAME="resonanceKnob" x="641" y="40" d="42"/>  
 	<VALUE NAME="filterEnvelopeAmtKnob" x="704" y="40" d="42"/>
   
-	<VALUE NAME="multimodeKnob" x="640" y="104" d="42"/>  
+	<VALUE NAME="multimodeKnob" x="641" y="104" d="42"/>  
 	<VALUE NAME="filterKeyFollowButton" x="573" y="110" w="28" h="35"/>
 
 	<VALUE NAME="filterBPBlendButton" x="697" y="110" w="28" h="35"/>  
@@ -67,19 +67,19 @@
 
 	<VALUE NAME="attackKnob" x="793" y="132" d="42"/>  
 	<VALUE NAME="decayKnob" x="855" y="132" d="42"/>  
-	<VALUE NAME="sustainKnob" x="918" y="132" d="42"/>  
-	<VALUE NAME="releaseKnob" x="982" y="132" d="42"/>  
+	<VALUE NAME="sustainKnob" x="920" y="132" d="42"/>  
+	<VALUE NAME="releaseKnob" x="983" y="132" d="42"/>  
 
 	<VALUE NAME="fattackKnob" x="793" y="40" d="42"/>  
 	<VALUE NAME="fdecayKnob" x="855" y="40" d="42"/>  
-	<VALUE NAME="fsustainKnob" x="918" y="40" d="42"/>  
-	<VALUE NAME="freleaseKnob" x="982" y="40" d="42"/>  
+	<VALUE NAME="fsustainKnob" x="920" y="40" d="42"/>  
+	<VALUE NAME="freleaseKnob" x="983" y="40" d="42"/>  
 
 	<!------- MODULATION ----->
 
 	<VALUE NAME="lfoFrequencyKnob" x="581" y="207" d="42"/>  
-	<VALUE NAME="lfoAmt1Knob" x="640" y="207" d="42"/>  
-	<VALUE NAME="lfoAmt2Knob" x="704" y="207" d="42"/>  
+	<VALUE NAME="lfoAmt1Knob" x="644" y="207" d="42"/>  
+	<VALUE NAME="lfoAmt2Knob" x="706" y="207" d="42"/>  
 
 	<VALUE NAME="lfoSinButton" x="587" y="269" d="40" w="28" h="35"/>  
 	<VALUE NAME="lfoSquareButton" x="587" y="323" d="40" w="28" h="35"/>  
