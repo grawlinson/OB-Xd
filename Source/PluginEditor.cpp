@@ -882,15 +882,15 @@ void ObxdAudioProcessorEditor::createMenu ()
     scaleMenu.addItem(menuScaleNum+2, "2x", true, getScaleFactor() == 2.0f);
     menu->addSubMenu("GUI Size", scaleMenu, true);
 
-#if defined(WIN32) || defined(LINUX)
+#ifdef LINUX
     menu->addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
 #endif
 
-#ifdef JUCE_MAC
+#if defined(JUCE_MAC) || defined(WIN32)
     PopupMenu helpMenu;
     String version = String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2);
-    helpMenu.addItem(menuScaleNum+3, version, false);
     helpMenu.addItem(menuScaleNum+4, "Manual", true);
+    helpMenu.addItem(menuScaleNum+3, version, false);
     menu->addSubMenu("Help", helpMenu, true);
 #endif
 }
