@@ -15,6 +15,8 @@
 class ObxdAudioProcessor;
 
 
+
+
 //==============================================================================
 class ScalableComponent
 {
@@ -38,4 +40,23 @@ private:
     float scaleFactor;
 	bool isHighResolutionDisplay;
     
+};
+
+
+//==============================================================================
+class CustomLookAndFeel : public LookAndFeel_V3,
+                             public ScalableComponent
+{
+public:
+    CustomLookAndFeel(ObxdAudioProcessor* owner_):LookAndFeel_V3(), ScalableComponent(owner_) {
+        this->setColour(PopupMenu::backgroundColourId, Colour(20, 20, 20));
+        this->setColour(PopupMenu::textColourId, Colour(245, 245, 245));
+        this->setColour(PopupMenu::highlightedBackgroundColourId, Colour(60, 60, 60));
+    };
+
+    PopupMenu::Options getOptionsForComboBoxPopupMenu (ComboBox& box, Label& label) override
+    {
+        PopupMenu::Options option = LookAndFeel_V3::getOptionsForComboBoxPopupMenu(box, label);
+        return option.withStandardItemHeight (label.getHeight()/ getScaleFactor());
+    };
 };

@@ -122,6 +122,7 @@ void ObxdAudioProcessorEditor::resized() {
                         }
                         else if (dynamic_cast<ButtonList*>(mappingComps[name])){
                             mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
+                            //((ButtonList *)mappingComps[name])->getRootMenu()->setLookAndFeel(& getLookAndFeel());
                         }
 
                         else if (dynamic_cast<TooglableButton*>(mappingComps[name])){
@@ -477,12 +478,16 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                                         
                     if (name == "voiceSwitch"){
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices");
+                        CustomLookAndFeel *lf = new CustomLookAndFeel(&this->processor);
+                        voiceSwitch->setLookAndFeel(lf);
                         mappingComps["voiceSwitch"] = voiceSwitch;
                     }
 
 
                     if (name == "legatoSwitch"){
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato");
+                        CustomLookAndFeel *lf = new CustomLookAndFeel(&this->processor);
+                        legatoSwitch->setLookAndFeel(lf);
                         mappingComps["legatoSwitch"] = legatoSwitch;
                     }
 
@@ -587,10 +592,17 @@ void ObxdAudioProcessorEditor::scaleFactorChanged()
         {
             object->setScaleFactor(scaleFactor, highResolutionDisplay);
         }
+        
+        // update look and feel
+        CustomLookAndFeel* laf =
+            dynamic_cast<CustomLookAndFeel*>(&getChildComponent(i)->getLookAndFeel());
+        if (laf != nullptr)
+        {
+            laf->setScaleFactor(scaleFactor, highResolutionDisplay);
+        }
     }
-
-    // update look and feel
-
+    
+    
     // redraw everything
     backgroundImage = getScaledImageFromCache("main", scaleFactor, highResolutionDisplay);
 
