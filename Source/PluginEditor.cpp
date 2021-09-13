@@ -71,9 +71,9 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
                 ScalableComponent::setScaleFactor(2.0f, isHighResolutionDisplay());
             break;
     }
-
+    repaint();
     scaleFactorChanged();
-    //repaint();
+    
 }
 
 
@@ -1325,7 +1325,7 @@ void ObxdAudioProcessorEditor::paint(Graphics& g)
     if (newPhysicalPixelScaleFactor != processor.physicalPixelScaleFactor)
     {
         processor.physicalPixelScaleFactor = newPhysicalPixelScaleFactor;
-        //triggerAsyncUpdate();
+        scaleFactorChanged();
     }
 
 	g.fillAll (Colours::black);
