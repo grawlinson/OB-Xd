@@ -37,7 +37,19 @@ PresetBar::PresetBar (ObxdAudioProcessorEditor &gui)
     presetNameLb.reset (new CustomLabel ("new label",
                                          TRANS("---\n")));
     addAndMakeVisible (presetNameLb.get());
-    presetNameLb->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+
+#ifdef JUCE_MAC
+    presetNameLb->setFont (juce::Font ("Helvetica Neue", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+            
+#ifdef JUCE_WINDOWS
+    presetNameLb->setFont (juce::Font ("Arial", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+
+#ifdef JUCE_LINUX
+    presetNameLb->setFont (juce::Font ("DejaVu Sans", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+
     presetNameLb->setJustificationType (juce::Justification::centred);
     presetNameLb->setEditable (false, false, false);
     presetNameLb->setColour (juce::TextEditor::textColourId, juce::Colours::black);

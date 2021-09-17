@@ -25,11 +25,13 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
       skins (processor.getSkinFiles()),
       banks (processor.getBankFiles())
 {
-    LookAndFeel& lf = getLookAndFeel();
+    setLookAndFeel(new CustomLookAndFeel(&this->processor));
+
+    //LookAndFeel& lf = getLookAndFeel();
     // Popup Menu Look and Feel
-    lf.setColour(PopupMenu::backgroundColourId, Colour(20, 20, 20));
-    lf.setColour(PopupMenu::textColourId, Colour(245, 245, 245));
-    lf.setColour(PopupMenu::highlightedBackgroundColourId, Colour(60, 60, 60));
+    //lf.setColour(PopupMenu::backgroundColourId, Colour(20, 20, 20));
+    //lf.setColour(PopupMenu::textColourId, Colour(245, 245, 245));
+    //lf.setColour(PopupMenu::highlightedBackgroundColourId, Colour(60, 60, 60));
     
     //skinFolder = ownerFilter.getCurrentSkinFolder();  // initialized above
     commandManager.registerAllCommandsForTarget(this);
@@ -478,16 +480,15 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                                         
                     if (name == "voiceSwitch"){
                         voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices");
-                        CustomLookAndFeel *lf = new CustomLookAndFeel(&this->processor);
-                        voiceSwitch->setLookAndFeel(lf);
+                        voiceSwitch->setLookAndFeel(&this->getLookAndFeel());
                         mappingComps["voiceSwitch"] = voiceSwitch;
                     }
 
 
                     if (name == "legatoSwitch"){
                         legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato");
-                        CustomLookAndFeel *lf = new CustomLookAndFeel(&this->processor);
-                        legatoSwitch->setLookAndFeel(lf);
+                       
+                        legatoSwitch->setLookAndFeel(&this->getLookAndFeel());
                         mappingComps["legatoSwitch"] = legatoSwitch;
                     }
 
@@ -523,6 +524,7 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
         presetBar->setVisible(processor.getShowPresetBar());
         presetBar->leftClicked = [this](juce::Point<int> &pos){
             PopupMenu menu;
+            menu.setLookAndFeel(&this->getLookAndFeel());
             for (int i = 0; i < processor.getNumPrograms(); ++i)
             {
                 menu.addItem (i + progStart + 1,
@@ -774,12 +776,19 @@ void ObxdAudioProcessorEditor::createMenu ()
 {
     popupMenus.clear();
     PopupMenu* menu = new PopupMenu();
+    //menu->setLookAndFeel(new CustomLookAndFeel(&this->processor));
     PopupMenu progMenu;
     PopupMenu bankMenu;
     PopupMenu skinMenu;
     PopupMenu fileMenu;
     //PopupMenu viewMenu;
     PopupMenu midiMenu;
+    menu->setLookAndFeel(&this->getLookAndFeel());
+    progMenu.setLookAndFeel(&this->getLookAndFeel());
+    bankMenu.setLookAndFeel(&this->getLookAndFeel());
+    skinMenu.setLookAndFeel(&this->getLookAndFeel());
+    fileMenu.setLookAndFeel(&this->getLookAndFeel());
+    midiMenu.setLookAndFeel(&this->getLookAndFeel());
     skins = processor.getSkinFiles();
     banks = processor.getBankFiles();
     {
@@ -900,6 +909,7 @@ void ObxdAudioProcessorEditor::createMenu ()
 
 #if defined(JUCE_MAC) || defined(WIN32)
     PopupMenu helpMenu;
+    helpMenu.setLookAndFeel(&this->getLookAndFeel());
     String version = String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2);
     helpMenu.addItem(menuScaleNum+4, "Manual", true);
     helpMenu.addItem(menuScaleNum+3, version, false);
