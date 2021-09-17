@@ -23,19 +23,32 @@
  */
 #pragma once
 #include "../Source/Engine/SynthEngine.h"
+class ObxdAudioProcessor;
 
-class ButtonList  : public ComboBox
+class ButtonList  : public ComboBox, public ScalableComponent
 {
+    juce::String img_name;
 public:
-	ButtonList (Image k, int fh) : ComboBox("cb")
+	ButtonList (juce::String nameImg, int fh, ObxdAudioProcessor *owner) : ComboBox("cb"), ScalableComponent(owner), img_name(nameImg)
 	{
-		kni = k;
+        scaleFactorChanged();
 		count = 0;
 		h2 = fh;
-		w2 = k.getWidth();
+		w2 = kni.getWidth();
 	}
 	//int addItem
-
+    void scaleFactorChanged() override
+    {
+        kni = getScaledImageFromCache(img_name, getScaleFactor(), getIsHighResolutionDisplay());
+        /*
+        backgroundImage =
+            allImage.getClippedImage(Rectangle<int>(0,
+                                                    allImage.getHeight() / 2,
+                                                    allImage.getWidth(),
+                                                    allImage.getHeight() / 2));
+         */
+        repaint();
+    }
 // Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
 public:
     class ButtonListAttachment  : public juce::AudioProcessorValueTreeState::ComboBoxAttachment
@@ -94,7 +107,7 @@ public:
     void paintOverChildren (Graphics& g) override
 	{
 		int ofs = getSelectedId() - 1;
-        g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs, w2, h2);
+        g.drawImage(kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs * getScaleInt(), w2 * getScaleInt() , h2* getScaleInt());
 	}
 
 private:

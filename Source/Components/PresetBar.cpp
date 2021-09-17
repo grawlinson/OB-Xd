@@ -34,10 +34,22 @@ PresetBar::PresetBar (ObxdAudioProcessorEditor &gui)
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    presetNameLb.reset (new juce::Label ("new label",
+    presetNameLb.reset (new CustomLabel ("new label",
                                          TRANS("---\n")));
     addAndMakeVisible (presetNameLb.get());
-    presetNameLb->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+
+#ifdef JUCE_MAC
+    presetNameLb->setFont (juce::Font ("Helvetica Neue", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+            
+#ifdef JUCE_WINDOWS
+    presetNameLb->setFont (juce::Font ("Arial", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+
+#ifdef JUCE_LINUX
+    presetNameLb->setFont (juce::Font ("DejaVu Sans", 16.00f, juce::Font::plain).withTypefaceStyle ("Bold"));
+#endif
+
     presetNameLb->setJustificationType (juce::Justification::centred);
     presetNameLb->setEditable (false, false, false);
     presetNameLb->setColour (juce::TextEditor::textColourId, juce::Colours::black);
@@ -70,13 +82,16 @@ PresetBar::PresetBar (ObxdAudioProcessorEditor &gui)
     drawable1 = juce::Drawable::createFromImageData (presetnavigation_svg, presetnavigation_svgSize);
 
     //[UserPreSize]
+    presetNameLb->leftClicked = [this](juce::Point<int> pos){
+        this->leftClicked(pos);
+    };
     //[/UserPreSize]
 
     setSize (471, 40);
 
 
     //[Constructor] You can add your own custom stuff here..
-    startTimer(500);
+    startTimer(50);
     //[/Constructor]
 }
 
@@ -136,12 +151,14 @@ void PresetBar::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_previousBtn] -- add your button handler code here..
         editor.prevProgram();
+        //update();
         //[/UserButtonCode_previousBtn]
     }
     else if (buttonThatWasClicked == nextBtn.get())
     {
         //[UserButtonCode_nextBtn] -- add your button handler code here..
         editor.nextProgram();
+        //update();
         //[/UserButtonCode_nextBtn]
     }
 

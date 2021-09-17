@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.4.0"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.5.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
               pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
@@ -9,14 +9,18 @@
               pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier="com.discodsp.obxd"
               companyName="discoDSP" companyWebsite="https://www.discodsp.com/"
               pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              pluginFormats="buildAU,buildStandalone,buildVST3" buildVST="0"
+              pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" buildVST="1"
               buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="1" enableIAA="0" displaySplashScreen="0" jucerFormatVersion="1"
-              pluginChannelConfigs="{0,2}" companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
+              buildStandalone="1" enableIAA="0" jucerFormatVersion="1" pluginChannelConfigs="{0,2}"
+              companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
               pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{BD020CFA-798B-F1A1-A6C7-7559BD467248}" name="Components">
+        <FILE id="ZHNz4D" name="ScaleComponent.cpp" compile="1" resource="0"
+              file="Source/Components/ScaleComponent.cpp"/>
+        <FILE id="j4plOT" name="ScaleComponent.h" compile="0" resource="0"
+              file="Source/Components/ScaleComponent.h"/>
         <FILE id="XnxhrR" name="PresetBar.h" compile="0" resource="0" file="Source/Components/PresetBar.h"/>
         <FILE id="GHGyel" name="PresetBar.cpp" compile="1" resource="0" file="Source/Components/PresetBar.cpp"/>
         <FILE id="qhLBZY" name="SetPresetNameWindow.cpp" compile="1" resource="0"
@@ -27,12 +31,17 @@
       <GROUP id="{5F0B15D1-4D92-B2FF-5904-9CF4C3CE645F}" name="Images">
         <FILE id="nnY63W" name="appicon.png" compile="0" resource="1" file="Source/Images/appicon.png"/>
         <FILE id="kwaOoZ" name="main.png" compile="0" resource="1" file="Source/Images/main.png"/>
+        <FILE id="S4I5XU" name="main@2x.png" compile="0" resource="1" file="Source/Images/main@2x.png"/>
+        <FILE id="A8hDlt" name="main@4x.png" compile="0" resource="1" file="Source/Images/main@4x.png"/>
         <FILE id="l84SVW" name="menu.png" compile="0" resource="1" file="Source/Images/menu.png"/>
+        <FILE id="a3krBW" name="menu@2x.png" compile="0" resource="1" file="Source/Images/menu@2x.png"/>
+        <FILE id="bxKZxm" name="menu@4x.png" compile="0" resource="1" file="Source/Images/menu@4x.png"/>
         <FILE id="NKGY6X" name="presetnavigation.svg" compile="0" resource="1"
               file="Source/Images/presetnavigation.svg"/>
       </GROUP>
       <GROUP id="{6995BDF2-263F-3CA7-8CA4-4E21F325477A}" name="Gui">
         <FILE id="zJoidp" name="ButtonList.h" compile="0" resource="0" file="Source/Gui/ButtonList.h"/>
+        <FILE id="I5Qd7K" name="ImageButton.h" compile="0" resource="0" file="Source/Gui/ImageButton.h"/>
         <FILE id="lB2ss0" name="Knob.h" compile="0" resource="0" file="Source/Gui/Knob.h"/>
         <FILE id="YKpBza" name="TooglableButton.h" compile="0" resource="0"
               file="Source/Gui/TooglableButton.h"/>
@@ -69,6 +78,8 @@
       <FILE id="VISBqh" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="LkXqq2" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="nvjdHY" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
+      <FILE id="ASjsrT" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
@@ -80,7 +91,7 @@
                        stripLocalSymbols="0" linkTimeOptimisation="0"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="OB-Xd"
                        stripLocalSymbols="1" linkTimeOptimisation="1" osxCompatibility="10.9 SDK"
-                       enablePluginBinaryCopyStep="1"/>
+                       enablePluginBinaryCopyStep="1" macOSDeploymentTarget="10.9"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl" path="Modules"/>
@@ -149,20 +160,20 @@
     </VS2019>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
              useGlobalPath="0"/>
-    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_WEB_BROWSER="0" JUCE_ASIO="1"
                JUCE_JACK="1" JUCE_USE_CURL="0"/>

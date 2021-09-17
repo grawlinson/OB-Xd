@@ -195,7 +195,7 @@ public:
     
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
-    
+    void setGuiSize(const int gui_size);
     //==============================================================================
     static String getEngineParameterId (size_t);
     int getParameterIndexFromId (String);
@@ -229,8 +229,11 @@ private:
 	SynthEngine synth;
 	ObxdBank programs;
 
-	String currentSkin;
+	
 public:
+    float physicalPixelScaleFactor;
+    int gui_size;
+    String currentSkin;
 	String currentBank;
     File currentBankFile;
     void saveBank();

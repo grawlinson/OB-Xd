@@ -69,8 +69,9 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	options.storageFormat = PropertiesFile::storeAsXML;
 	options.millisecondsBeforeSaving = 2500;
 	options.processLock = &configLock;
-	config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
+    config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
     showPresetBar = config->getBoolValue("presetnavigation");
+    gui_size = config->getIntValue("gui_size", 1);
 	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
 	currentBank = "000 - FMR OB-Xa Patch Book";
 
@@ -408,6 +409,8 @@ void ObxdAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 #else
 	std::unique_ptr<XmlElement> xmlState = getXmlFromBinary(data, sizeInBytes);
 #endif
+    
+    DBG(" XML:" << xmlState->toString());
 	if (xmlState)
 	{
 		XmlElement* xprogs = xmlState->getFirstChildElement();
@@ -802,6 +805,7 @@ File ObxdAudioProcessor::getPresetsFolder() const
 
 File ObxdAudioProcessor::getCurrentSkinFolder() const
 {
+    DBG(" SKIN : " << currentSkin);
 	return getSkinFolder().getChildFile(currentSkin);
 }
 
@@ -813,6 +817,11 @@ void ObxdAudioProcessor::setCurrentSkinFolder(const String& folderName)
 	config->setNeedsToBeSaved(true);
 }
 
+void ObxdAudioProcessor::setGuiSize(const int gui_size) {
+    this->gui_size = gui_size;
+    config->setValue("gui_size", gui_size);
+    config->setNeedsToBeSaved(true);
+}
 //==============================================================================
 String ObxdAudioProcessor::getEngineParameterId (size_t index)
 {
