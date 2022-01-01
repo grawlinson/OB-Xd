@@ -50,15 +50,15 @@ ObxdAudioProcessorEditor::ObxdAudioProcessorEditor (ObxdAudioProcessor& ownerFil
     getTopLevelComponent()->addKeyListener (commandManager.getKeyMappings());
     
     //Timer::callAfterDelay (100, [this] { this->grabKeyboardFocus(); }); // ensure that key presses are sent to the KeyPressTarget object
+    
+    if (PluginHostType().isProTools()) { } else { startTimer(100); }; // Fix ProTools file dialog focus issues
 
-	startTimer(100); // This will fix the issue
-
+	//startTimer(100); // This will fix the issue
     
     DBG("W: " <<getWidth() << " H:" << getHeight());
 
     loadSkin (processor);
 
-    
     updateFromHost();
     
     switch(processor.gui_size)
