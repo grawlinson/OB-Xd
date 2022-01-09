@@ -26,6 +26,7 @@
 #include "VoiceQueue.h"
 #include "SynthEngine.h"
 #include "Lfo.h"
+#include "Tuning.h"
 
 class Motherboard
 {
@@ -42,6 +43,7 @@ private:
 	float sampleRate,sampleRateInv;
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Motherboard)
 public:
+	Tuning tuning;
 	bool asPlayedMode;
 	Lfo mlfo,vibratoLfo;
 	float vibratoAmount;
@@ -343,6 +345,7 @@ public:
 	}
 	void processSample(float* sm1,float* sm2)
 	{
+		tuning.updateMTSESPStatus();
 		mlfo.update();
 		vibratoLfo.update();
 		float vl=0,vr=0;
@@ -360,6 +363,7 @@ public:
 
 		for(int i = 0 ; i < totalvc;i++)
 		{
+				voices[i].initTuning(&tuning);
 				float x1 = processSynthVoice(voices[i],lfovalue,viblfo);
 				if(Oversample)
 				{

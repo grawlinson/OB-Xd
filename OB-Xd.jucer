@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.5.1"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.6.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
               pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
@@ -16,6 +16,11 @@
               pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
+      <GROUP id="{E11C29DD-69D5-DA26-5CFF-B65751876DEE}" name="MTS">
+        <FILE id="IUi0NP" name="libMTSClient.cpp" compile="1" resource="0"
+              file="Source/MTS/libMTSClient.cpp"/>
+        <FILE id="D5281m" name="libMTSClient.h" compile="0" resource="0" file="Source/MTS/libMTSClient.h"/>
+      </GROUP>
       <GROUP id="{BD020CFA-798B-F1A1-A6C7-7559BD467248}" name="Components">
         <FILE id="ZHNz4D" name="ScaleComponent.cpp" compile="1" resource="0"
               file="Source/Components/ScaleComponent.cpp"/>
@@ -69,6 +74,7 @@
         <FILE id="cJCh5P" name="SawOsc.h" compile="0" resource="0" file="Source/Engine/SawOsc.h"/>
         <FILE id="gXSGsx" name="SynthEngine.h" compile="0" resource="0" file="Source/Engine/SynthEngine.h"/>
         <FILE id="dJvsex" name="TriangleOsc.h" compile="0" resource="0" file="Source/Engine/TriangleOsc.h"/>
+        <FILE id="fH5re8" name="Tuning.h" compile="0" resource="0" file="Source/Engine/Tuning.h"/>
         <FILE id="eM2bUm" name="VoiceQueue.h" compile="0" resource="0" file="Source/Engine/VoiceQueue.h"/>
       </GROUP>
       <FILE id="QQwhFQ" name="PluginProcessor.cpp" compile="1" resource="0"
