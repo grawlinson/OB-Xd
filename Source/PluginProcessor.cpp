@@ -794,7 +794,7 @@ File ObxdAudioProcessor::getBanksFolder() const
 
 File ObxdAudioProcessor::getMidiFolder() const
 {
-    return getDocumentFolder().getChildFile("Midi");
+    return getDocumentFolder().getChildFile("MIDI");
 }
 
 
