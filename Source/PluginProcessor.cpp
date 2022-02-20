@@ -39,10 +39,12 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
         auto name         = TRANS (id);
         auto range        = NormalisableRange<float> {0.0f, 1.0f};
         auto defaultValue = defaultParams.values[i];
-        auto parameter    = std::make_unique<AudioParameterFloat> (id,
-                                                                   name,
-                                                                   range,
-                                                                   defaultValue);
+        auto parameter    = std::make_unique<AudioParameterFloat> (
+            id, name, range, defaultValue, String{}, AudioProcessorParameter::genericParameter,
+            [=](float value, int /*maxStringLength*/)
+            {
+                return ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(i, value);
+            });
         
         params.push_back (std::move (parameter));
     }
@@ -912,6 +914,110 @@ String ObxdAudioProcessor::getEngineParameterId (size_t index)
     }
     
     return "Undefined";
+}
+
+String ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(size_t index, float value)
+{
+    switch (index)
+    {
+    // case SELF_OSC_PUSH:      return "SelfOscPush";
+    // case ENV_PITCH_BOTH:     return "EnvPitchBoth";
+    // case FENV_INVERT:        return "FenvInvert";
+    // case PW_OSC2_OFS:        return "PwOfs";
+    // case LEVEL_DIF:          return "LevelDif";
+    // case PW_ENV_BOTH:        return "PwEnvBoth";
+    // case PW_ENV:             return "PwEnv";
+    // case LFO_SYNC:           return "LfoSync";
+    // case ECONOMY_MODE:       return "EconomyMode";
+    // case UNLEARN:            return "MidiUnlearn";
+    // case MIDILEARN:          return "MidiLearn";
+    // case VAMPENV:            return "VAmpFactor";
+    // case VFLTENV:            return "VFltFactor";
+    // case ASPLAYEDALLOCATION: return "AsPlayedAllocation";
+    case BENDLFORATE:        return String{ logsc(value, 3, 10), 2 } + " Hz";
+    // case FOURPOLE:           return "FourPole";
+    // case LEGATOMODE:         return "LegatoMode";
+    // case ENVPITCH:           return "EnvelopeToPitch";
+    // case OSCQuantize:        return "PitchQuant";
+    // case VOICE_COUNT:        return "VoiceCount";
+    // case BANDPASS:           return "BandpassBlend";
+    // case FILTER_WARM:        return "Filter_Warm";
+    // case BENDRANGE:          return "BendRange";
+    // case BENDOSC2:           return "BendOsc2Only";
+    case OCTAVE:             return String{ (roundToInt(value * 4) - 2) * 12.f, 0 } + " Semitones";
+    case TUNE:               return String{ value * 200 - 100, 1 } + " Cents";
+    // case BRIGHTNESS:         return "Brightness";
+    case NOISEMIX: {
+        const auto decibels = Decibels::gainToDecibels(logsc(value, 0, 1, 35));
+        if (decibels < -80) return "-Inf";
+        return String{ decibels, 2 } + " dB";
+    }
+    case OSC1MIX:            
+    case OSC2MIX: {
+        const auto decibels = Decibels::gainToDecibels(value);
+        if (decibels < -80) return "-Inf";
+        return String{ decibels, 2 } + " dB";
+    }
+    // case MULTIMODE:          return "Multimode";
+    // case LFOSHWAVE:          return "LfoSampleHoldWave";
+    // case LFOSINWAVE:         return "LfoSineWave";
+    // case LFOSQUAREWAVE:      return "LfoSquareWave";
+    // case LFO1AMT:            return "LfoAmount1";
+    // case LFO2AMT:            return "LfoAmount2";
+    // case LFOFILTER:          return "LfoFilter";
+    // case LFOOSC1:            return "LfoOsc1";
+    // case LFOOSC2:            return "LfoOsc2";
+    case LFOFREQ:            return String{ logsc(value, 0, 50, 120), 2 } + " Hz";
+    // case LFOPW1:             return "LfoPw1";
+    // case LFOPW2:             return "LfoPw2";
+    // case PORTADER:           return "PortamentoDetune";
+    // case FILTERDER:          return "FilterDetune";
+    // case ENVDER:             return "EnvelopeDetune";
+    case PAN1:               
+    case PAN2:               
+    case PAN3:               
+    case PAN4:               
+    case PAN5:               
+    case PAN6:               
+    case PAN7:               
+    case PAN8: {
+		const auto pan = value - 0.5f;
+        if (pan < 0.f) return String{ pan, 2 } + " (Left)";
+        if (pan > 0.f) return String{ pan, 2 } + " (Right)";
+        return String{ pan, 2 } + " (Center)";
+    }
+    // case XMOD:               return "Xmod";
+    // case OSC2HS:             return "Osc2HardSync";
+    // case OSC1P:              return String{ getPitch(value * 48), 2 };
+    // case OSC2P:              return String{ getPitch(value * 48), 2 };
+    // case PORTAMENTO:         return "Portamento";
+    // case UNISON:             return "Unison";
+    // case FLT_KF:             return "FilterKeyFollow";
+    // case PW:                 return "PulseWidth";
+    // case OSC2Saw:            return "Osc2Saw";
+    // case OSC1Saw:            return "Osc1Saw";
+    // case OSC1Pul:            return "Osc1Pulse";
+    // case OSC2Pul:            return "Osc2Pulse";
+    //case VOLUME:             return String{ Decibels::gainToDecibels(linsc(value, 0, 0.30)), 2 };
+    // case UDET:               return "VoiceDetune";
+    // case OSC2_DET:           return "Oscillator2detune";
+    // case CUTOFF:             return "Cutoff";
+    // case RESONANCE:          return "Resonance";
+    // case ENVELOPE_AMT:       return "FilterEnvAmount";
+    // case LATK:               return String{ logsc(value, 4, 60000, 900) / 1000.f, 2};
+    // case LDEC:               return String{ logsc(value, 4, 60000, 900) / 1000.f, 2};
+    // case LSUS:               return String{ value, 2};
+    // case LREL:               return String{ logsc(value, 8, 60000, 900) / 1000.f, 2};
+    // case FATK:               return String{ logsc(value, 1, 60000, 900) / 1000.f, 2};
+    // case FDEC:               return String{ logsc(value, 1, 60000, 900) / 1000.f, 2};
+    // case FSUS:               return String{ value, 2};
+    // case FREL:               return String{ logsc(value, 1, 60000, 900) / 1000.f, 2 };
+
+    default:
+        break;
+    }
+
+    return String{ value, 2 };
 }
 
 int ObxdAudioProcessor::getParameterIndexFromId (String paramId)

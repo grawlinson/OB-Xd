@@ -25,6 +25,24 @@
 #include "../Source/Engine/SynthEngine.h"
 #include "../Components/ScaleComponent.h"
 class ObxdAudioProcessor;
+
+class KnobLookAndFeel : public LookAndFeel_V4
+{
+public:
+    KnobLookAndFeel()
+    {
+        setColour(BubbleComponent::ColourIds::backgroundColourId, Colours::white.withAlpha(0.8f));
+        setColour(BubbleComponent::ColourIds::outlineColourId, Colours::transparentBlack);
+        setColour(TooltipWindow::textColourId, Colours::black);
+    }
+    int getSliderPopupPlacement(Slider&) override
+    {
+        return BubbleComponent::BubblePlacement::above;
+    }
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(KnobLookAndFeel)
+};
+
 class Knob  : public Slider, public ScalableComponent, public ActionBroadcaster
 {
     juce::String img_name;
@@ -43,8 +61,15 @@ public:
 		h2 = fh;
         w2 = kni.getWidth();
 		numFr = kni.getHeight() / h2;
-		
-	};
+        setPopupDisplayEnabled(true, true, getParentComponent());
+        setLookAndFeel(&lookAndFeel);
+	}
+
+    ~Knob() override
+    {
+        setLookAndFeel(nullptr);
+    }
+
     void scaleFactorChanged() override
     {
         kni = getScaledImageFromCache(img_name, getScaleFactor(), getIsHighResolutionDisplay());
@@ -116,8 +141,6 @@ public:
 		int ofs = (int) ((getValue() - getMinimum()) / (getMaximum() - getMinimum()) * (numFr - 1));
         g.drawImage (kni, 0, 0, getWidth(), getHeight(), 0, h2 * ofs * getScaleInt(), w2 * getScaleInt(), h2 * getScaleInt());
 	}
-    
-    ~Knob() override {};
 
     void resetOnShiftClick(bool value, const String& identifier)
     {
@@ -131,4 +154,5 @@ private:
     bool shouldResetOnShiftClick{ false };
     String resetActionMessage{};
     AudioProcessorParameter* parameter {nullptr};
+    KnobLookAndFeel lookAndFeel;
 };
