@@ -55,6 +55,7 @@ class ObxdAudioProcessorEditor  : public AudioProcessorEditor
 //                                  , public Slider::Listener
                                 , public Button::Listener
 //                                  , public ComboBox::Listener
+                                , public ActionListener
                                 , public ApplicationCommandTarget
                                 , public Timer
                                 , public FileDragAndDropTarget
@@ -177,6 +178,7 @@ public:
     {
         return processor.physicalPixelScaleFactor > 1.0;
     }
+    void actionListenerCallback(const String& message) override;
 private:
     Rectangle<int> transformBounds(int x, int y, int w, int h);
 	Knob* addKnob (int x, int y, int d, ObxdAudioProcessor& filter, int parameter, String name, float defval);
@@ -304,6 +306,10 @@ private:
     int menuScaleNum;
     int countTimerForLed = 0;
 
+    struct Action
+    {
+        static const String panReset;
+    };
 };
 
 #endif  // PLUGINEDITOR_H_INCLUDED

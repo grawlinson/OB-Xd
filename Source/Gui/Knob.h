@@ -25,7 +25,7 @@
 #include "../Source/Engine/SynthEngine.h"
 #include "../Components/ScaleComponent.h"
 class ObxdAudioProcessor;
-class Knob  : public Slider, public ScalableComponent
+class Knob  : public Slider, public ScalableComponent, public ActionBroadcaster
 {
     juce::String img_name;
 public:
@@ -56,6 +56,18 @@ public:
                                                     allImage.getHeight() / 2));
          */
         repaint();
+    }
+
+    void mouseDown(const MouseEvent& event) override
+    {
+        if (event.mods.isShiftDown())
+        {
+            if (shouldResetOnShiftClick)
+            {
+                sendActionMessage(resetActionMessage);
+            }
+        }
+        Slider::mouseDown(event);
     }
 // Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
 public:
@@ -106,9 +118,17 @@ public:
 	}
     
     ~Knob() override {};
+
+    void resetOnShiftClick(bool value, const String& identifier)
+    {
+        shouldResetOnShiftClick = value;
+        resetActionMessage = identifier;
+    }
 private:
 	Image kni;
 	int fh, numFr;
 	int w2, h2;
+    bool shouldResetOnShiftClick{ false };
+    String resetActionMessage{};
     AudioProcessorParameter* parameter {nullptr};
 };
