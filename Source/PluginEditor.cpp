@@ -210,6 +210,14 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                     if (name == "osc1PitchKnob"){
                         osc1PitchKnob = addKnob (x, y, d, ownerFilter, OSC1P, "Osc1Pitch", 0);
+                        osc1PitchKnob->shiftDragCallback = [](double value)
+                        {
+                            if (value < 0.125) return 0.0;
+                            if (value < 0.375) return 0.25;
+                            if (value < 0.625) return 0.5;
+                            if (value < 0.875) return 0.75;
+                            return 1.0;
+                        };
                         mappingComps["osc1PitchKnob"] = osc1PitchKnob;
                     }
                     if (name == "pulseWidthKnob"){
@@ -218,6 +226,14 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                     if (name == "osc2PitchKnob"){
                         osc2PitchKnob = addKnob (x, y, d, ownerFilter, OSC2P, "Osc2Pitch", 0);
+                        osc2PitchKnob->shiftDragCallback = [](double value)
+                        {
+                            if (value < 0.125) return 0.0;
+                            if (value < 0.375) return 0.25;
+                            if (value < 0.625) return 0.5;
+                            if (value < 0.875) return 0.75;
+                            return 1.0;
+                        };
                         mappingComps["osc2PitchKnob"] = osc2PitchKnob;
                     }
                     

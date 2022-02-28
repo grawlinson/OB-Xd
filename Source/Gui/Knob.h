@@ -94,6 +94,19 @@ public:
         }
         Slider::mouseDown(event);
     }
+
+    void mouseDrag(const MouseEvent& event) override
+	{
+        Slider::mouseDrag(event);
+        if (event.mods.isShiftDown())
+        {
+            if (shiftDragCallback)
+            {
+                setValue(shiftDragCallback(getValue()), sendNotificationAsync);
+            }
+        }
+	}
+
 // Source: https://git.iem.at/audioplugins/IEMPluginSuite/-/blob/master/resources/customComponents/ReverseSlider.h
 public:
     class KnobAttachment  : public juce::AudioProcessorValueTreeState::SliderAttachment
@@ -147,6 +160,8 @@ public:
         shouldResetOnShiftClick = value;
         resetActionMessage = identifier;
     }
+
+    std::function<double(double)> shiftDragCallback;
 private:
 	Image kni;
 	int fh, numFr;
