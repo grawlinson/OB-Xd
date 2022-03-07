@@ -198,6 +198,8 @@ public:
     void setGuiSize(const int gui_size);
     //==============================================================================
     static String getEngineParameterId (size_t);
+	static String getTrueParameterValueFromNormalizedRange(size_t, float normalizedValue);
+
     int getParameterIndexFromId (String);
     void setEngineParameterValue (int, float, bool notifyToHost= false);
     void parameterChanged (const String&, float) override;

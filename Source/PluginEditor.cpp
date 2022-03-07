@@ -210,6 +210,14 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                     if (name == "osc1PitchKnob"){
                         osc1PitchKnob = addKnob (x, y, d, ownerFilter, OSC1P, "Osc1Pitch", 0);
+                        osc1PitchKnob->shiftDragCallback = [](double value)
+                        {
+                            if (value < 0.125) return 0.0;
+                            if (value < 0.375) return 0.25;
+                            if (value < 0.625) return 0.5;
+                            if (value < 0.875) return 0.75;
+                            return 1.0;
+                        };
                         mappingComps["osc1PitchKnob"] = osc1PitchKnob;
                     }
                     if (name == "pulseWidthKnob"){
@@ -218,6 +226,14 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                     if (name == "osc2PitchKnob"){
                         osc2PitchKnob = addKnob (x, y, d, ownerFilter, OSC2P, "Osc2Pitch", 0);
+                        osc2PitchKnob->shiftDragCallback = [](double value)
+                        {
+                            if (value < 0.125) return 0.0;
+                            if (value < 0.375) return 0.25;
+                            if (value < 0.625) return 0.5;
+                            if (value < 0.875) return 0.75;
+                            return 1.0;
+                        };
                         mappingComps["osc2PitchKnob"] = osc2PitchKnob;
                     }
                     
@@ -420,35 +436,51 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     
                     if (name == "pan1Knob"){
                         pan1Knob = addKnob (x, y, d, ownerFilter, PAN1, "1", 0.5);
+                        pan1Knob->resetOnShiftClick(true, Action::panReset);
+                        pan1Knob->addActionListener(this);
                         mappingComps["pan1Knob"] = pan1Knob;
                     }
                     if (name == "pan2Knob"){
                         pan2Knob = addKnob (x, y, d, ownerFilter, PAN2, "2", 0.5);
+                        pan2Knob->resetOnShiftClick(true, Action::panReset);
+                        pan2Knob->addActionListener(this);
                         mappingComps["pan2Knob"] = pan2Knob;
                     }
                     if (name == "pan3Knob"){
                         pan3Knob = addKnob (x, y, d, ownerFilter, PAN3, "3", 0.5);
+                        pan3Knob->resetOnShiftClick(true, Action::panReset);
+                        pan3Knob->addActionListener(this);
                         mappingComps["pan3Knob"] = pan3Knob;
                     }
                     if (name == "pan4Knob"){
                         pan4Knob = addKnob (x, y, d, ownerFilter, PAN4, "4", 0.5);
+                        pan4Knob->resetOnShiftClick(true, Action::panReset);
+                        pan4Knob->addActionListener(this);
                         mappingComps["pan4Knob"] = pan4Knob;
                     }
                     
                     if (name == "pan5Knob"){
                         pan5Knob = addKnob (x, y, d, ownerFilter, PAN5, "5", 0.5);
+                        pan5Knob->resetOnShiftClick(true, Action::panReset);
+                        pan5Knob->addActionListener(this);
                         mappingComps["pan5Knob"] = pan5Knob;
                     }
                     if (name == "pan6Knob"){
                         pan6Knob = addKnob (x, y, d, ownerFilter, PAN6, "6", 0.5);
+                        pan6Knob->resetOnShiftClick(true, Action::panReset);
+                        pan6Knob->addActionListener(this);
                         mappingComps["pan6Knob"] = pan6Knob;
                     }
                     if (name == "pan7Knob"){
                         pan7Knob = addKnob (x, y, d, ownerFilter, PAN7, "7", 0.5);
+                        pan7Knob->resetOnShiftClick(true, Action::panReset);
+                        pan7Knob->addActionListener(this);
                         mappingComps["pan7Knob"] = pan7Knob;
                     }
                     if (name == "pan8Knob"){
                         pan8Knob = addKnob (x, y, d, ownerFilter, PAN8, "8", 0.5);
+                        pan8Knob->resetOnShiftClick(true, Action::panReset);
+                        pan8Knob->addActionListener(this);
                         mappingComps["pan8Knob"] = pan8Knob;
                     }
                     
@@ -730,6 +762,22 @@ TooglableButton* ObxdAudioProcessorEditor::addButton (int x, int y, int w, int h
     
 	return button;
 }
+
+void ObxdAudioProcessorEditor::actionListenerCallback(const String& message)
+{
+    if (message.equalsIgnoreCase(Action::panReset))
+    {
+        const StringArray parameters{ "pan1Knob", "pan2Knob", "pan3Knob", "pan4Knob", "pan5Knob", "pan6Knob", "pan7Knob", "pan8Knob" };
+        for (const auto& parameter : parameters)
+        {
+            if (auto* knob = dynamic_cast<Knob*>(mappingComps[parameter]))
+            {
+                knob->setValue(knob->getDoubleClickReturnValue());
+            } 
+        }
+    }
+}
+
 Rectangle<int> ObxdAudioProcessorEditor::transformBounds(int x, int y, int w, int h)
 {
     if (getScaleFactor() == 1.0f)
@@ -1449,6 +1497,8 @@ void ObxdAudioProcessorEditor::filesDropped(const StringArray& files, int x, int
         //createMenu();
     }
 }
+
+const String ObxdAudioProcessorEditor::Action::panReset{ "panReset" };
 /*
 bool ObxdAudioProcessorEditor::keyPressed(const KeyPress & press) {
     if (press.getKeyCode() == '+' || press.getKeyCode() == KeyPress::numberPadAdd)
