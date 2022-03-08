@@ -117,10 +117,13 @@ void ObxdAudioProcessorEditor::resized() {
                     int d = child->getIntAttribute("d");
                     int w = child->getIntAttribute("w");
                     int h = child->getIntAttribute("h");
+                    bool tooltipEnabled = child->getBoolAttribute("tooltip", false);
                     DBG(" COmponent : " << name);
                     if (mappingComps[name] != nullptr){
-                        if (dynamic_cast<Knob*>(mappingComps[name])){
-                            mappingComps[name]->setBounds(transformBounds(x, y, d,d));
+                        if (auto* knob = dynamic_cast<Knob*>(mappingComps[name])){
+                            knob->setBounds(transformBounds(x, y, d,d));
+                            if (!tooltipEnabled)
+                                knob->setPopupDisplayEnabled(false, false, nullptr);
                         }
                         else if (dynamic_cast<ButtonList*>(mappingComps[name])){
                             mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
