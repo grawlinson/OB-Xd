@@ -110,6 +110,12 @@ static inline float fxbSwapFloat (const float x) noexcept
 #endif
 }
 
+enum class Tooltip
+{
+	Disable = 0,
+	StandardDisplay,
+	FullDisplay
+};
 //==============================================================================
 /**
 */
@@ -196,6 +202,8 @@ public:
 	File getCurrentSkinFolder() const;
 	void setCurrentSkinFolder(const String& folderName);
     void setGuiSize(const int gui_size);
+	Tooltip getTooltipBehavior() const;
+	void setTooltipBehavior(const Tooltip tooltip);
     //==============================================================================
     static String getEngineParameterId (size_t);
 	static String getTrueParameterValueFromNormalizedRange(size_t, float normalizedValue);
@@ -251,6 +259,7 @@ public:
 private:
 	Array<File> bankFiles;
     Array<File> skinFiles;
+	Tooltip tooltipBehavior;
 
     std::unique_ptr<PropertiesFile> config;
 	InterProcessLock configLock;

@@ -61,7 +61,6 @@ public:
 		h2 = fh;
         w2 = kni.getWidth();
 		numFr = kni.getHeight() / h2;
-        setPopupDisplayEnabled(true, true, getParentComponent());
         setLookAndFeel(&lookAndFeel);
 	}
 

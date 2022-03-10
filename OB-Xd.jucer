@@ -9,11 +9,12 @@
               pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier="com.discodsp.obxd"
               companyName="discoDSP" companyWebsite="https://www.discodsp.com/"
               pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" buildVST="1"
-              buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="1" enableIAA="0" jucerFormatVersion="1" pluginChannelConfigs="{0,2}"
+              pluginFormats="buildStandalone,buildVST3" buildVST="0" buildVST3="1"
+              buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0" buildStandalone="1"
+              enableIAA="0" jucerFormatVersion="1" pluginChannelConfigs="{0,2}"
               companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
-              pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth">
+              pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth"
+              displaySplashScreen="1">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{E11C29DD-69D5-DA26-5CFF-B65751876DEE}" name="MTS">
@@ -91,7 +92,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" bigIcon="nnY63W" smallIcon="nnY63W"
                vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3"
-               aaxFolder="Modules/aax">
+               aaxFolder="Modules/aax" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="OB-Xd"
                        stripLocalSymbols="0" linkTimeOptimisation="0"/>
@@ -116,7 +117,7 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraLinkerFlags="-no-pie"
-                vstLegacyFolder="Modules/vstsdk2.4">
+                vstLegacyFolder="Modules/vstsdk2.4" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Release64" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
                        targetName="OB-Xd" linuxArchitecture="-m64" headerPath="../../JuceLibraryCode&#10;../../Source&#10;../Modules/vstsdk2.4&#10;/usr/include/freetype2&#10;/usr/include"
@@ -140,7 +141,7 @@
     </LINUX_MAKE>
     <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="nnY63W" bigIcon="nnY63W"
             vstLegacyFolder="Modules/vstsdk2.4" vst3Folder="Modules/vstsdk3"
-            aaxFolder="Modules/aax">
+            aaxFolder="Modules/aax" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="OB-Xd" headerPath="../../Modules/asiosdk2.3.2/common"
                        useRuntimeLibDLL="0" enablePluginBinaryCopyStep="1"/>

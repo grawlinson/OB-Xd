@@ -122,8 +122,15 @@ void ObxdAudioProcessorEditor::resized() {
                     if (mappingComps[name] != nullptr){
                         if (auto* knob = dynamic_cast<Knob*>(mappingComps[name])){
                             knob->setBounds(transformBounds(x, y, d,d));
-                            if (!tooltipEnabled)
+                            const auto tooltipBehavior = processor.getTooltipBehavior();
+                            if (tooltipBehavior == Tooltip::Disable ||
+                                (tooltipBehavior == Tooltip::StandardDisplay && !tooltipEnabled))
+                            {
                                 knob->setPopupDisplayEnabled(false, false, nullptr);
+                            } else
+                            {
+                                knob->setPopupDisplayEnabled(true, true, knob->getParentComponent());
+                            }
                         }
                         else if (dynamic_cast<ButtonList*>(mappingComps[name])){
                             mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
@@ -953,6 +960,24 @@ void ObxdAudioProcessorEditor::createMenu ()
     scaleMenu.addItem(menuScaleNum+1, "1.5x", true, getScaleFactor() == 1.5f);
     scaleMenu.addItem(menuScaleNum+2, "2x", true, getScaleFactor() == 2.0f);
     menu->addSubMenu("GUI Size", scaleMenu, true);
+
+    PopupMenu tooltipMenu;
+    tooltipMenu.addItem("Disabled", true, processor.getTooltipBehavior() == Tooltip::Disable, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::Disable);
+            resized();
+        });
+    tooltipMenu.addItem("Standard Display", true, processor.getTooltipBehavior() == Tooltip::StandardDisplay, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::StandardDisplay);
+            resized();
+        });
+    tooltipMenu.addItem("Full Display", true, processor.getTooltipBehavior() == Tooltip::FullDisplay, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::FullDisplay);
+            resized();
+        });
+    menu->addSubMenu("Tooltips", tooltipMenu, true);
 
 #ifdef LINUX
     menu->addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);
