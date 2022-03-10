@@ -521,17 +521,17 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                                         
                     if (name == "voiceSwitch"){
-                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices");
+                        voiceSwitch.reset(addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices"));
                         voiceSwitch->setLookAndFeel(&this->getLookAndFeel());
-                        mappingComps["voiceSwitch"] = voiceSwitch;
+                        mappingComps["voiceSwitch"] = voiceSwitch.get();
                     }
 
 
                     if (name == "legatoSwitch"){
-                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato");
+                        legatoSwitch.reset(addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato"));
                        
                         legatoSwitch->setLookAndFeel(&this->getLookAndFeel());
-                        mappingComps["legatoSwitch"] = legatoSwitch;
+                        mappingComps["legatoSwitch"] = legatoSwitch.get();
                     }
 
 

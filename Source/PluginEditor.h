@@ -272,8 +272,7 @@ private:
     *midiLearnButton=nullptr,
     *midiUnlearnButton=nullptr;
 
-	ButtonList *voiceSwitch = nullptr,
-    *legatoSwitch = nullptr;
+	std::unique_ptr<ButtonList> voiceSwitch, legatoSwitch;
 
 	File skinFolder;
     
