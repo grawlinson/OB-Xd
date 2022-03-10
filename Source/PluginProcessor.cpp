@@ -988,8 +988,8 @@ String ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(size_t index
     }
     // case XMOD:               return "Xmod";
     // case OSC2HS:             return "Osc2HardSync";
-    // case OSC1P:              return String{ getPitch(value * 48), 2 };
-    // case OSC2P:              return String{ getPitch(value * 48), 2 };
+    case OSC1P:              return String{ (float(value * 4) - 2) * 12.f, 1 } + " Semitones";
+    case OSC2P:              return String{ (float(value * 4) - 2) * 12.f, 1 } + " Semitones";
     // case PORTAMENTO:         return "Portamento";
     // case UNISON:             return "Unison";
     // case FLT_KF:             return "FilterKeyFollow";
