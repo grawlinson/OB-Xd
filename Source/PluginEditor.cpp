@@ -228,6 +228,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                             if (value < 0.875) return 0.75;
                             return 1.0;
                         };
+                        osc1PitchKnob->altDragCallback = [](double value)
+                        {
+                            const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                            return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
+                        };
                         mappingComps["osc1PitchKnob"] = osc1PitchKnob;
                     }
                     if (name == "pulseWidthKnob"){
@@ -243,6 +248,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                             if (value < 0.625) return 0.5;
                             if (value < 0.875) return 0.75;
                             return 1.0;
+                        };
+                        osc2PitchKnob->altDragCallback = [](double value)
+                        {
+                            const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                            return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
                         };
                         mappingComps["osc2PitchKnob"] = osc2PitchKnob;
                     }
@@ -384,6 +394,27 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     
                     if (name == "pitchQuantButton"){
                         pitchQuantButton =  addButton (x, y,  w, h, ownerFilter, OSCQuantize, "Step");
+                        pitchQuantButton->onStateChange = [&]
+                        {
+                            const auto isButtonOn = pitchQuantButton->getToggleState();
+                            const auto configureOscKnob = [&](const String& parameter)
+                            {
+                                if (auto* knob = dynamic_cast<Knob*>(mappingComps[parameter]))
+                                {
+                                    if (isButtonOn)
+                                        knob->alternativeValueMapCallback = [](double value)
+                                    {
+                                        const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                                        return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
+                                    };
+                                    else
+                                        knob->alternativeValueMapCallback = nullptr;
+                                }
+                            };
+                            configureOscKnob("osc1PitchKnob");
+                            configureOscKnob("osc2PitchKnob");
+                            
+                        };
                         mappingComps["pitchQuantButton"] = pitchQuantButton;
                     }
                     
@@ -739,7 +770,7 @@ Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor
 	knob->setRange (0, 1);
 	knob->setBounds (x, y, d+(d/6), d+(d/6));
 	knob->setTextBoxIsEditable (false);
-	knob->setDoubleClickReturnValue (true, defval);
+	knob->setDoubleClickReturnValue (true, defval, ModifierKeys::noModifiers);
     knob->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue());
     addAndMakeVisible (knob);
     
