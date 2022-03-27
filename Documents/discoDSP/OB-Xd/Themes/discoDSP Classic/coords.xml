@@ -6,8 +6,8 @@
 	<!------- MASTER ----->
 
 	<VALUE NAME="volumeKnob" x="53" y="120" d="42"/>
-	<VALUE NAME="tuneKnob" x="116" y="120" d="42"/>  
-	<VALUE NAME="transposeKnob" x="181" y="120" d="42"/> 
+	<VALUE NAME="tuneKnob" x="116" y="120" d="42" tooltip="1"/>  
+	<VALUE NAME="transposeKnob" x="181" y="120" d="42" tooltip="1"/> 
 
 	<!------- GLOBAL ----->
 
@@ -27,15 +27,15 @@
 	<VALUE NAME="bendOsc2OnlyButton" x="321" y="354" d="32" w="28" h="35"/>  
 	<VALUE NAME="bendRangeButton" x="267" y="354" d="32" w="28" h="35"/> 
 
-	<VALUE NAME="bendLfoRateKnob" x="369" y="345" d="40" w="28" h="35"/>  
+	<VALUE NAME="bendLfoRateKnob" x="369" y="345" d="40" w="28" h="35" tooltip="1"/>  
 	<VALUE NAME="veloFltEnvKnob" x="433" y="345" d="40" w="28" h="35"/>
 	<VALUE NAME="veloAmpEnvKnob" x="491" y="345" d="40" w="28" h="35"/>
 
 	<!------- OSCILLATORS -----> 
   
-	<VALUE NAME="osc1PitchKnob" x="276" y="40" d="42"/>  
+	<VALUE NAME="osc1PitchKnob" x="276" y="40" d="42" tooltip="1"/>  
 	<VALUE NAME="pulseWidthKnob" x="339" y="40" d="42"/>  
-	<VALUE NAME="osc2PitchKnob" x="402" y="40" d="42"/>   
+	<VALUE NAME="osc2PitchKnob" x="402" y="40" d="42" tooltip="1"/>   
 
 	<VALUE NAME="xmodKnob" x="339" y="168" d="42"/>  
 	<VALUE NAME="osc2DetuneKnob" x="339" y="104" d="42"/>
@@ -46,9 +46,9 @@
 
 	<!------- MIX ----->
 
-	<VALUE NAME="osc1MixKnob" x="492" y="40" d="42"/>  
-	<VALUE NAME="osc2MixKnob" x="492" y="132" d="42"/>  
-	<VALUE NAME="noiseMixKnob" x="492" y="224" d="42"/>   
+	<VALUE NAME="osc1MixKnob" x="492" y="40" d="42" tooltip="1"/>  
+	<VALUE NAME="osc2MixKnob" x="492" y="132" d="42" tooltip="1"/>  
+	<VALUE NAME="noiseMixKnob" x="492" y="224" d="42" tooltip="1"/>   
 
 	<!------- FILTER ----->
 
@@ -77,7 +77,7 @@
 
 	<!------- MODULATION ----->
 
-	<VALUE NAME="lfoFrequencyKnob" x="581" y="207" d="42"/>  
+	<VALUE NAME="lfoFrequencyKnob" x="581" y="207" d="42" tooltip="1"/>  
 	<VALUE NAME="lfoAmt1Knob" x="640" y="207" d="42"/>  
 	<VALUE NAME="lfoAmt2Knob" x="704" y="207" d="42"/>  
 
@@ -105,13 +105,13 @@
 	<VALUE NAME="envelopeDetuneKnob" x="965" y="240" d="36" w="28" h="35"/>  
 	<VALUE NAME="portamentoDetuneKnob" x="892" y="240" d="36" w="28" h="35"/>
 
-	<VALUE NAME="pan1Knob" x="801" y="323" d="35"/>  
-	<VALUE NAME="pan2Knob" x="860" y="323" d="35"/>  
-	<VALUE NAME="pan3Knob" x="924" y="323" d="35"/>  
-	<VALUE NAME="pan4Knob" x="987" y="323" d="35"/>  
+	<VALUE NAME="pan1Knob" x="801" y="323" d="35" tooltip="1"/>  
+	<VALUE NAME="pan2Knob" x="860" y="323" d="35" tooltip="1"/>  
+	<VALUE NAME="pan3Knob" x="924" y="323" d="35" tooltip="1"/>  
+	<VALUE NAME="pan4Knob" x="987" y="323" d="35" tooltip="1"/>  
 
-	<VALUE NAME="pan5Knob" x="801" y="376" d="35"/>  
-	<VALUE NAME="pan6Knob" x="860" y="376" d="35"/>  
-	<VALUE NAME="pan7Knob" x="924" y="376" d="35"/>  
-	<VALUE NAME="pan8Knob" x="987" y="376" d="35"/> 
+	<VALUE NAME="pan5Knob" x="801" y="376" d="35" tooltip="1"/>  
+	<VALUE NAME="pan6Knob" x="860" y="376" d="35" tooltip="1"/>  
+	<VALUE NAME="pan7Knob" x="924" y="376" d="35" tooltip="1"/>  
+	<VALUE NAME="pan8Knob" x="987" y="376" d="35" tooltip="1"/> 
 </PROPERTIES>

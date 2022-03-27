@@ -117,10 +117,20 @@ void ObxdAudioProcessorEditor::resized() {
                     int d = child->getIntAttribute("d");
                     int w = child->getIntAttribute("w");
                     int h = child->getIntAttribute("h");
+                    bool tooltipEnabled = child->getBoolAttribute("tooltip", false);
                     DBG(" COmponent : " << name);
                     if (mappingComps[name] != nullptr){
-                        if (dynamic_cast<Knob*>(mappingComps[name])){
-                            mappingComps[name]->setBounds(transformBounds(x, y, d,d));
+                        if (auto* knob = dynamic_cast<Knob*>(mappingComps[name])){
+                            knob->setBounds(transformBounds(x, y, d,d));
+                            const auto tooltipBehavior = processor.getTooltipBehavior();
+                            if (tooltipBehavior == Tooltip::Disable ||
+                                (tooltipBehavior == Tooltip::StandardDisplay && !tooltipEnabled))
+                            {
+                                knob->setPopupDisplayEnabled(false, false, nullptr);
+                            } else
+                            {
+                                knob->setPopupDisplayEnabled(true, true, knob->getParentComponent());
+                            }
                         }
                         else if (dynamic_cast<ButtonList*>(mappingComps[name])){
                             mappingComps[name]->setBounds(transformBounds(x, y,  w, h));
@@ -218,6 +228,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                             if (value < 0.875) return 0.75;
                             return 1.0;
                         };
+                        osc1PitchKnob->altDragCallback = [](double value)
+                        {
+                            const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                            return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
+                        };
                         mappingComps["osc1PitchKnob"] = osc1PitchKnob;
                     }
                     if (name == "pulseWidthKnob"){
@@ -233,6 +248,11 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                             if (value < 0.625) return 0.5;
                             if (value < 0.875) return 0.75;
                             return 1.0;
+                        };
+                        osc2PitchKnob->altDragCallback = [](double value)
+                        {
+                            const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                            return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
                         };
                         mappingComps["osc2PitchKnob"] = osc2PitchKnob;
                     }
@@ -374,6 +394,27 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     
                     if (name == "pitchQuantButton"){
                         pitchQuantButton =  addButton (x, y,  w, h, ownerFilter, OSCQuantize, "Step");
+                        pitchQuantButton->onStateChange = [&]
+                        {
+                            const auto isButtonOn = pitchQuantButton->getToggleState();
+                            const auto configureOscKnob = [&](const String& parameter)
+                            {
+                                if (auto* knob = dynamic_cast<Knob*>(mappingComps[parameter]))
+                                {
+                                    if (isButtonOn)
+                                        knob->alternativeValueMapCallback = [](double value)
+                                    {
+                                        const auto semitoneValue = (int)jmap(value, -24.0, 24.0);
+                                        return jmap((double)semitoneValue, -24.0, 24.0, 0.0, 1.0);
+                                    };
+                                    else
+                                        knob->alternativeValueMapCallback = nullptr;
+                                }
+                            };
+                            configureOscKnob("osc1PitchKnob");
+                            configureOscKnob("osc2PitchKnob");
+                            
+                        };
                         mappingComps["pitchQuantButton"] = pitchQuantButton;
                     }
                     
@@ -511,17 +552,17 @@ void ObxdAudioProcessorEditor::loadSkin (ObxdAudioProcessor& ownerFilter)
                     }
                                         
                     if (name == "voiceSwitch"){
-                        voiceSwitch = addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices");
+                        voiceSwitch.reset(addList (x, y, w, h, ownerFilter, VOICE_COUNT, "VoiceCount", "voices"));
                         voiceSwitch->setLookAndFeel(&this->getLookAndFeel());
-                        mappingComps["voiceSwitch"] = voiceSwitch;
+                        mappingComps["voiceSwitch"] = voiceSwitch.get();
                     }
 
 
                     if (name == "legatoSwitch"){
-                        legatoSwitch = addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato");
+                        legatoSwitch.reset(addList (x, y, w, h, ownerFilter, LEGATOMODE, "Legato", "legato"));
                        
                         legatoSwitch->setLookAndFeel(&this->getLookAndFeel());
-                        mappingComps["legatoSwitch"] = legatoSwitch;
+                        mappingComps["legatoSwitch"] = legatoSwitch.get();
                     }
 
 
@@ -729,7 +770,7 @@ Knob* ObxdAudioProcessorEditor::addKnob (int x, int y, int d, ObxdAudioProcessor
 	knob->setRange (0, 1);
 	knob->setBounds (x, y, d+(d/6), d+(d/6));
 	knob->setTextBoxIsEditable (false);
-	knob->setDoubleClickReturnValue (true, defval);
+	knob->setDoubleClickReturnValue (true, defval, ModifierKeys::noModifiers);
     knob->setValue (filter.getPluginState().getParameter (filter.getEngineParameterId (parameter))->getValue());
     addAndMakeVisible (knob);
     
@@ -950,6 +991,24 @@ void ObxdAudioProcessorEditor::createMenu ()
     scaleMenu.addItem(menuScaleNum+1, "1.5x", true, getScaleFactor() == 1.5f);
     scaleMenu.addItem(menuScaleNum+2, "2x", true, getScaleFactor() == 2.0f);
     menu->addSubMenu("GUI Size", scaleMenu, true);
+
+    PopupMenu tooltipMenu;
+    tooltipMenu.addItem("Disabled", true, processor.getTooltipBehavior() == Tooltip::Disable, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::Disable);
+            resized();
+        });
+    tooltipMenu.addItem("Standard Display", true, processor.getTooltipBehavior() == Tooltip::StandardDisplay, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::StandardDisplay);
+            resized();
+        });
+    tooltipMenu.addItem("Full Display", true, processor.getTooltipBehavior() == Tooltip::FullDisplay, [&]
+        {
+            processor.setTooltipBehavior(Tooltip::FullDisplay);
+            resized();
+        });
+    menu->addSubMenu("Tooltips", tooltipMenu, true);
 
 #ifdef LINUX
     menu->addItem(1, String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2), false);

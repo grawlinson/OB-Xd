@@ -61,8 +61,8 @@ public:
 		h2 = fh;
         w2 = kni.getWidth();
 		numFr = kni.getHeight() / h2;
-        setPopupDisplayEnabled(true, true, getParentComponent());
         setLookAndFeel(&lookAndFeel);
+        setVelocityModeParameters(1.0, 1, 0.0, true, ModifierKeys::ctrlModifier);
 	}
 
     ~Knob() override
@@ -104,6 +104,17 @@ public:
             {
                 setValue(shiftDragCallback(getValue()), sendNotificationAsync);
             }
+        }
+        if (event.mods.isAltDown())
+        {
+            if (altDragCallback)
+            {
+                setValue(altDragCallback(getValue()), sendNotificationAsync);
+            }
+        }
+        if (alternativeValueMapCallback)
+        {
+            setValue(alternativeValueMapCallback(getValue()), sendNotificationAsync);
         }
 	}
 
@@ -161,7 +172,7 @@ public:
         resetActionMessage = identifier;
     }
 
-    std::function<double(double)> shiftDragCallback;
+    std::function<double(double)> shiftDragCallback, altDragCallback, alternativeValueMapCallback;
 private:
 	Image kni;
 	int fh, numFr;

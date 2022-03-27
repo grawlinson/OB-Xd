@@ -74,6 +74,7 @@ ObxdAudioProcessor::ObxdAudioProcessor()
     config = std::unique_ptr<PropertiesFile> (new PropertiesFile (getDocumentFolder().getChildFile ("Skin.xml"), options));
     showPresetBar = config->getBoolValue("presetnavigation");
     gui_size = config->getIntValue("gui_size", 1);
+    tooltipBehavior = static_cast<Tooltip>(config->getIntValue("tooltip", 1));
 	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Ilkka Rosma Dark";
 	currentBank = "000 - FMR OB-Xa Patch Book";
 
@@ -824,6 +825,19 @@ void ObxdAudioProcessor::setGuiSize(const int gui_size) {
     config->setValue("gui_size", gui_size);
     config->setNeedsToBeSaved(true);
 }
+
+Tooltip ObxdAudioProcessor::getTooltipBehavior() const
+{
+    return tooltipBehavior;
+}
+
+void ObxdAudioProcessor::setTooltipBehavior(const Tooltip tooltip)
+{
+    this->tooltipBehavior = tooltip;
+    config->setValue("tooltip", static_cast<int>(tooltip));
+    config->setNeedsToBeSaved(true);
+}
+
 //==============================================================================
 String ObxdAudioProcessor::getEngineParameterId (size_t index)
 {
@@ -988,8 +1002,8 @@ String ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(size_t index
     }
     // case XMOD:               return "Xmod";
     // case OSC2HS:             return "Osc2HardSync";
-    // case OSC1P:              return String{ getPitch(value * 48), 2 };
-    // case OSC2P:              return String{ getPitch(value * 48), 2 };
+    case OSC1P:              return String{ (float(value * 4) - 2) * 12.f, 1 } + " Semitones";
+    case OSC2P:              return String{ (float(value * 4) - 2) * 12.f, 1 } + " Semitones";
     // case PORTAMENTO:         return "Portamento";
     // case UNISON:             return "Unison";
     // case FLT_KF:             return "FilterKeyFollow";
@@ -1017,7 +1031,7 @@ String ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(size_t index
         break;
     }
 
-    return String{ value, 2 };
+    return String{ static_cast<int>(jmap(value, 0.f, 127.f)) };
 }
 
 int ObxdAudioProcessor::getParameterIndexFromId (String paramId)
