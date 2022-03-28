@@ -14,7 +14,7 @@
               buildStandalone="1" enableIAA="0" jucerFormatVersion="1" pluginChannelConfigs="{0,2}"
               companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
               pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth"
-              displaySplashScreen="1">
+              displaySplashScreen="0" pluginVST3Category="Instrument" pluginAUMainType="'aumu'">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{E11C29DD-69D5-DA26-5CFF-B65751876DEE}" name="MTS">
