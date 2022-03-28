@@ -11,10 +11,10 @@
               pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" buildVST="1"
               buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="1" enableIAA="0" jucerFormatVersion="1" pluginChannelConfigs="{0,2}"
-              companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
-              pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth"
-              displaySplashScreen="0" pluginVST3Category="Instrument" pluginAUMainType="'aumu'">
+              buildStandalone="1" enableIAA="0" jucerFormatVersion="1" companyCopyright="discoDSP"
+              companyEmail="contactus@discodsp.com" pluginAAXCategory="2048"
+              pluginVSTCategory="kPlugCategSynth" displaySplashScreen="0" pluginChannelConfigs="{0,2}"
+              pluginAUMainType="'aumu'" pluginVST3Category="Synth">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{E11C29DD-69D5-DA26-5CFF-B65751876DEE}" name="MTS">
