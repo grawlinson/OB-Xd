@@ -85,11 +85,7 @@ public:
     void buttonClicked (Button *) override;
     //bool keyPressed(const KeyPress & press) override;
     void timerCallback() override {
-#if JUCE_WINDOWS || JUCE_LINUX
-    // No run timer to grab component on  window
-#else
-        this->grabKeyboardFocus();
-#endif
+
         countTimer ++;
         if (countTimer == 4 && needNotifytoHost){
             countTimer = 0;
