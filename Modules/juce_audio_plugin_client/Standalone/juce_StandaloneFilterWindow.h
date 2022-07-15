@@ -277,8 +277,8 @@ public:
             maxNumOutputs = jmax (0, (int) defaultConfig.numOuts);
         }
 
-        if (auto* bus = processor->getBus (true, 0))
-            maxNumInputs = jmax (0, bus->getDefaultLayout().size());
+//        if (auto* bus = processor->getBus (true, 0))
+//            maxNumInputs = jmax (0, bus->getDefaultLayout().size());
 
         if (auto* bus = processor->getBus (false, 0))
             maxNumOutputs = jmax (0, bus->getDefaultLayout().size());
