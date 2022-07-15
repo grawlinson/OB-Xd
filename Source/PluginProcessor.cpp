@@ -40,7 +40,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
         auto range        = NormalisableRange<float> {0.0f, 1.0f};
         auto defaultValue = defaultParams.values[i];
         auto parameter    = std::make_unique<AudioParameterFloat> (
-            id, name, range, defaultValue, String{}, AudioProcessorParameter::genericParameter,
+            ParameterID{ id, 1 }, name, range, defaultValue, String{}, AudioProcessorParameter::genericParameter,
             [=](float value, int /*maxStringLength*/)
             {
                 return ObxdAudioProcessor::getTrueParameterValueFromNormalizedRange(i, value);

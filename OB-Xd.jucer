@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.8.0"
+<JUCERPROJECT id="mxW328" name="OB-Xd" projectType="audioplug" version="2.9.0"
               bundleIdentifier="com.discoDSP.Obxd" includeBinaryInAppConfig="1"
               pluginName="OB-Xd" pluginDesc="Emulation of famous OB-X, OB-Xa and OB-8 synths"
               pluginManufacturer="discoDSP" pluginManufacturerCode="DDSP" pluginCode="Obxd"
@@ -9,12 +9,12 @@
               pluginAUExportPrefix="" pluginRTASCategory="2048" aaxIdentifier="com.discodsp.obxd"
               companyName="discoDSP" companyWebsite="https://www.discodsp.com/"
               pluginIsMidiEffectPlugin="0" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" buildVST="1"
-              buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="1" enableIAA="0" jucerFormatVersion="1" companyCopyright="discoDSP"
-              companyEmail="contactus@discodsp.com" pluginAAXCategory="2048"
-              pluginVSTCategory="kPlugCategSynth" displaySplashScreen="0" pluginChannelConfigs="{0,2}"
-              pluginAUMainType="'aumu'" pluginVST3Category="Synth">
+              pluginFormats="buildAU,buildLV2,buildStandalone,buildVST,buildVST3"
+              buildVST="1" buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0"
+              buildAAX="0" buildStandalone="1" enableIAA="0" jucerFormatVersion="1"
+              pluginChannelConfigs="{0,2}" companyCopyright="discoDSP" companyEmail="contactus@discodsp.com"
+              pluginAAXCategory="2048" pluginVSTCategory="kPlugCategSynth"
+              displaySplashScreen="0">
   <MAINGROUP id="NZ3n4V" name="OB-Xd">
     <GROUP id="{90740217-84AB-FD0D-FBC4-CA9EA2C68D5E}" name="Source">
       <GROUP id="{E11C29DD-69D5-DA26-5CFF-B65751876DEE}" name="MTS">
