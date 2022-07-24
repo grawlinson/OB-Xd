@@ -15,4 +15,4 @@ Latest binaries can be downloaded at https://www.discodsp.com/obxd/
 
 # Building
 
-Source code can be compiled with [JUCE 6.1.6](https://github.com/juce-framework/JUCE/releases/tag/6.1.6) and VST3 SDK.
+Source code can be compiled with [JUCE 7.0.1](https://github.com/juce-framework/JUCE/releases/tag/7.0.1).
