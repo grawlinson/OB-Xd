@@ -508,10 +508,36 @@ void ObxdAudioProcessor::saveBank() {
 }
 
 bool ObxdAudioProcessor::loadPreset(const File& fxpFile) {
-    loadFromFXBFile(fxpFile);
+    loadFromFXPFile(fxpFile);
     currentPreset = fxpFile.getFileName();
     currentPresetFile = fxpFile;
     return true;
+}
+
+/// Serialize the current Preset, just like the saveFXPFile function,
+/// but keeps the data in memory instead of writing it to a file.
+void ObxdAudioProcessor::serializePreset(MemoryBlock& memoryBlock)
+{
+	juce::MemoryBlock m;
+	getCurrentProgramStateInformation(m);
+	{
+		memoryBlock.reset();
+		auto totalLen = sizeof (fxProgramSet) + m.getSize() - 8;
+		memoryBlock.setSize (totalLen, true);
+
+		auto set = static_cast<fxProgramSet*>(memoryBlock.getData());
+		set->chunkMagic = fxbName ("CcnK");
+		set->byteSize = 0;
+		set->fxMagic = fxbName ("FPCh");
+		set->version = fxbSwap (fxbVersionNum);
+		set->fxID = fxbName ("Obxd");
+		set->fxVersion = fxbSwap (fxbVersionNum);
+		set->numPrograms = fxbSwap (getNumPrograms());
+		programs.currentProgramPtr->name.copyToUTF8(set->name, 28);
+		set->chunkSize = fxbSwap (static_cast<int32>(m.getSize()));
+
+		m.copyTo (set->chunk, 0, m.getSize());
+	}
 }
 
 bool ObxdAudioProcessor::saveFXPFile(const File& fxpFile){
@@ -612,12 +638,40 @@ bool ObxdAudioProcessor::saveFXBFile(const File& fxbFile) {
     return true;
 }
 
+bool ObxdAudioProcessor::loadFromFXPFile(const File& fxpFile)
+{
+	MemoryBlock mb;
+	if (! fxpFile.loadFileAsData(mb))
+		return false;
+	
+	if (!loadFromMemoryBlock(mb))
+		return false;
+
+	currentPreset = fxpFile.getFileName();
+	currentPresetFile = fxpFile;
+	updateHostDisplay();
+	
+	return true;
+}
+
 bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 {
 	MemoryBlock mb;
 	if (! fxbFile.loadFileAsData(mb))
 		return false;
+	
+	if (!loadFromMemoryBlock(mb))
+		return false;
+	
+	currentBank = fxbFile.getFileName();
+	currentBankFile = fxbFile;
+	updateHostDisplay();
+	
+	return true;
+}
 
+bool ObxdAudioProcessor::loadFromMemoryBlock(MemoryBlock& mb)
+{
 	const void* const data = mb.getData();
 	const size_t dataSize = mb.getSize();
 
@@ -705,10 +759,6 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 	{
 		return false;
 	}
-
-	currentBank = fxbFile.getFileName();
-    currentBankFile = fxbFile;
-	updateHostDisplay();
 
 	return true;
 }

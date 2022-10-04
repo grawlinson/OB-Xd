@@ -177,11 +177,14 @@ public:
     bool deleteBank();
     bool loadPreset(const File& fxpFile);
     bool savePreset(const File& fxpFile);
+	void serializePreset(MemoryBlock& memoryBlock);		// Copy the current Preset into a MemoryBlock
     void changePresetName(const String &name);
     void newPreset(const String &name);
     void deletePreset();
     
+	bool loadFromFXPFile(const File& fxbFile);
 	bool loadFromFXBFile(const File& fxbFile);
+	bool loadFromMemoryBlock(MemoryBlock& memoryBlock);
     bool saveFXBFile(const File& fxbFile);
     bool saveFXPFile(const File& fxpFile);
     bool saveBank(const File& fxbFile);
