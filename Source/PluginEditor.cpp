@@ -863,8 +863,9 @@ void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilte
 
 void ObxdAudioProcessorEditor::createMenu ()
 {
+#if JUCE_MAC
 	bool enablePasteOption = macPasteboard::containsPresetData();	// Check if the clipboard contains data for a Preset
-
+#endif
     popupMenus.clear();
     PopupMenu* menu = new PopupMenu();
     //menu->setLookAndFeel(new CustomLookAndFeel(&this->processor));
@@ -928,6 +929,8 @@ void ObxdAudioProcessorEditor::createMenu ()
                      true,
                      false);
         
+#if JUCE_MAC
+
 		fileMenu.addSeparator();
 		
 		fileMenu.addItem(static_cast<int>(MenuAction::CopyPreset),
@@ -939,7 +942,7 @@ void ObxdAudioProcessorEditor::createMenu ()
 					 "Paste Preset...",
 					 enablePasteOption,
 					 false);
-
+#endif
 		/*
         fileMenu.addItem(static_cast<int>(MenuAction::DeleteBank),
                      "Delete Bank...",
@@ -1338,6 +1341,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
         }
     };
 
+#if JUCE_MAC
 	// Copy to clipboard
 	if (action == MenuAction::CopyPreset)
 	{
@@ -1362,6 +1366,7 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
 			processor.loadFromMemoryBlock(memoryBlock);	//loadPreset(memoryBlock);
 		}
 	}
+#endif
 }
 
 
