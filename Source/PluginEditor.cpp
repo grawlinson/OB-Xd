@@ -863,6 +863,13 @@ void ObxdAudioProcessorEditor::rebuildComponents (ObxdAudioProcessor& ownerFilte
 
 void ObxdAudioProcessorEditor::createMenu ()
 {
+#if JUCE_MAC
+	bool enablePasteOption = macPasteboard::containsPresetData();	// Check if the clipboard contains data for a Preset
+#else
+    juce::MemoryBlock memoryBlock;
+    memoryBlock.fromBase64Encoding(SystemClipboard::getTextFromClipboard());
+    bool enablePasteOption = processor.isMemoryBlockAPreset(memoryBlock);
+#endif
     popupMenus.clear();
     PopupMenu* menu = new PopupMenu();
     //menu->setLookAndFeel(new CustomLookAndFeel(&this->processor));
@@ -926,7 +933,20 @@ void ObxdAudioProcessorEditor::createMenu ()
                      true,
                      false);
         
-        /*
+
+		fileMenu.addSeparator();
+		
+		fileMenu.addItem(static_cast<int>(MenuAction::CopyPreset),
+					 "Copy Preset...",
+					 true,
+					 false);
+		
+		fileMenu.addItem(static_cast<int>(MenuAction::PastePreset),
+					 "Paste Preset...",
+					 enablePasteOption,
+					 false);
+
+		/*
         fileMenu.addItem(static_cast<int>(MenuAction::DeleteBank),
                      "Delete Bank...",
                      true,
@@ -1324,6 +1344,57 @@ void ObxdAudioProcessorEditor::MenuActionCallback(int action){
         }
     };
 
+#if JUCE_MAC
+	// Copy to clipboard
+	if (action == MenuAction::CopyPreset)
+	{
+		juce::MemoryBlock serializedData;
+
+		// Serialize the Preset, produces the same data as an export but into memory instead of a file.
+		processor.serializePreset(serializedData);
+
+		// Place the data onto the clipboard
+		macPasteboard::copyPresetDataToClipboard(serializedData.getData(), serializedData.getSize());
+	}
+
+	// Paste from clipboard
+	if (action == MenuAction::PastePreset)
+	{
+		juce::MemoryBlock memoryBlock;
+
+		// Fetch Preset data from the clipboard
+		if (macPasteboard::fetchPresetDataFromClipboard(memoryBlock))
+		{
+			// Load the data
+			processor.loadFromMemoryBlock(memoryBlock);	//loadPreset(memoryBlock);
+		}
+	}
+#else
+    // Copy to clipboard
+    if (action == MenuAction::CopyPreset)
+    {
+        juce::MemoryBlock serializedData;
+
+        // Serialize the Preset, produces the same data as an export but into memory instead of a file.
+        processor.serializePreset(serializedData);
+        
+        // Place the data onto the clipboard
+        SystemClipboard::copyTextToClipboard(serializedData.toBase64Encoding());
+    }
+
+    // Paste from clipboard
+    if (action == MenuAction::PastePreset)
+    {
+        juce::MemoryBlock memoryBlock;
+
+        // Fetch Preset data from the clipboard
+        memoryBlock.fromBase64Encoding(SystemClipboard::getTextFromClipboard());
+
+        // Load the data
+        processor.loadFromMemoryBlock(memoryBlock);	//loadPreset(memoryBlock);
+        
+    }
+#endif
 }
 
 

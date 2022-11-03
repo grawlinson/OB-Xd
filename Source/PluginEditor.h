@@ -43,6 +43,8 @@ enum MenuAction
     DeletePreset,
     DeleteBank,
     ShowBanks,
+	CopyPreset,
+	PastePreset,
     LoadBank // LoadBank must be the last enum value
 };
 //==============================================================================
