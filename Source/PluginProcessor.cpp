@@ -670,6 +670,21 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 	return true;
 }
 
+bool ObxdAudioProcessor::isMemoryBlockAPreset(const MemoryBlock& mb)
+{
+    const void* const data = mb.getData();
+    const size_t dataSize = mb.getSize();
+
+    if (dataSize < 28)
+        return false;
+
+    const fxSet* const set = (const fxSet*)data;
+
+    if ((!compareMagic(set->chunkMagic, "CcnK")) || fxbSwap(set->version) > fxbVersionNum)
+        return false;
+    return true;
+}
+
 bool ObxdAudioProcessor::loadFromMemoryBlock(MemoryBlock& mb)
 {
 	const void* const data = mb.getData();

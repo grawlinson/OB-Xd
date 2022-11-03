@@ -184,6 +184,7 @@ public:
     
 	bool loadFromFXPFile(const File& fxbFile);
 	bool loadFromFXBFile(const File& fxbFile);
+	bool isMemoryBlockAPreset(const MemoryBlock& memoryBlock);
 	bool loadFromMemoryBlock(MemoryBlock& memoryBlock);
     bool saveFXBFile(const File& fxbFile);
     bool saveFXPFile(const File& fxpFile);
