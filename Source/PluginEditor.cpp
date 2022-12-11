@@ -1037,7 +1037,7 @@ void ObxdAudioProcessorEditor::createMenu ()
 #if defined(JUCE_MAC) || defined(WIN32)
     PopupMenu helpMenu;
     helpMenu.setLookAndFeel(&this->getLookAndFeel());
-    String version = String("Release ") +  String(JucePlugin_VersionString);//.dropLastCharacters(2);
+    String version = String("Release ") +  String(JucePlugin_VersionString).dropLastCharacters(2);
     helpMenu.addItem(menuScaleNum+4, "Manual", true);
     helpMenu.addItem(menuScaleNum+3, version, false);
     menu->addSubMenu("Help", helpMenu, true);
